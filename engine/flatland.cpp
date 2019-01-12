@@ -9,6 +9,7 @@
 
 using namespace std;
 
+#include "flattask.h"
 #include "flatwindow.h"
 
 float flatland_dt;
@@ -90,6 +91,10 @@ int init_flatland(const FlatWindow& w, gameloop loop, const flat_status& s, floa
 
             delay = clock();
 
+            /* Execute tasks */
+            task_s::executeAll();
+
+            /* Execute loop function */
             loop_function(flatland_dt);
 
             SDL_Delay((Uint32) (1000.0f / fps));

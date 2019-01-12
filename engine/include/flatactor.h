@@ -2,35 +2,28 @@
 #define __FLATACTOR_H__
 
 #include "flatcollector.h"
+#include "flatevolvable.h"
 
-struct task_s;
+class FlatBound;
 
-class FlatActor : public FlatCollector
+class FlatActor : public FlatCollector, public FlatEvolvable
 {
-    task_s * task;
-    
     // TODO, event binding
     // TODO, serial binding
+    
+    /* Bounds */
+    FlatBound * bounds;
 
 public:
 
-    FlatActor(FlatCollector *parent = 0, bool evolving = false);
+    FlatActor(FlatCollector *parent = 0, FlatBound *bounds = 0);
 
-    virtual ~FlatActor();
+    ~FlatActor();
 
-    /* Evolution fields */
+    virtual void evolve(float dt) override;
 
-    void evolve_task(void*);
-
-    virtual void evolve(float dt);
-
-    void setEvolving(bool flag);
-
-    bool isEvolving() const;
-    
-    /* Surface fields */
-
-    virtual SDL_Surface * sdl_surface() = 0;
+    void setBounds(FlatBound * bounds);
+    FlatBound * getBounds() const;
 };
 
 #endif

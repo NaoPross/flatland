@@ -45,13 +45,14 @@ class FlatWindow : public FlatObject, public Focusable
 
     FlatLayer * main_layer;
 
-    void serial_cb(SDL_Event*) override;
+    void serial_cb(const SDL_Event&) override;
 
-protected:
+// TODO window calls
+//protected:
 
-    virtual void keyEvent(SDL_KeyEvent*);
+    //virtual void resizeEvent();
 
-    virtual void quitEvent();
+    //virtual void quitEvent();
 
 public:
 

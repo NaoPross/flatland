@@ -155,6 +155,20 @@ void FlatWindow::setWindowStatus(window_status status)
     this->status = status;
 }
 
+void FlatWindow::serial_cb(const SDL_Event &event)
+{
+    // TODO Default escape exits
+
+    switch (event.type)
+    {
+    case SDL_KEYDOWN:
+
+        if (event.key.keysym.sym == SDLK_ESCAPE) 
+            close(); // TODO not enough
+    break;
+    }
+}
+
 Uint32 FlatWindow::winstatus_to_flags(window_status s)
 {
     Uint32 flags = 0;

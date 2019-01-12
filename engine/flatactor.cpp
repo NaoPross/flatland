@@ -1,44 +1,30 @@
 #include "flatactor.h"
 
-#include "flattask.h"
 #include "flatland.h"
 
-FlatActor::FlatActor(FlatCollector *parent, bool evolving)
+FlatActor::FlatActor(FlatCollector *parent, FlatBound *bounds)
 
-    : FlatCollector(parent), task(0)
+    : FlatCollector(parent), bounds(bounds)
 {
-    setEvolving(evolving);
 }
 
 FlatActor::~FlatActor()
 {
-    if (task)
-        delete task;
+    
 }
 
-void FlatActor::evolve_task(void *data)
+void FlatActor::setBounds(FlatBound * bounds)
 {
-    evolve(*(float*)data);
+    this->bounds = bounds;
 }
 
-void FlatActor::evolve(float) {}
-
-void FlatActor::setEvolving(bool flag)
+FlatBound * FlatActor::getBounds() const
 {
-    if (isEvolving() != flag)
-    {
-        if (flag)
-            task = new FlatTask<FlatActor>(this, &FlatActor::evolve_task, (void*)&flatland_dt);
-        else {
-
-            delete task;
-            task = 0;
-        }
-    }
+    return bounds;
 }
 
-bool FlatActor::isEvolving() const
+void FlatActor::evolve(float dt)
 {
-    return task != 0;
+
 }
 

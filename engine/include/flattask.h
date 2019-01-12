@@ -11,28 +11,15 @@ class task_s
 
 public:
 
-    task_s()
-    {
-        /* Push into the public callback list */
-        tasks.push_back(this);
-    }
+    task_s();
 
-    virtual ~task_s()
-    {
-        /* Remove from the public callback list */
-        tasks.remove(this);
-    }
+    virtual ~task_s();
 
     virtual void exec() = 0;
 
     /* Execute all tasks */
-    static void executeAll()
-    {
-        for (task_s * task : tasks)
-            task->exec();
-    }
+    static void executeAll();
 };
-
 
 template<class T>
 class FlatTask : public task_s
