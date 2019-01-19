@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 #include <iostream>
 #include "flatlayer.h"
+#include "flatsignal.h"
 
 using namespace std;
 
@@ -155,17 +156,18 @@ void FlatWindow::setWindowStatus(window_status status)
     this->status = status;
 }
 
-void FlatWindow::serial_cb(const SDL_Event &event)
+void FlatWindow::key_cb(const SDL_KeyboardEvent *event)
 {
     // TODO Default escape exits
 
-    switch (event.type)
+    if (event->type == SDL_KEYDOWN && event->keysym.sym == SDLK_ESCAPE) 
     {
-    case SDL_KEYDOWN:
+        /* Close window */
+        close();
 
-        if (event.key.keysym.sym == SDLK_ESCAPE) 
-            close(); // TODO not enough
-    break;
+        /* Say flatland to quit */
+        FlatSignal quit(this, 0, 0xff);
+        quit.emit("core");
     }
 }
 

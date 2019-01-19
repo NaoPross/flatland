@@ -23,7 +23,7 @@ void loop(float dt)
 {
     ++count;
 
-    if (count == 1000)
+    if (count == 100)
         quit_flatland();
 
     cout << "Loop number: " << count << endl;

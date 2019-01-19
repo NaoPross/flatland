@@ -27,14 +27,14 @@ struct window_status
 };
 
 #include "flatobject.h"
-#include "focusable.h"
+#include "serial/keyfocusable.h"
 
 class SDL_Window;
 class FlatLayer;
 
 class SDL_KeyEvent;
 
-class FlatWindow : public FlatObject, public Focusable
+class FlatWindow : public FlatObject, virtual public KeyFocusable
 {
     std::string title;
     window_status status;
@@ -45,7 +45,7 @@ class FlatWindow : public FlatObject, public Focusable
 
     FlatLayer * main_layer;
 
-    void serial_cb(const SDL_Event&) override;
+    void key_cb(const SDL_KeyboardEvent*) override;
 
 // TODO window calls
 //protected:

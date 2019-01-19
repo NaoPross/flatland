@@ -1,21 +1,10 @@
 #ifndef __FOCUSABLE_H__
 #define __FOCUSABLE_H__
 
-#include <vector>
+#include "types.h"
 
-union SDL_Event;
 class task_s;
-
-struct SDL_EventCollector
-{
-    task_s * checker;
-    std::vector<SDL_Event> stack;
-
-    SDL_EventCollector();
-    ~SDL_EventCollector();
-
-    void collect(void*);
-};
+union SDL_Event;
 
 class Focusable
 {
@@ -23,15 +12,19 @@ class Focusable
 
     task_s * event_trigger;
 
-    static SDL_EventCollector * collector;
+protected:
+
+    /* Callback to event */
+    virtual void serial_cb(const SDL_Event*) = 0;
+
+    /* Event stack specification */
+    virtual Uint32 stackID() const = 0;
 
 public:
 
     Focusable(bool focused = true);
 
     virtual ~Focusable();
-
-    virtual void serial_cb(const SDL_Event&) = 0;
 
     void setFocused(bool flag);
 

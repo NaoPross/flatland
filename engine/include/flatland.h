@@ -35,8 +35,14 @@ struct flat_status
     unsigned char loop:1;
 };
 
-int init_flatland(const FlatWindow&, gameloop, const flat_status&, float fps = 60);
+int init_flatland(FlatWindow*, gameloop, const flat_status&, float fps = 60);
 void quit_flatland();
+
+/* Core channel */
+
+class SignalChannel;
+
+SignalChannel * getCoreChannel();
 
 /* Window and status accessors */
 

@@ -1,0 +1,24 @@
+- Test one: open window for 100 frames *
+
+- FlatTasks *
+- FlatSignals *
+- FlatEvent (basic) *
+- Bind keyboard on FlatWindow *
+- Construct core channel *
+- Bind notify closing window with signals *
+
+- Test two: open window and close with keyboard *
+
+- Exceptions
+- Priorities on FlatTask
+- FlatEvent (all)
+
+- Test three: manage multiple events and possible vulnerability
+
+- Fixes
+- FlatLayer
+- FlatSprite
+
+- Test four: animation test
+
+- Sound

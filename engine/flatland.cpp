@@ -10,6 +10,7 @@
 using namespace std;
 
 #include "flattask.h"
+#include "flatsignal.h"
 #include "flatwindow.h"
 
 float flatland_dt;
@@ -17,6 +18,7 @@ float flatland_dt;
 set<FlatObject*> objects;
 
 FlatWindow * window = 0;
+SignalChannel * core = 0;
 
 gameloop loop_function;
 
@@ -53,16 +55,45 @@ Uint32 status_to_flags(const flat_status& s)
     return flags; 
 }
 
-int init_flatland(const FlatWindow& w, gameloop loop, const flat_status& s, float _fps)
+/* Listen to simple quit calls */
+class QuitListener : public FlatListener
 {
-    // init variables
+    virtual void callback(FlatObject*, void*) override
+    {
+        /* Order to quit */
+        quit_flatland();        
+    }
 
-    window = new FlatWindow(w);
+public:
+
+    QuitListener()
+    {
+        addFilter("quit");
+        core->connect(this);
+    }
+};
+
+int init_flatland(FlatWindow* w, gameloop loop, const flat_status& s, float _fps)
+{
+    cout << "Flatland: Initializing flatland" << endl;
+
+    // Init core channel 
+
+    core = new SignalChannel("core");
+    QuitListener quitter;
+
+    // init variables
+    
+    cout << "Flatland: Initializing window" << endl;
+
+    window = w;
     loop_function = loop;
     status = s;
     fps = _fps;
 
     // init SDL
+    
+    cout << "Flatland: Initializing SDL" << endl;
     
     Uint32 flags = status_to_flags(s);
     
@@ -74,6 +105,7 @@ int init_flatland(const FlatWindow& w, gameloop loop, const flat_status& s, floa
 
     // init window
 
+    cout << "Flatland: Opening window" << endl;
     window->open();
     
     /* Game loop */
@@ -83,6 +115,8 @@ int init_flatland(const FlatWindow& w, gameloop loop, const flat_status& s, floa
 
     clock_t delay = 0;
 
+    cout << "Flatland: Entering game-loop" << endl;
+
     do
     {
         do {
@@ -91,11 +125,11 @@ int init_flatland(const FlatWindow& w, gameloop loop, const flat_status& s, floa
 
             delay = clock();
 
-            /* Execute tasks */
-            task_s::executeAll();
-
             /* Execute loop function */
             loop_function(flatland_dt);
+
+            /* Execute tasks */
+            task_s::executeAll();
 
             SDL_Delay((Uint32) (1000.0f / fps));
 
@@ -107,8 +141,12 @@ int init_flatland(const FlatWindow& w, gameloop loop, const flat_status& s, floa
     }
     while(status.running);
 
-    delete window;
-    window = 0;
+    cout << "Flatland: destroying core channel" << endl;
+
+    delete core;
+    core = 0;
+
+    cout << "Flatland: quitting SDL" << endl;
 
     SDL_Quit();
 
@@ -124,5 +162,10 @@ void quit_flatland()
 flat_status flatland_status()
 {
     return status;
+}
+
+SignalChannel * getCoreChannel()
+{
+    return core;
 }
 

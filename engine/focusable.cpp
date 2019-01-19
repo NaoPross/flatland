@@ -1,29 +1,6 @@
-#include "focusable.h"
+#include "serial/focusable.h"
 #include "flattask.h"
-#include "SDL2/SDL.h"
-
-
-SDL_EventCollector::SDL_EventCollector()
-{
-    checker = new FlatTask<SDL_EventCollector>(this, &SDL_EventCollector::collect, 0);
-}
-
-SDL_EventCollector::~SDL_EventCollector()
-{
-    delete checker;
-}
-
-void SDL_EventCollector::collect(void*)
-{
-    SDL_Event event;
-
-    while ( SDL_PollEvent(&event) )
-        stack.push_back(event);
-}
-
-
-
-SDL_EventCollector * Focusable::collector = new SDL_EventCollector();
+#include "flatserial.h"
 
 Focusable::Focusable(bool focused) : focused(focused) 
 {
@@ -47,7 +24,7 @@ bool Focusable::isFocused() const
 
 void Focusable::serial_precall(void*)
 {
-    for (auto event : Focusable::collector->stack)
-        serial_cb(event);
+    for (auto event : FlatSerial::collector->getStack(stackID()))
+        serial_cb(&event);
 }
 

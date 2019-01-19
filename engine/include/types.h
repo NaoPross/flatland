@@ -22,8 +22,11 @@ class FlatWindow;
 class FlatSpriter;
 class FlatMultiSpriter;
 
+class task_s;
+
 /* SDL types */
 
+typedef unsigned char Uint8;
 typedef unsigned int Uint32;
 
 struct SDL_Surface;

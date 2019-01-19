@@ -1,6 +1,6 @@
 #include "flatobject.h"
 
-#include <string.h>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -18,15 +18,24 @@ FlatObject::~FlatObject()
     FlatObject::allObjects.remove(this);
 }
 
-void FlatObject::setID(const char *id)
+void FlatObject::setID(const string& id)
 {
-    strncpy(this->id, id, 31);
-    this->id[31] = '\0';
+    this->id = id;
 }
 
-const char* FlatObject::getID() const
+const string& FlatObject::getID() const
 {
-    return &id[0];
+    return id;
+}
+
+string FlatObject::randomID(Uint8 length) {
+    
+    string out;
+
+    for (Uint8 i = 0; i < length; ++i)
+        out += (char)(rand() % 93 + 33);
+
+    return out;
 }
 
 bool FlatObject::isAllocated(FlatObject *obj)
@@ -40,11 +49,11 @@ bool FlatObject::isAllocated(FlatObject *obj)
     return false;
 }
 
-vector<FlatObject*>& FlatObject::getByID(const char *id, vector<FlatObject*>& l)
+vector<FlatObject*>& FlatObject::getByID(const string& id, vector<FlatObject*>& l)
 {
     for (FlatObject * obj : FlatObject::allObjects)
     {
-        if (!strcmp(id, obj->getID()))
+        if (id == obj->getID())
             l.push_back(obj);
     }
 

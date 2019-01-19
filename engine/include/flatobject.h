@@ -3,13 +3,14 @@
 
 #include <list>
 #include <vector>
+#include <string>
 #include <initializer_list>
 
 #include "types.h"
 
 class FlatObject
 {
-    char id[32];
+    std::string id;
 
     /* Common list of objects */
     static std::list<FlatObject*> allObjects;
@@ -19,15 +20,17 @@ public:
     FlatObject();
     ~FlatObject();
 
-    void setID(const char*);
+    void setID(const std::string&);
 
-    const char* getID() const;
+    const std::string& getID() const;
 
     /* Static accessors to allObject */
 
     static bool isAllocated(FlatObject*);
    
-    static std::vector<FlatObject*>& getByID(const char *id, std::vector<FlatObject*>&);
+    static std::vector<FlatObject*>& getByID(const std::string& id, std::vector<FlatObject*>&);
+
+    static std::string randomID(Uint8 length = 8);
 };
 
 #endif

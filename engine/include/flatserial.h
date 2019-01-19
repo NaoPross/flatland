@@ -1,14 +1,42 @@
 #ifndef __FLATSERIAL_H__
 #define __FLATSERIAL_H__
 
-/* SDL serial events handling */
+#include "types.h"
+#include <vector>
+#include "SDL2/SDL.h"
 
-class Focusable;
+union SDL_Event;
+class task_s;
 
-void process_events();
+struct SDL_EventCollector
+{
+    task_s * checker;
+   
+    /* Keyboard event */ 
+    std::vector<SDL_Event> keyboard;
 
-void registerFocusable(Focusable*);
+    /* Window resize or iconize event */
+    std::vector<SDL_Event> window;
 
-void unregisterFocusable(Focusable*);
+    /* Quit notification */
+    std::vector<SDL_Event> quit;
+
+    /* Custom events: useful for signals */
+    std::vector<SDL_Event> user;
+
+    // TODO other events
+
+    SDL_EventCollector();
+    ~SDL_EventCollector();
+
+    void collect(void*);
+
+    const std::vector<SDL_Event>& getStack(Uint32 id) const;
+};
+
+namespace FlatSerial {
+
+    extern SDL_EventCollector * collector;
+}
 
 #endif
