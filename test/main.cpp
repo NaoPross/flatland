@@ -1,5 +1,6 @@
 #include "flatland.h"
 #include "flatwindow.h"
+#include "exceptions/forcequit.h"
 
 int count = 0;
 
@@ -24,7 +25,7 @@ void loop(float dt)
     ++count;
 
     if (count == 1000)
-        quit_flatland();
+        throw ForceQuit("1000 steps reached");
 
     cout << "Loop number: " << count << endl;
 }

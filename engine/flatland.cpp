@@ -12,6 +12,8 @@ using namespace std;
 #include "flattask.h"
 #include "flatsignal.h"
 #include "flatwindow.h"
+#include "flatexception.h"
+#include "exceptions/forcequit.h"
 
 float flatland_dt;
 
@@ -125,11 +127,37 @@ int init_flatland(FlatWindow* w, gameloop loop, const flat_status& s, float _fps
 
             delay = clock();
 
-            /* Execute loop function */
-            loop_function(flatland_dt);
+            try {
 
-            /* Execute tasks */
-            task_s::executeAll();
+                try {
+
+                    /* Execute loop function */
+                    loop_function(flatland_dt);
+
+                } catch (const exception &e) {
+
+                    cerr << "Flatland: exception thrown while executing loop" << endl;
+                    cerr << e.what() << endl;
+                }
+            
+                try {
+                
+                    /* Execute tasks */
+                    task_s::executeAll();
+                
+                } catch (const exception &e) {
+                    
+                    cerr << "Flatland: exception thrown while executing tasks" << endl;
+                    cerr << e.what() << endl;
+                }
+
+            } catch (const ForceQuit& f) {
+                
+                cerr << "Flatland: a force quit call was thrown" << endl;
+                cerr << "Possible reason: " << f.reason << endl;
+
+                quit_flatland();
+            }
 
             SDL_Delay((Uint32) (1000.0f / fps));
 
@@ -140,6 +168,10 @@ int init_flatland(FlatWindow* w, gameloop loop, const flat_status& s, float _fps
         SDL_Delay((Uint32)(1000 / fps_pause));
     }
     while(status.running);
+
+    cout << "Flatland: closing window" << endl;
+
+    window->close();
 
     cout << "Flatland: destroying core channel" << endl;
 
