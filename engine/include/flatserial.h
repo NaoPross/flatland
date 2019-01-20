@@ -11,6 +11,7 @@ class task_s;
 struct SDL_EventCollector
 {
     task_s * checker;
+    task_s * eraser;
    
     /* Keyboard event */ 
     std::vector<SDL_Event> keyboard;
@@ -30,6 +31,7 @@ struct SDL_EventCollector
     ~SDL_EventCollector();
 
     void collect(void*);
+    void erase(void*);
 
     const std::vector<SDL_Event>& getStack(Uint32 id) const;
 };

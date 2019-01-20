@@ -18,8 +18,8 @@ SignalChannel::SignalChannel(const string& id)
         //TODO throw exception
         ;
 
-    /* Initialize task */
-    checker = new FlatTask<SignalChannel>(this, &SignalChannel::post_processing, 0);
+    /* Initialize task, post-process, fifth priority */
+    checker = new FlatTask<SignalChannel>(this, &SignalChannel::post_processing, 0, false, 4);
 
     string ID = (id.empty()) ? FlatObject::randomID() : id;
 
@@ -96,9 +96,10 @@ void SignalChannel::post_processing(void*)
 
 /* FlatSignal class */
 
-FlatSignal::FlatSignal(FlatObject *sender, void *data, Uint8 priority)
+FlatSignal::FlatSignal(FlatObject *sender, const string& id, void *data, Uint8 priority)
     : sender(sender), data(data), priority(priority)
 {
+    setID(id);
 }
 
 bool FlatSignal::emit(const string& channel) const
@@ -134,13 +135,9 @@ bool FlatListener::checkInFilters(const std::string& filter) const
 
 void FlatListener::execute(const FlatSignal& sig)
 {
-    if (!sig.getID().empty())
-    {
-        if (!checkInFilters(sig.getID()))
-            return;
-    }
-
-    callback(sig.sender, sig.data);
+    if ((!sig.getID().empty() && checkInFilters(sig.getID())) || 
+        (sig.getID().empty() && filters.empty()))
+        callback(sig.sender, sig.data);
 }
 
 void FlatListener::addFilter(const std::string& f)

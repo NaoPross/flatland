@@ -1,23 +1,53 @@
 #include "flattask.h"
 
-/* Static variable definition */
-std::list<task_s*> task_s::tasks;
+bool task_prior::operator()(task_s* s, task_s* g) const
+{
+    return s->getPriority() <= g->getPriority();
+}
 
-task_s::task_s()
+/* Static variable definition */
+task_set task_s::pre_process_tasks;
+task_set task_s::post_process_tasks;
+
+task_s::task_s(bool pre_process, Uint8 priority) 
+
+    : pre_process(pre_process), priority(priority)
 {
     /* Push into the public callback list */
-    tasks.push_back(this);
+    if (pre_process)
+        pre_process_tasks.insert(this);
+    else
+        post_process_tasks.insert(this);
 }
 
 task_s::~task_s()
 {
     /* Remove from the public callback list */
-    tasks.remove(this);
+    if (pre_process)
+        pre_process_tasks.erase(this);
+    else
+        post_process_tasks.erase(this);
 }
 
-void task_s::executeAll()
+Uint8 task_s::getPriority() const
 {
-    for (task_s * task : task_s::tasks)
+    return priority;
+}
+    
+void task_s::setPriority(Uint8 priority)
+{
+    this->priority = priority;
+}
+
+void task_s::executePreProcess()
+{
+    for (task_s * task : task_s::pre_process_tasks)
+        task->exec();
+}
+
+void task_s::executePostProcess()
+{
+    for (task_s * task : task_s::post_process_tasks)
         task->exec();
 }
 

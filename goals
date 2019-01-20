@@ -9,15 +9,15 @@
 
 - Test two: open window and close with keyboard *
 
-- Exceptions
-- Priorities on FlatTask
-- FlatEvent (all)
+- Exceptions *
+- Priorities on FlatTask *
 
-- Test three: manage multiple events and possible vulnerability
+- Test three: manage multiple events and test possible vulnerability *
 
 - Fixes
 - FlatLayer
 - FlatSprite
+- FlatEvent (all)
 
 - Test four: animation test
 

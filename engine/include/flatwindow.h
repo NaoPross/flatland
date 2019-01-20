@@ -34,7 +34,7 @@ class FlatLayer;
 
 class SDL_KeyEvent;
 
-class FlatWindow : public FlatObject, virtual public KeyFocusable
+class FlatWindow : virtual public FlatObject, public KeyFocusable
 {
     std::string title;
     window_status status;

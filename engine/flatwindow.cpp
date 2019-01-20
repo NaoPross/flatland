@@ -166,7 +166,7 @@ void FlatWindow::key_cb(const SDL_KeyboardEvent *event)
         close();
 
         /* Say flatland to quit */
-        FlatSignal quit(this, 0, 0xff);
+        FlatSignal quit(this, "quit", 0, 0xff);
         quit.emit("core");
     }
 }

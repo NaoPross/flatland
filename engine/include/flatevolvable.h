@@ -3,7 +3,7 @@
 
 #include "flatobject.h"
 
-struct task_s;
+class task_s;
 
 class FlatEvolvable : virtual public FlatObject
 {
@@ -17,7 +17,7 @@ public:
 
     /* Evolution fields */
 
-    void evolve_task(void*);
+    void evolve_task(float*);
 
     virtual void evolve(float dt) = 0;
 

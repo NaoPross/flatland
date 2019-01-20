@@ -3,12 +3,17 @@
 
 SDL_EventCollector::SDL_EventCollector()
 {
-    checker = new FlatTask<SDL_EventCollector>(this, &SDL_EventCollector::collect, 0);
+    /* Checker task, pre-process, maximum priority */
+    checker = new FlatTask<SDL_EventCollector>(this, &SDL_EventCollector::collect, 0, true, 0);
+
+    /* Eraser task, post-process, minimum priority */
+    eraser = new FlatTask<SDL_EventCollector>(this, &SDL_EventCollector::erase, 0, false, 0xff);
 }
 
 SDL_EventCollector::~SDL_EventCollector()
 {
     delete checker;
+    delete eraser;
 }
 
 void SDL_EventCollector::collect(void*)
@@ -47,6 +52,14 @@ void SDL_EventCollector::collect(void*)
 
         // TODO other events
     }
+}
+
+void SDL_EventCollector::erase(void*)
+{
+    keyboard.clear();
+    window.clear();
+    quit.clear();
+    user.clear();
 }
 
 const std::vector<SDL_Event>& SDL_EventCollector::getStack(Uint32 id) const

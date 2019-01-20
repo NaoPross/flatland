@@ -5,7 +5,7 @@
 
 struct SDL_KeyboardEvent;
 
-class KeyFocusable : public Focusable
+class KeyFocusable : virtual public Focusable
 {
 
     virtual void serial_cb(const SDL_Event*) override;

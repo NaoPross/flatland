@@ -23,7 +23,10 @@ public:
     void * data;
     Uint8 priority;
 
-    FlatSignal(FlatObject * sender, void *data = 0, Uint8 priority = 5);
+    FlatSignal( FlatObject * sender, 
+                const std::string& id = "", 
+                void *data = 0, 
+                Uint8 priority = 5);
 
     /* Alias to SignalChannel::emit() */
     bool emit(const std::string& channel) const;

@@ -15,9 +15,9 @@ FlatEvolvable::~FlatEvolvable()
         delete task;
 }
 
-void FlatEvolvable::evolve_task(void *data)
+void FlatEvolvable::evolve_task(float *data)
 {
-    evolve(*(float*)data);
+    evolve(*data);
 }
 
 void FlatEvolvable::setEvolving(bool flag)
@@ -25,7 +25,7 @@ void FlatEvolvable::setEvolving(bool flag)
     if (isEvolving() != flag)
     {
         if (flag)
-            task = new FlatTask<FlatEvolvable>(this, &FlatEvolvable::evolve_task, (void*)&flatland_dt);
+            task = new FlatTask<FlatEvolvable, float*>(this, &FlatEvolvable::evolve_task, &flatland_dt);
         else {
 
             delete task;

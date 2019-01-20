@@ -130,6 +130,17 @@ int init_flatland(FlatWindow* w, gameloop loop, const flat_status& s, float _fps
             try {
 
                 try {
+                
+                    /* Execute tasks */
+                    task_s::executePreProcess();
+                
+                } catch (const exception &e) {
+                    
+                    cerr << "Flatland: exception thrown while executing pre-process tasks" << endl;
+                    cerr << e.what() << endl;
+                }
+
+                try {
 
                     /* Execute loop function */
                     loop_function(flatland_dt);
@@ -143,11 +154,11 @@ int init_flatland(FlatWindow* w, gameloop loop, const flat_status& s, float _fps
                 try {
                 
                     /* Execute tasks */
-                    task_s::executeAll();
+                    task_s::executePostProcess();
                 
                 } catch (const exception &e) {
                     
-                    cerr << "Flatland: exception thrown while executing tasks" << endl;
+                    cerr << "Flatland: exception thrown while executing post-process tasks" << endl;
                     cerr << e.what() << endl;
                 }
 
