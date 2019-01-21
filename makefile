@@ -4,7 +4,7 @@
 NAME := flatland
 BIN := bin/lib$(NAME).so
 CC := g++
-CPP11 := -std=c++11
+CFLAGS := -Wall -std=c++17
 
 DIRS := engine 
 BACKUP := backup
@@ -25,14 +25,14 @@ all: $(BIN)
 
 $(BIN): dirs $(OBJ) 
 	@printf "\nAssembling binaries\n\n"
-	$(CC) -shared -o $@ $(OBJ) -I $(INCLUDES) $(LIBS) $(CPP11)
+	$(CC) $(CFLAGS) -shared -o $@ $(OBJ) -I $(INCLUDES) $(LIBS)
 	@printf "\nCompilation successfully completed\n"
 
 # compile all sources
 
 $(OBJ): bin/%.o : %.cpp $(SRC)
 	@printf "\nCompiling $<\n"
-	$(CC) -c $< -fPIC -o $@ -I $(INCLUDES) $(LIBS) $(CPP11)
+	$(CC) $(CFLAGS) -c $< -fPIC -o $@ -I $(INCLUDES) $(LIBS)
 
 # phony commands implementation
 
