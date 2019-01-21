@@ -15,7 +15,7 @@ Component::Component(Component *parent, const std::string& id)
     }
 }
 
-Component~Component()
+Component::~Component()
 {
 
 }
@@ -29,7 +29,7 @@ void Component::setParent(Component *parent)
     this->parent = parent;
 }
 
-Component * getParent()
+Component * Component::getParent()
 {
     return parent;
 }
