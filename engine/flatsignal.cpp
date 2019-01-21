@@ -10,7 +10,7 @@ bool sig_prior_cmp::operator()(const FlatSignal& s, const FlatSignal& g) const
 
 map<string, SignalChannel*> SignalChannel::channels;    
 
-SignalChannel::SignalChannel(const string& id)
+SignalChannel::SignalChannel(const string& id, bool pre_process)
 {
     SignalChannel * other = findChannel(id);
 
@@ -19,7 +19,11 @@ SignalChannel::SignalChannel(const string& id)
         ;
 
     /* Initialize task, post-process, fifth priority */
-    checker = new FlatTask<SignalChannel>(this, &SignalChannel::post_processing, 0, false, 4);
+    checker = new FlatTask<SignalChannel>(  this, 
+                                            &SignalChannel::post_processing, 
+                                            0, 
+                                            pre_process, 
+                                            pre_process ? 2 : 10);
 
     string ID = (id.empty()) ? FlatObject::randomID() : id;
 

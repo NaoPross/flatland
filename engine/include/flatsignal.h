@@ -59,7 +59,7 @@ class SignalChannel : virtual public FlatObject
  
 public:
 
-    SignalChannel(const std::string& id = "");
+    SignalChannel(const std::string& id = "", bool pre_process = false);
     ~SignalChannel();
 
     void emit(const FlatSignal&);

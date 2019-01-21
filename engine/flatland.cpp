@@ -71,7 +71,7 @@ public:
     QuitListener()
     {
         addFilter("quit");
-        core->connect(this);
+        core.connect(this);
     }
 };
 
