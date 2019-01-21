@@ -1,0 +1,6 @@
+[submodule "lib/libmm"]
+	path = lib/libmm
+	url = https://git.thearcway.org/git/flatland/libmm
+[submodule "lib/libwrapsdl2"]
+	path = lib/libwrapsdl2
+	url = https://git.thearcway.org/git/flatland/libwrapsdl2
