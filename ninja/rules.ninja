@@ -1,8 +1,8 @@
 includes = -I engine/include
-cflags = -Wall -pedantic -fPIC -std=c++17 $includes
+cflags = -Wall -pedantic -fPIC -std=c++17 -DDEBUG $includes
 
-libs = 
-lflags = -lSDL2 $libs
+libs = -lSDL2
+lflags = $libs
 
 flags = -fdiagnostics-color
 
@@ -20,4 +20,8 @@ rule link
 
 rule link-shared
     command = g++ $flags $cflags -shared -o $out $in $lflags
-    description = linking $out
+    description = linking shared object $out
+
+rule link-static
+    command = ar rvs $out $in
+    description = creating archive $out

@@ -8,7 +8,7 @@ def find_sources(path):
 
     # add path prefix to files
     sources = tuple(map(lambda f: path + "/" + f, sources))
-    objects = tuple(map(lambda f: "bin/" + path + "/" + f, objects))
+    objects = tuple(map(lambda f: "build/" + path + "/" + f, objects))
 
     return sources, objects
 
@@ -22,8 +22,8 @@ with open("build.ninja", "w") as bf:
     print("include ninja/rules.ninja\n", file=bf)
 
     # create build directories
-    print("build bin/engine: mkdir\n", file=bf)
-    print("build bin/test: mkdir\n", file=bf)
+    print("build build/engine: mkdir\n", file=bf)
+    print("build build/test: mkdir\n", file=bf)
 
 
     # build engine files
@@ -31,7 +31,9 @@ with open("build.ninja", "w") as bf:
         print("build {}: cpp {}".format(o, s), file=bf)
 
     # build engine library
-    print("\nbuild bin/libflatland.so: link-shared " + " ".join(objects) + "\n", file=bf)
+    print("\nbuild build/libflatland.so: link-shared " + " ".join(objects), file=bf)
+    print("\nbuild build/libflatland.a: link-static " + " ".join(objects), file=bf)
+    print("\n", file=bf)
 
 
     # find test sources
@@ -42,4 +44,4 @@ with open("build.ninja", "w") as bf:
     for s, o, b in zip(sources, objects, binaries):
         print("build {}: cpp {}".format(o, s), file=bf)
         print("build {}: link {}".format(b, o), file=bf)
-        print("    lflags = $lflags ../bin/libflatland.so\n", file=bf)
+        print("    lflags = $lflags ../build/libflatland.so\n", file=bf)
