@@ -22,12 +22,12 @@ namespace flat
     
         object * sender;
         void * data; // TODO, avoid this void pointer
-        priority prior;
+        priority_t prior;
     
         signal(     object * sender, 
                     const std::string& id = "", 
                     void * data,
-                    prior_t prior = prior_t::none);
+                    priority_t prior = priority_t::none);
 
         /* Alias to flat::core::channel::emit() */
         bool emit(const std::string& channel) const;
@@ -51,7 +51,7 @@ namespace flat
      
     public:
     
-        channel(const std::string& id = "", prior_t priority = prior_t::none);
+        channel(const std::string& id = "", priority_t priority = priority_t::none);
         ~channel();
     
         void emit(const signal&);

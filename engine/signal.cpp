@@ -1,11 +1,11 @@
-#include "signal.hpp"
+#include "core/signal.hpp"
 
 using namespace std;
 using namespace flat::core;
 
 map<string, channel*> channel::channels;    
 
-channel::channel(const string& id, prior_t prior)
+channel::channel(const string& id, priority_t prior)
 {
     channel * other = find_channel(id);
 
@@ -89,7 +89,7 @@ void channel::post_processing()
 signal::signal( object *sender, 
                 const string& id, 
                 void *data, 
-                prior_t priority)
+                priority_t priority)
 
     : sender(sender), data(data), priority(priority)
 {

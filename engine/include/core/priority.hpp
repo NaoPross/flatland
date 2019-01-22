@@ -2,12 +2,10 @@
 
 #include <set>
 
-namespace flat
-{
-    namespace core
-    {
-        enum class prior_t : unsigned 
-        {
+namespace flat {
+    namespace core {
+
+        enum class priority_t : unsigned  {
             max = 0,
             higher = 1,
             high = 2,
@@ -17,47 +15,23 @@ namespace flat
             min = 6,
         };
 
-        class prioritized
-        {
-            const prior_t m_priority;
+        class prioritized {
+        private:
+            const priority_t m_priority;
 
         public:
+            prioritized(priority_t priority = priority_t::none)
+                : m_priority(priority) {}
 
-            prioritized(prior_t m_priority = prior_t::none) : m_priority(m_priority) {}
-
-            const prior priority() const
-            {
+            const priority_t priority() const {
                 return m_priority;
             }
-        };
-       
-        struct prior_criteria
-        {
-            bool operator()(const prioritized& a, const prioritized& b) const
-            {
-                return a.priority() < b.priority();
-            }
-        };
-
-        /* Compiler will complain if don't pass a non prioritized object */
-
-        template <class T>
-        using prior_set = std::multiset<T, prior_criteria>;
-
-
-        /* Equivalent but with pointers */
-
-        struct prior_ptr_criteria
-        {
-            bool operator()(const prioritized* a, const prioritized* b) const
-            {
-                return a->priority() < b->priority();
-            }
-        };
-
-        /* Compiler will complain if don't pass a non prioritized object */
-
-        template <class T>
-        using prior_ptr_set = std::multiset<T*, prior_criteria>;
+        };       
+        
+        bool operator<(const prioritized& lhs, const prioritized& rhs) {
+            return lhs.priority() < rhs.priority();
+        }
     }
-};
+}
+
+
