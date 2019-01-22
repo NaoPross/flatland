@@ -45,33 +45,33 @@ void channel::emit(const signal& sig)
     if (!sig.priority) {
 
         /* Execute immediately */
-        for (auto listener_s : listener_ss)
-            listener_s->execute(sig);
+        for (auto lis : listeners)
+            lis->execute(sig);
 
     } else
         /* Insert in order of priority */
         stack.insert(sig);
 }
 
-void channel::connect(listener_s* l)
+void channel::connect(listener* l)
 {
     /* Control not to double */
-    for (auto listener_s : listener_ss)
+    for (auto lis : listeners)
     {
-        if (listener_s == l)
+        if (lis == l)
             return;
     }
 
-    listener_ss.push_back(l);
+    listeners.push_back(l);
 }
 
-void channel::disconnect(listener_s* l)
+void channel::disconnect(listener* l)
 {
-    listener_ss.remove(l);
+    listeners.remove(l);
 }
 
    
-channel * channel::findChannel(const string& id)
+channel * channel::find_channel(const string& id)
 {
     if (id.empty())
         return 0;
@@ -88,8 +88,8 @@ void channel::post_processing(void*)
         /* for each listener_s, catch signal */
         for (const auto& signal : stack)
         {
-            for (auto listener_s : listener_ss)
-                listener_s->execute(signal);
+            for (auto l : listeners)
+                l->execute(signal);
         }
 
         stack.clear();
@@ -123,10 +123,21 @@ bool signal::emit(const string& channel) const
 
 /* listener_s class */
 
-listener_s::listener_s(const initializer_list<string>& filters) 
-    : filters(filters) {}
+listener::listener(   std::function<void()> m_callback,
+                      const std::initializer_list<std::string>& filters)
 
-bool listener_s::check_in_filters(const std::string& filter) const
+    : m_callback(m_callback), filters(filters)
+{
+
+}
+
+listener::~listener()
+{
+    if (parent != 0)
+        parent->disconnect(this);
+}
+
+bool listener::check_in_filters(const std::string& filter) const
 {
     for (const auto& f : filters)
     {
@@ -137,22 +148,24 @@ bool listener_s::check_in_filters(const std::string& filter) const
     return false;
 }
 
-void listener_s::add_filter(const std::string& f)
+void listener::add_filter(const std::string& f)
 {
     filters.push_back(f);
 }
 
-void listener_s::remove_filter(const std::string& f)
+void listener::remove_filter(const std::string& f)
 {
     filters.remove(f);
 }
 
-bool listener_s::connect(const std::string& chan)
+bool listener::connect(const std::string& chan)
 {    
     channel * c = channel::find_channel(chan);
 
     if (!c)
         c->connect(this);
+
+    parent = c;
 
     return c != 0;
 }
@@ -164,6 +177,15 @@ bool listener_s::disconnect(const std::string& chan)
     if (!c)
         c->connect(this);
 
+    parent = 0;
+
     return c != 0;
+}
+
+void listener::invoke(const flat::core::signal&)
+{
+    if ((!sig.get_id().empty() && check_in_filters(sig.get_id())) || 
+    (sig.get_id().empty() && filters.empty()))
+        m_callback(sig.sender);
 }
 
