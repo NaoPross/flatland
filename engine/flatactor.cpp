@@ -23,8 +23,3 @@ FlatBound * FlatActor::getBounds() const
     return bounds;
 }
 
-void FlatActor::evolve(float dt)
-{
-
-}
-

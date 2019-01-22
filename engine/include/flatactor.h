@@ -2,11 +2,10 @@
 #define __FLATACTOR_H__
 
 #include "flatcollector.h"
-#include "flatevolvable.h"
 
 class FlatBound;
 
-class FlatActor : public FlatCollector, public FlatEvolvable
+class FlatActor : public FlatCollector
 {
     // TODO, event binding
     // TODO, serial binding
@@ -20,7 +19,6 @@ public:
 
     ~FlatActor();
 
-    virtual void evolve(float dt) override;
 
     void setBounds(FlatBound * bounds);
     FlatBound * getBounds() const;
