@@ -15,11 +15,19 @@ def find_sources(path):
 
 with open("build.ninja", "w") as bf:
 
-    # find engine sources
-    sources, objects = find_sources("engine")
-
     # include rules
     print("include ninja/rules.ninja\n", file=bf)
+
+    # build libmm dependencies
+    print("build lib/libmm/build/libmm.so: ninja lib/libmm", file=bf)
+    print("build lib/libmm/build/libmm.a: ninja lib/libmm", file=bf)
+
+    # build libwsdl2 dependencies
+    print("build lib/libwsdl2/build/libwsdl2.so: ninja lib/libmm", file=bf)
+    print("build lib/libwsdl2/build/libwsdl2.a: ninja lib/libmm", file=bf)
+
+    # find engine sources
+    sources, objects = find_sources("engine")
 
     # create build directories
     print("build build/engine: mkdir\n", file=bf)
