@@ -10,14 +10,14 @@
 using namespace std;
 
 #include "flattask.h"
-#include "flatsignal.h"
+#include "signal.h"
 #include "flatwindow.h"
 #include "flatexception.h"
 #include "exceptions/forcequit.h"
 
 float flatland_dt;
 
-set<FlatObject*> objects;
+set<flat::core::object*> objects;
 
 FlatWindow * window = 0;
 SignalChannel * core = 0;
@@ -60,7 +60,7 @@ Uint32 status_to_flags(const flat_status& s)
 /* Listen to simple quit calls */
 class QuitListener : public FlatListener
 {
-    virtual void callback(FlatObject*, void*) override
+    virtual void callback(flat::core::object*, void*) override
     {
         /* Order to quit */
         quit_flatland();        

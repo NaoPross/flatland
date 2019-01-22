@@ -1,10 +1,10 @@
 #ifndef __FLATCOLLECTOR_H__
 #define __FLATCOLLECTOR_H__
 
-#include "flatobject.h"
+#include "object.h"
 #include <set>
 
-class FlatCollector : virtual public FlatObject
+class FlatCollector : virtual public flat::core::object
 {
     FlatCollector * parent;
 

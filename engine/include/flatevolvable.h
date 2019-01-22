@@ -1,11 +1,11 @@
 #ifndef __FLATEVOLVABLE_H__
 #define __FLATEVOLVABLE_H__
 
-#include "flatobject.h"
+#include "object.h"
 
 class task_s;
 
-class FlatEvolvable : virtual public FlatObject
+class FlatEvolvable : virtual public flat::core::object
 {
     task_s * task;
 

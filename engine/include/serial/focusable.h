@@ -1,13 +1,13 @@
 #ifndef __FOCUSABLE_H__
 #define __FOCUSABLE_H__
 
-#include "flatobject.h"
+#include "object.h"
 #include "types.h"
 
 class task_s;
 union SDL_Event;
 
-class Focusable : virtual public FlatObject
+class Focusable : virtual public flat::core::object
 {
     bool focused;
 

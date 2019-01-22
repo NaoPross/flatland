@@ -3,7 +3,7 @@
 #include <SDL2/SDL.h>
 #include <iostream>
 #include "flatlayer.h"
-#include "flatsignal.h"
+#include "signal.h"
 
 using namespace std;
 
@@ -47,7 +47,7 @@ FlatWindow::FlatWindow( int width, int height,
 
 FlatWindow::FlatWindow(const FlatWindow& win)
 
-    :   FlatObject(win),
+    :   flat::core::object(win),
         title(win.title), status(win.status),
         sdl_window(0), screen(0)
 {

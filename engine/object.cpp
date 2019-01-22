@@ -1,4 +1,4 @@
-#include "flatobject.h"
+#include "object.h"
 
 #include <stdlib.h>
 

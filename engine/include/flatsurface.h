@@ -1,10 +1,10 @@
 #ifndef __FLATSURFACE_H__
 #define __FLATSURFACE_H__
 
-#include "flatobject.h"
+#include "object.h"
 #include <SDL2/SDL.h>
 
-class FlatSurface : public FlatObject
+class FlatSurface : public flat::core::object
 {
     SDL_Surface * surface;
     SDL_Surface * parent;

@@ -100,7 +100,7 @@ void channel::post_processing(void*)
 
 /* signal class */
 
-signal::signal(FlatObject *sender, const string& id, void *data, Uint8 priority)
+signal::signal(flat::core::object *sender, const string& id, void *data, Uint8 priority)
     : sender(sender), data(data), priority(priority)
 {
     set_id(id);
