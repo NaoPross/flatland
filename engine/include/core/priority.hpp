@@ -42,7 +42,7 @@ namespace flat
         /* Compiler will complain if don't pass a non prioritized object */
 
         template <class T>
-        using prior_set = std::set<T, prior_criteria>;
+        using prior_set = std::multiset<T, prior_criteria>;
 
 
         /* Equivalent but with pointers */
@@ -58,6 +58,6 @@ namespace flat
         /* Compiler will complain if don't pass a non prioritized object */
 
         template <class T>
-        using prior_ptr_set = std::set<T*, prior_criteria>;
+        using prior_ptr_set = std::multiset<T*, prior_criteria>;
     }
 };
