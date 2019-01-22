@@ -1,6 +1,14 @@
-bin/**
-**/*.swp
+# build files
+bin
+**/*.o
 
+# ninja build files
 .ninja_deps
 .ninja_log
 build.ninja
+
+# vim editor
+**/*.swp
+
+# sublime text
+**/*.sublime*
