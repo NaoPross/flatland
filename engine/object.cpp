@@ -33,7 +33,7 @@ string object::random_id(uint8_t length) {
     
     string out;
 
-    for (Uint8 i = 0; i < length; ++i)
+    for (uint8_t i = 0; i < length; ++i)
         out += (char)(rand() % 93 + 33);
 
     return out;
@@ -54,7 +54,7 @@ vector<object*>& object::get_by_id(const string& id, vector<object*>& l)
 {
     for (object * obj : object::all_objects)
     {
-        if (id == obj->getID())
+        if (id == obj->get_id())
             l.push_back(obj);
     }
 

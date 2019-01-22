@@ -1,13 +1,13 @@
 #include "flatserial.h"
-#include "flattask.h"
+#include "task.hpp"
 
 SDL_EventCollector::SDL_EventCollector()
 {
     /* Checker task, pre-process, maximum priority */
-    checker = new FlatTask<SDL_EventCollector>(this, &SDL_EventCollector::collect, 0, true, 0);
+    checker = new flat::core::task<SDL_EventCollector>(this, &SDL_EventCollector::collect, 0, true, 0);
 
     /* Eraser task, post-process, minimum priority */
-    eraser = new FlatTask<SDL_EventCollector>(this, &SDL_EventCollector::erase, 0, false, 0xff);
+    eraser = new flat::core::task<SDL_EventCollector>(this, &SDL_EventCollector::erase, 0, false, 0xff);
 }
 
 SDL_EventCollector::~SDL_EventCollector()

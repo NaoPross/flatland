@@ -1,10 +1,10 @@
 #include "serial/focusable.h"
-#include "flattask.h"
+#include "task.hpp"
 #include "flatserial.h"
 
 Focusable::Focusable(bool focused) : focused(focused) 
 {
-    event_trigger = new FlatTask<Focusable>(this, &Focusable::serial_precall, 0); 
+    event_trigger = new flat::core::task<Focusable>(this, &Focusable::serial_precall, 0); 
 }
 
 Focusable::~Focusable()

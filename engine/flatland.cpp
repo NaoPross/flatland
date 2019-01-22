@@ -9,7 +9,7 @@
 
 using namespace std;
 
-#include "flattask.h"
+#include "task.hpp"
 #include "signal.h"
 #include "flatwindow.h"
 #include "flatexception.h"
