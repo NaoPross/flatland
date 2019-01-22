@@ -6,7 +6,8 @@
 #include <initializer_list>
 #include "object.hpp"
 #include "task.hpp"
-#include "types.hpp"
+#include "types.h"
+#include <functional>
 
 namespace flat
 {
@@ -23,12 +24,10 @@ class flat::core::signal : virtual public flat::core::object
 public:
 
     flat::core::object * sender;
-    void * data;
     priority prior;
 
     signal( flat::core::object * sender, 
                 const std::string& id = "", 
-                void *data = 0, 
                 priority prior = 5);
 
     /* Alias to flat::core::channel::emit() */
@@ -53,7 +52,7 @@ class flat::core::channel : virtual public flat::core::object
     stack_t stack;
 
     /* Listeners list */
-    std::list<flat::core::listener_s*> listeners;
+    std::list<flat::core::listener> listeners;
 
     /* Synchronous task checking for signals */
     task_s * checker;
@@ -85,54 +84,29 @@ public:
 };
 
 /* Listener class */
-class flat::core::listener_s : virtual public flat::core::object
+class flat::core::listener : virtual public flat::core::object
 {
     std::list<std::string> filters;
 
     bool check_in_filters(const std::string&) const;
 
+    std::function<void(const flat::core::object*)> m_callback;
+
+    flat::core::channel * parent = 0;
+
 public:
 
-    flat::core::listener(const std::initializer_list<std::string>& filters = {});
-    virtual ~flat::core::listener() {}
+    listener(   std::function<void()> m_callback,
+                const std::initializer_list<std::string>& filters = {});
 
-    virtual void execute(const flat::core::signal&) = 0;
+    ~listener();
 
     void add_filter(const std::string&);
     void remove_filter(const std::string&);
 
     bool connect(const std::string&);
     bool disconnect(const std::string&);
+
+    void invoke(const flat::core::signal&);
 };
-
-template<class T>
-class flat::core::listener : public flat::core::listener_s
-{
-    typedef void (T::*callback_t)(void*);
-
-    T * object;
-    callback_t callback;
-
-    void *args;
-
-public:
-
-    listener(   T *object,
-                callback_t callback,
-                const std::initializer_list<std::string>& filters = {},
-                void *args = 0)
-
-        :   flat::core::listener_s(filters), 
-            object(object), 
-            callback(callback),
-            args(args) {}
-
-    virtual void execute(const flat::core::signal&) override
-    {
-        if ((!sig.get_id().empty() && check_in_filters(sig.get_id())) || 
-        (sig.get_id().empty() && filters.empty()))
-        (object->*callback)(sig.sender, sig.data);
-    }
-};
-
 
