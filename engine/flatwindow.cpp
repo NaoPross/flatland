@@ -3,7 +3,7 @@
 #include <SDL2/SDL.h>
 #include <iostream>
 #include "flatlayer.h"
-#include "signal.h"
+#include "signal.hpp"
 
 using namespace std;
 
@@ -15,7 +15,7 @@ FlatWindow::FlatWindow( int x, int y,
     :   title(title), status(status),
         sdl_window(0), screen(0)
 {
-    setID(title.c_str());
+    set_id(title);
 
     bounds = new SDL_Rect;
     
@@ -166,7 +166,7 @@ void FlatWindow::key_cb(const SDL_KeyboardEvent *event)
         close();
 
         /* Say flatland to quit */
-        FlatSignal quit(this, "quit", 0, 0xff);
+        flat::core::signal quit(this, "quit", 0, 0xff);
         quit.emit("core");
     }
 }
