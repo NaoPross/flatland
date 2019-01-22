@@ -5,7 +5,7 @@
 #include <string>
 #include <initializer_list>
 
-#include "types.h"
+#include "types.hpp"
 
 namespace flat
 {

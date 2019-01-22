@@ -3,7 +3,14 @@
 
 /* Flatland types */
 
-class flat::core::object;
+namespace flat
+{
+    namespace core
+    {
+        class object;
+    }
+
+}
 
 class FlatActor;
 class FlatSprite;

@@ -1,7 +1,7 @@
 #ifndef __FLATBOUND_H__
 #define __FLATBOUND_H__
 
-#include "object.h"
+#include "object.hpp"
 #include "svector.h"
 
 typedef SVector<int, 2> pixel;

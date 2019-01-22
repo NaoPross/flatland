@@ -26,7 +26,7 @@ struct window_status
     unsigned char focus:1;
 };
 
-#include "object.h"
+#include "object.hpp"
 #include "serial/keyfocusable.h"
 
 class SDL_Window;
@@ -91,7 +91,7 @@ public:
 
     void setWindowStatus(window_status);
 
-    static Uint32 winstatus_to_flags(window_status);
+    static uint32_t winstatus_to_flags(window_status);
 };
 
 #endif

@@ -1,7 +1,7 @@
 #ifndef __FLAT_COMPONENT_H__
 #define __FLAT_COMPONENT_H__
 
-#include "object.h"
+#include "object.hpp"
 #include <string>
 
 class Component : virtual public flat::core::object

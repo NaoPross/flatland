@@ -62,7 +62,7 @@ void SDL_EventCollector::erase(void*)
     user.clear();
 }
 
-const std::vector<SDL_Event>& SDL_EventCollector::getStack(Uint32 id) const
+const std::vector<SDL_Event>& SDL_EventCollector::getStack(uint32_t id) const
 {
     switch(id)
     {

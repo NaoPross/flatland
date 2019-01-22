@@ -2,7 +2,7 @@
 #define __FLAT_TASK_H__
 
 #include <set>
-#include "types.h"
+#include "types.hpp"
 
 struct task_prior
 {

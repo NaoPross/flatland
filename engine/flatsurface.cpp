@@ -4,7 +4,7 @@
 
 using namespace std;
 
-FlatSurface::FlatSurface(const char *filename, Uint32 format, SDL_Surface *parent)
+FlatSurface::FlatSurface(const char *filename, uint32_t format, SDL_Surface *parent)
 
     : flat::core::object(), parent(parent), hide(false)
 {
@@ -146,7 +146,7 @@ void FlatSurface::blit()
         SDL_BlitSurface(surface, viewport, parent, offset);
 }
 
-SDL_Surface * FlatSurface::loadOptimizedSurface(const char *filename, Uint32 format)
+SDL_Surface * FlatSurface::loadOptimizedSurface(const char *filename, uint32_t format)
 {
     SDL_Surface * optimized = 0;
 

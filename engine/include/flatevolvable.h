@@ -1,7 +1,7 @@
 #ifndef __FLATEVOLVABLE_H__
 #define __FLATEVOLVABLE_H__
 
-#include "object.h"
+#include "object.hpp"
 
 class task_s;
 

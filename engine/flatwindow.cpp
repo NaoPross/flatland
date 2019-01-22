@@ -68,7 +68,7 @@ FlatWindow::~FlatWindow()
 
 int FlatWindow::open()
 {
-    Uint32 win_flags = winstatus_to_flags(status);
+    uint32_t win_flags = winstatus_to_flags(status);
     
     sdl_window = SDL_CreateWindow(  title.c_str(), 
                                     bounds->x,
@@ -171,9 +171,9 @@ void FlatWindow::key_cb(const SDL_KeyboardEvent *event)
     }
 }
 
-Uint32 FlatWindow::winstatus_to_flags(window_status s)
+uint32_t FlatWindow::winstatus_to_flags(window_status s)
 {
-    Uint32 flags = 0;
+    uint32_t flags = 0;
 
     if (s.fullscreen)
         flags |= SDL_WINDOW_FULLSCREEN;
