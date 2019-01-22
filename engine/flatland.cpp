@@ -10,14 +10,14 @@
 using namespace std;
 
 #include "flattask.h"
-#include "flatsignal.h"
+#include "signal.h"
 #include "flatwindow.h"
 #include "flatexception.h"
 #include "exceptions/forcequit.h"
 
 float flatland_dt;
 
-set<FlatObject*> objects;
+set<flat::core::object*> objects;
 
 FlatWindow * window = 0;
 SignalChannel * core = 0;
@@ -29,9 +29,9 @@ flat_status status;
 float fps;
 float fps_pause = 5;
 
-Uint32 status_to_flags(const flat_status& s)
+uint32_t status_to_flags(const flat_status& s)
 {
-    Uint32 flags = 0;
+    uint32_t flags = 0;
 
     if (s.audio)
         flags |= SDL_INIT_AUDIO;
@@ -60,7 +60,7 @@ Uint32 status_to_flags(const flat_status& s)
 /* Listen to simple quit calls */
 class QuitListener : public FlatListener
 {
-    virtual void callback(FlatObject*, void*) override
+    virtual void callback(flat::core::object*, void*) override
     {
         /* Order to quit */
         quit_flatland();        
@@ -97,7 +97,7 @@ int init_flatland(FlatWindow* w, gameloop loop, const flat_status& s, float _fps
     
     cout << "Flatland: Initializing SDL" << endl;
     
-    Uint32 flags = status_to_flags(s);
+    uint32_t flags = status_to_flags(s);
     
     if ( SDL_Init(flags | SDL_INIT_NOPARACHUTE) < 0)
     {
@@ -170,13 +170,13 @@ int init_flatland(FlatWindow* w, gameloop loop, const flat_status& s, float _fps
                 quit_flatland();
             }
 
-            SDL_Delay((Uint32) (1000.0f / fps));
+            SDL_Delay((uint32_t) (1000.0f / fps));
 
             delay -= clock();
 
         } while (status.loop);
         
-        SDL_Delay((Uint32)(1000 / fps_pause));
+        SDL_Delay((uint32_t)(1000 / fps_pause));
     }
     while(status.running);
 

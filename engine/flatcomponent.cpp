@@ -1,5 +1,5 @@
 #include "flatcomponent.h"
-#include "flatsignal.h"
+#include "signal.h"
 
 Component::Component(Component *parent, const std::string& id)
     : parent(parent)
@@ -7,7 +7,7 @@ Component::Component(Component *parent, const std::string& id)
     // TODO, check flatland initialization
 
     if (id.empty())
-        setID(FlatObject::randomID());
+        setID(flat::core::object::randomID());
 
     if (parent == 0)
     {

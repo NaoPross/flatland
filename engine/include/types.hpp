@@ -3,7 +3,14 @@
 
 /* Flatland types */
 
-class FlatObject;
+namespace flat
+{
+    namespace core
+    {
+        class object;
+    }
+
+}
 
 class FlatActor;
 class FlatSprite;
@@ -26,8 +33,8 @@ class task_s;
 
 /* SDL types */
 
-typedef unsigned char Uint8;
-typedef unsigned int Uint32;
+typedef unsigned char uint8_t;
+typedef unsigned int uint32_t;
 
 struct SDL_Surface;
 struct SDL_Rect;

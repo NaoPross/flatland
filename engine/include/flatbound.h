@@ -1,12 +1,12 @@
 #ifndef __FLATBOUND_H__
 #define __FLATBOUND_H__
 
-#include "flatobject.h"
+#include "object.hpp"
 #include "svector.h"
 
 typedef SVector<int, 2> pixel;
 
-class FlatBound : virtual public FlatObject
+class FlatBound : virtual public flat::core::object
 {
     pixel location;
 

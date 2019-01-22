@@ -1,10 +1,10 @@
 #ifndef __FLATSURFACE_H__
 #define __FLATSURFACE_H__
 
-#include "flatobject.h"
+#include "object.hpp"
 #include <SDL2/SDL.h>
 
-class FlatSurface : public FlatObject
+class FlatSurface : public flat::core::object
 {
     SDL_Surface * surface;
     SDL_Surface * parent;
@@ -16,7 +16,7 @@ class FlatSurface : public FlatObject
 
 public:
 
-    FlatSurface(const char *filename, Uint32 format = SDL_PIXELFORMAT_RGBA32, SDL_Surface *parent = 0);
+    FlatSurface(const char *filename, uint32_t format = SDL_PIXELFORMAT_RGBA32, SDL_Surface *parent = 0);
     FlatSurface(SDL_Surface *surface, SDL_Surface *parent = 0);
 
     FlatSurface(const FlatSurface&);
@@ -47,7 +47,7 @@ public:
 
     void blit();
 
-    static SDL_Surface * loadOptimizedSurface(const char* filename, Uint32 format);
+    static SDL_Surface * loadOptimizedSurface(const char* filename, uint32_t format);
 
     static SDL_Surface * copySurface(SDL_Surface*);
 };

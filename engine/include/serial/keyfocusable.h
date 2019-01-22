@@ -10,7 +10,7 @@ class KeyFocusable : virtual public Focusable
 
     virtual void serial_cb(const SDL_Event*) override;
 
-    virtual Uint32 stackID() const override;
+    virtual uint32_t stackID() const override;
 
 protected:
 

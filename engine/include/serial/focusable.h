@@ -1,13 +1,13 @@
 #ifndef __FOCUSABLE_H__
 #define __FOCUSABLE_H__
 
-#include "flatobject.h"
-#include "types.h"
+#include "object.hpp"
+#include "types.hpp"
 
 class task_s;
 union SDL_Event;
 
-class Focusable : virtual public FlatObject
+class Focusable : virtual public flat::core::object
 {
     bool focused;
 
@@ -19,7 +19,7 @@ protected:
     virtual void serial_cb(const SDL_Event*) = 0;
 
     /* Event stack specification */
-    virtual Uint32 stackID() const = 0;
+    virtual uint32_t stackID() const = 0;
 
 public:
 

@@ -4,9 +4,9 @@
 
 using namespace std;
 
-FlatSurface::FlatSurface(const char *filename, Uint32 format, SDL_Surface *parent)
+FlatSurface::FlatSurface(const char *filename, uint32_t format, SDL_Surface *parent)
 
-    : FlatObject(), parent(parent), hide(false)
+    : flat::core::object(), parent(parent), hide(false)
 {
     setID(filename);
 
@@ -35,7 +35,7 @@ FlatSurface::FlatSurface(const char *filename, Uint32 format, SDL_Surface *paren
 
 FlatSurface::FlatSurface(SDL_Surface *surface, SDL_Surface *parent)
 
-    : FlatObject(), parent(parent), hide(false)
+    : flat::core::object(), parent(parent), hide(false)
 {
     this->surface = new SDL_Surface(*surface);
 
@@ -56,7 +56,7 @@ FlatSurface::FlatSurface(SDL_Surface *surface, SDL_Surface *parent)
 
 FlatSurface::FlatSurface(const FlatSurface &sprite)
 
-    : FlatObject(sprite), parent(sprite.parent),
+    : flat::core::object(sprite), parent(sprite.parent),
         hide(sprite.hide)
 {
     offset = new SDL_Rect(*sprite.offset);
@@ -146,7 +146,7 @@ void FlatSurface::blit()
         SDL_BlitSurface(surface, viewport, parent, offset);
 }
 
-SDL_Surface * FlatSurface::loadOptimizedSurface(const char *filename, Uint32 format)
+SDL_Surface * FlatSurface::loadOptimizedSurface(const char *filename, uint32_t format)
 {
     SDL_Surface * optimized = 0;
 

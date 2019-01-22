@@ -1,7 +1,7 @@
 #ifndef __FLATSERIAL_H__
 #define __FLATSERIAL_H__
 
-#include "types.h"
+#include "types.hpp"
 #include <vector>
 #include "SDL2/SDL.h"
 
@@ -33,7 +33,7 @@ struct SDL_EventCollector
     void collect(void*);
     void erase(void*);
 
-    const std::vector<SDL_Event>& getStack(Uint32 id) const;
+    const std::vector<SDL_Event>& getStack(uint32_t id) const;
 };
 
 namespace FlatSerial {
