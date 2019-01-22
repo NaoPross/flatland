@@ -27,9 +27,9 @@ namespace flat {
             std::function<void()> m_callback;
         };
 
-        struct job : public std::set<task> {
+        struct job : public std::multiset<task> {
             inline void add_task(task t) {
-                insert(begin(), t);
+                this->insert(t);
             }
 
             void invoke_tasks();

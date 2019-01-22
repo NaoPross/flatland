@@ -1,7 +1,6 @@
 #include "task.hpp"
 
 #include <functional>
-#include <set>
 
 
 namespace flat {
