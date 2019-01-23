@@ -39,28 +39,28 @@ int main(int argc, char *argv[]) {
     job f_job;
 
     // test a function
-    auto ciao_fn_task = f_job.make_task(hello);
+    auto hello_fn_task = f_job.make_task(hello);
 
     // test a function ad make the pointer go out of scope
     {
-        auto hello_fn_task = f_job.make_task(ciao);
+        auto ciao_fn_task = f_job.make_task(ciao);
     }
 
-    f_job.invoke_tasks();
+    f_job();
 
     std::cout << std::endl;
     std::cout << "Testing methods" << std::endl;
-    std::cout << "  should print once: today we have no motd!" << std::endl;
+    std::cout << "should print once: today we have no motd!" << std::endl;
     job m_job;
 
     // test a method
     message m;
-    m_job.make_task(std::bind(&message::print_motd, m));
+    auto msg = m_job.make_task(std::bind(&message::print_motd, m));
 
     // test a method of an object that goes out of scope
     {
         message out;
-        m_job.make_task(std::bind(&message::print_date, out));
+        auto date = m_job.make_task(std::bind(&message::print_date, out));
     }
 
     // invoke tasks
@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
     //
     //  hello!
     //  hello world!
-    m_job.invoke_tasks();
+    m_job();
 
     return 0;
 }

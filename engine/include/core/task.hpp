@@ -24,9 +24,13 @@ namespace flat {
             callback m_callback;
         };
 
-        struct job : private queue<std::weak_ptr<task>> {
+        struct job : public queue<std::weak_ptr<task>> {
             std::shared_ptr<task> make_task(task::callback f, priority_t p = priority_t::none);
             void invoke_tasks();
+
+            inline void operator()() {
+                invoke_tasks();
+            }
         };
     }
 }

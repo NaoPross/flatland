@@ -2,6 +2,8 @@
 
 #include <functional>
 #include <memory>
+#include <algorithm>
+#include <cassert>
 
 
 namespace flat {
@@ -12,20 +14,26 @@ namespace flat {
         std::shared_ptr<task> job::make_task(task::callback f, priority_t p) {
             auto shared = std::make_shared<task>(f, p);
             insert(shared);
+
             return shared;
         }
 
         void job::invoke_tasks() {
-            std::for_each(begin(), end(), [&](auto tp) {
+            // expired tasks to remove
+            std::vector<job::value_type> to_remove;
+
+            for (auto tp : *this) {
                 // check that the task has not expired
-                if (auto t = tp.lock()) {
-                    // run task
+                if (std::shared_ptr<task> t = tp.lock())
                     std::invoke(*t);
-                } else {
-                    // delete task
-                    erase(tp);
-                }
-            });
+                else
+                    to_remove.push_back(tp);
+            }
+
+            // delete expired tasks
+            for (auto tp : to_remove) {
+                erase(tp);
+            }
         }
     }
 }

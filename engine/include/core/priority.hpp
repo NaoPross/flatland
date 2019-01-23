@@ -33,7 +33,7 @@ namespace flat {
                 return lhs.priority() < rhs.priority();
             }
 
-            bool operator()(const std::weak_ptr<prioritized> lhs, const std::weak_ptr<prioritized>& rhs) {
+            bool operator()(const std::weak_ptr<prioritized> lhs, const std::weak_ptr<prioritized> rhs) {
                 if (auto l = lhs.lock()) {
                     if (auto r = rhs.lock()) {
                         // if both valid, check their priority
