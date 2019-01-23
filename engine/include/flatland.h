@@ -49,12 +49,12 @@ namespace core {
 
 /* Engine channels */
 
-channel& core_chan();
-channel& error_chan();
+core::channel& core_chan();
+core::channel& error_chan();
 
 /* Main job access */
 
-job& game_job();
+core::job& game_job();
 
 /* Window and status accessors */
 

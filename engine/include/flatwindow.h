@@ -26,7 +26,7 @@ struct window_status
     unsigned char focus:1;
 };
 
-#include "object.hpp"
+#include "core/object.hpp"
 #include "serial/keyfocusable.h"
 
 class SDL_Window;

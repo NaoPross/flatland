@@ -1,7 +1,7 @@
 #ifndef __FLATCOLLECTOR_H__
 #define __FLATCOLLECTOR_H__
 
-#include "object.hpp"
+#include "core/object.hpp"
 #include <set>
 
 class FlatCollector : virtual public flat::core::object

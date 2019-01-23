@@ -6,7 +6,7 @@
 #include <initializer_list>
 #include "object.hpp"
 #include "task.hpp"
-#include "types.h"
+#include "types.hpp"
 #include <functional>
 #include <memory>
 #include "priority.hpp"
@@ -110,11 +110,11 @@ namespace flat
 
         void invoke(const signal&);
 
-        /* Allow to safely bind e functor */
+        /* Allow to safely bind a functor */
         template<class T>
-        static ptr make(  const (T::*method(const object*, void*))& fct,
-                          T* obj,
-                          const std::initializer_list<std::string>& filters = {})
+        static ptr create(  const (T::*method(const object*, void*))& fct,
+                            T* obj,
+                            const std::initializer_list<std::string>& filters = {})
         {
             return new listener(std::bind(fct, ptr), filters);
         }

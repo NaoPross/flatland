@@ -1,5 +1,5 @@
 #include "flatserial.h"
-#include "task.hpp"
+#include "core/task.hpp"
 
 SDL_EventCollector::SDL_EventCollector()
 {

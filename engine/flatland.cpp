@@ -9,8 +9,8 @@
 
 using namespace std;
 
-#include "task.hpp"
-#include "signal.h"
+#include "core/task.hpp"
+#include "core/signal.hpp"
 #include "flatwindow.h"
 #include "flatexception.h"
 #include "exceptions/forcequit.h"

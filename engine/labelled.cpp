@@ -5,9 +5,10 @@
 using namespace std;
 using namespace flat::core;
 
-labelled::labelled(const std::string& label) : label(label) {}
+labelled::labelled(const std::string& label, bool allow_null) 
+    : label((!allow_null && label.empty()) ? object::random_label() : label) {}
 
-string labelled::random_id(uint8_t length) {
+string labelled::random_label(uint8_t length) {
     
     string out;
 

@@ -19,7 +19,7 @@ struct flat::core::labelled
 {
     const std::string label;
 
-    labelled(const std::string& label = "");
+    labelled(const std::string& label = "", bool allow_null = false);
 
     static std::string random_label(uint8_t length = 8);
 };

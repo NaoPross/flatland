@@ -7,8 +7,7 @@ using namespace flat::core;
 
 map<string, channel*> channel::channels;    
 
-channel::channel(const string& id, priority_t prior)
-    : labelled(id.empty() ? object::random_id(): id)
+channel::channel(const string& id, priority_t prior) : labelled(id)
 {
 }
 
@@ -114,7 +113,7 @@ signal::signal( object *sender,
                 void *data, 
                 priority_t priority)
 
-    :   labelled(id), 
+    :   labelled(id, true), 
         sender(sender), 
         m_package(package(data)), 
         priority(priority)

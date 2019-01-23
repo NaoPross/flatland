@@ -1,10 +1,11 @@
 #ifndef __FLAT_COMPONENT_H__
 #define __FLAT_COMPONENT_H__
 
-#include "object.hpp"
+#include "core/object.hpp"
+#include "core/labelled.hpp"
 #include <string>
 
-class Component : virtual public flat::core::object
+class Component : virtual public flat::core::object, virtual public flat::core::labelled
 {
     
     Component * parent;

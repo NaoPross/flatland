@@ -1,7 +1,7 @@
 #ifndef __FLATSURFACE_H__
 #define __FLATSURFACE_H__
 
-#include "object.hpp"
+#include "core/object.hpp"
 #include <SDL2/SDL.h>
 
 class FlatSurface : public flat::core::object
