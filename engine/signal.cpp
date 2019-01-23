@@ -1,4 +1,5 @@
 #include "core/signal.hpp"
+#include <functional>
 
 using namespace std;
 using namespace flat::core;
@@ -14,8 +15,7 @@ channel::channel(const string& id, priority_t prior)
         ;
 
     /* Initialize task, post-process, fifth priority */
-    checker = new task(  this, 
-                         &channel::post_processing, 
+    checker = new task(  bind(&channel::post_processing, this),
                          prior);
 
     string ID = (id.empty()) ? object::random_id() : id;

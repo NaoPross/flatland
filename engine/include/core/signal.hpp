@@ -38,7 +38,7 @@ namespace flat
     class channel : virtual public object
     {
         /* Post processing signal stacking */
-        prior_set<signal> stack;
+        queue<signal> stack;
     
         /* Listeners list */
         std::list<listener*> listeners;
@@ -51,7 +51,7 @@ namespace flat
      
     public:
     
-        channel(const std::string& id = "", priority_t priority = priority_t::none);
+        channel(const std::string& id = "", priority_t task_priority = priority_t::none);
         ~channel();
     
         void emit(const signal&);
