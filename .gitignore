@@ -1,5 +1,5 @@
 # build files
-bin
+build
 **/*.o
 
 # ninja build files

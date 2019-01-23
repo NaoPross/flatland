@@ -2,6 +2,8 @@
 
 #include <functional>
 #include <memory>
+#include <algorithm>
+#include <cassert>
 
 #include <vector>
 
@@ -18,27 +20,25 @@ namespace flat {
 
             auto shared = std::make_shared<task>(f, p);
             insert(shared);
+
             return shared;
         }
 
         void job::invoke_tasks() {
-            //std::for_each(begin(), end(), [&](auto tp) {
+            // expired tasks to remove
+            std::vector<job::value_type> to_erase;
 
-            vector<weak_ptr<task>> to_erase;
-
-            for (auto tp : (*this)) {
-                if (tp.expired())
+            for (auto tp : *this) {
+                // check that the task has not expired
+                if (std::shared_ptr<task> t = tp.lock())
+                    std::invoke(*t);
+                else
                     to_erase.push_back(tp);
             }
 
-            for (auto tp : to_erase)
+            // delete expired tasks
+            for (auto tp : to_erase) {
                 erase(tp);
-
-            for (auto tp : (*this)) {
-                // check that the task has not expired
-                    // run task
-                    auto t = tp.lock();
-                    std::invoke(*t);
             }
         }
 
