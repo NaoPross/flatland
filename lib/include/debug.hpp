@@ -41,6 +41,8 @@ namespace _np {
     void debug(Args&... args) {}
 
     template<typename Msg, typename Expr, typename... Args>
-    inline T& inspect(const Msg& msg, Expr& expr, const Args&... args) {}
+    inline T& inspect(const Msg& msg, Expr& expr, const Args&... args) {
+        return expr;
+    }
 }
 #endif
