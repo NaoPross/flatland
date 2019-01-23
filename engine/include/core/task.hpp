@@ -18,7 +18,7 @@ namespace flat {
             std::function<void()> m_callback;
         };
 
-        struct job : public std::multiset<task> {
+        struct job : public queue<task> {
             inline auto add_task(task t) {
                 this->insert(t);
             }

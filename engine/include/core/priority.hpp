@@ -4,7 +4,6 @@
 
 namespace flat {
     namespace core {
-
         enum class priority_t : unsigned  {
             max = 0,
             higher = 1,
@@ -27,10 +26,19 @@ namespace flat {
                 return m_priority;
             }
         };       
-        
-        bool operator<(const prioritized& lhs, const prioritized& rhs) {
-            return lhs.priority() < rhs.priority();
-        }
+
+        struct prioritize {
+            bool operator()(const prioritized& lhs, const prioritized& rhs) {
+                return lhs.priority() < rhs.priority();
+            }
+
+            bool operator()(const prioritized * const& lhs, const prioritized * const& rhs) {
+                return lhs->priority() < rhs->priority();
+            }
+        };
+
+        template<typename Prioritized>
+        using queue = std::multiset<Prioritized, prioritize>;
     }
 }
 
