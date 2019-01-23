@@ -1,7 +1,7 @@
 #ifndef __FOCUSABLE_H__
 #define __FOCUSABLE_H__
 
-#include "object.hpp"
+#include "core/object.hpp"
 #include "types.hpp"
 
 class task_s;

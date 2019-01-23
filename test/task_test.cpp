@@ -3,9 +3,21 @@
 #include <functional>
 #include <iostream>
 
+using namespace flat::core;
 
 // test class
 struct message {
+
+    message(job& m_job, bool date)
+    {
+        if (date)
+            mytask = m_job.make_task(std::bind(&message::print_date, *this));
+        else
+            mytask = m_job.make_task(std::bind(&message::print_motd, *this));
+    }
+
+    std::shared_ptr<task> mytask;
+
     std::string motd = "today we have no motd!";
     std::string date = "1 Jan 1970";
 
@@ -30,8 +42,6 @@ void ciao() {
 
 int main(int argc, char *argv[]) {
 
-    using namespace flat::core;
-
 
     std::cout << "Testing functions" << std::endl;
     std::cout << "should print once: hello!" << std::endl;
@@ -54,13 +64,11 @@ int main(int argc, char *argv[]) {
     job m_job;
 
     // test a method
-    message m;
-    m_job.make_task(std::bind(&message::print_motd, m));
+    message m(m_job, false);
 
     // test a method of an object that goes out of scope
     {
-        message out;
-        m_job.make_task(std::bind(&message::print_date, out));
+        message out(m_job, true);
     }
 
     // invoke tasks
