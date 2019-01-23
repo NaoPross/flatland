@@ -16,12 +16,15 @@ namespace flat {
         task::task(task::callback f, priority_t p)
             : m_callback(f) {}
 
-        std::shared_ptr<task> job::make_task(task::callback f, priority_t p) {
-
+        std::shared_ptr<task> job::delegate_task(task::callback f, priority_t p) {
             auto shared = std::make_shared<task>(f, p);
             insert(shared);
 
             return shared;
+        }
+
+        void job::add_task(task::callback f, priority_t p) {
+            insert(std::make_shared<task>(f, p));
         }
 
         void job::invoke_tasks() {

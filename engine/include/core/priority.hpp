@@ -16,21 +16,16 @@ namespace flat {
         };
 
         class prioritized {
-        private:
-            const priority_t m_priority;
-
         public:
-            prioritized(priority_t priority = priority_t::none)
-                : m_priority(priority) {}
+            const priority_t priority;
 
-            const priority_t priority() const {
-                return m_priority;
-            }
+            prioritized(priority_t p = priority_t::none)
+                : priority(p) {}
         };       
 
         struct prioritize {
             bool operator()(const prioritized& lhs, const prioritized& rhs) {
-                return lhs.priority() < rhs.priority();
+                return lhs.priority < rhs.priority;
             }
 
             bool operator()(const std::weak_ptr<prioritized> lhs, const std::weak_ptr<prioritized> rhs) {
@@ -38,7 +33,7 @@ namespace flat {
                     if (auto r = rhs.lock()) {
                         // if both valid, check their priority
                         // in case they are the same, left is prioritized
-                        return l->priority() < r->priority();
+                        return l->priority < r->priority;
                     } else {
                         // if right is expired, left is prioritized
                         return true;
