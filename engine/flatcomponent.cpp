@@ -1,13 +1,12 @@
 #include "flatcomponent.h"
 #include "signal.h"
 
-Component::Component(Component *parent, const std::string& id)
-    : parent(parent)
+using namespace flat;
+
+component::component(component *parent, const std::string& id)
+    : m_parent(parent)
 {
     // TODO, check flatland initialization
-
-    if (id.empty())
-        setID(flat::core::object::randomID());
 
     if (parent == 0)
     {
@@ -15,22 +14,22 @@ Component::Component(Component *parent, const std::string& id)
     }
 }
 
-Component::~Component()
+component::~component()
 {
 
 }
 
-void Component::setParent(Component *parent)
+void component::set_parent(component *parent)
 {
     if (parent == 0)
         // TODO set screen as parent layer
         ;
 
-    this->parent = parent;
+    this->m_parent = m_parent;
 }
 
-Component * Component::getParent()
+component * component::parent()
 {
-    return parent;
+    return m_parent;
 }
     

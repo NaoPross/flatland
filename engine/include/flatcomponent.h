@@ -5,24 +5,28 @@
 #include "core/labelled.hpp"
 #include <string>
 
-class Component : virtual public flat::core::object, virtual public flat::core::labelled
+namespace flat {
+
+class component : virtual public core::object, virtual public core::labelled
 {
     
-    Component * parent;
+    component * m_parent;
 
 public:
 
     /* Zero means attach to main window layer */
     /* Send a 'created' signal in component reserved channel */
-    Component(Component *parent = 0, const std::string& id = "");
+    component(component *parent = 0, const std::string& id = "");
 
     /* Send a 'deleted' signal in component reserved channel */ 
-    virtual ~Component();
+    virtual ~component();
 
-    void setParent(Component*);
-    Component * getParent();
+    void set_parent(component*);
+    component * parent();
 
     virtual void render() = 0;
 };
+
+}
 
 #endif

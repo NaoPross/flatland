@@ -5,29 +5,39 @@
 using namespace std;
 using namespace flat::core;
 
-map<string, channel*> channel::channels;    
+map<string, weak_ptr<channel>> channel::channels;    
 
-channel::channel(const string& id, priority_t prior) : labelled(id)
+channel::channel(const string& id) : labelled(id), mapped(false)
 {
 }
 
 channel::~channel()
 {
     // by default it should be there
-    channels.erase(label);
+    if (mapped)
+        channels.erase(label);
 }
 
-void channel::start()
+void channel::start(priority_t prior)
 {
     // Initialize task
-    checker = flat::game_job().delegate_task<channel>(&channel::check_and_call, this, prior);
+    checker = flat::game_job().delegate_task(&channel::check_and_call, *this, prior);
 }
 
 bool channel::map()
 {
-    channel * other = find_channel(label);
+    if (!mapped) {
 
-    return other ? false : channels.insert(pair<string, channel*>(label, this));
+        channel::ptr other = channel::find(label);
+
+        if (!other) {
+
+            channels.insert(pair<string, weak_ptr<channel>>(label, weak_from_this())); 
+            mapped = true;
+        }
+    }
+
+    return mapped;
 }
 
 void channel::emit(const signal& sig)
@@ -40,7 +50,9 @@ bool channel::connect(listener::ptr l)
     /* Control not to double */
     for (auto lis : listeners)
     {
-        if (lis.get() == l.get())
+        auto pt = lis.lock();
+
+        if (pt.get() == l.get())
             return false;
     }
 
@@ -50,17 +62,34 @@ bool channel::connect(listener::ptr l)
 
 void channel::disconnect(listener::ptr l)
 {
-    listeners.remove(l);
+    listeners.remove_if(
+                [l](weak_ptr<listener> p){ 
+                    
+                    listener::ptr pt = p.lock();
+                    return pt.get() == l.get(); 
+                });
+}
+
+bool channel::connect(listener* l)
+{
+    listener::ptr pt(l);
+    return connect(pt);
+}
+
+void channel::disconnect(listener* l)
+{
+    listener::ptr pt(l);
+    disconnect(pt);
 }
 
 channel::ptr channel::create(const string& id, priority_t prior)
 {
-    ptr out = std::make_ptr(new channel(id, prior));
+    ptr out = std::make_shared<channel>(id);
 
-    if (!out.map())
+    if (!out->map())
         return nullptr;
 
-    out.start();
+    out->start(prior);
 
     return out;
 }
@@ -91,15 +120,15 @@ void channel::check_and_call()
             if (pt = l.lock())
             {
                 for (const auto& sig : stack)
-                    l->invoke(sig);
+                    pt->invoke(sig);
             }
             else
                 to_erase.push_back(l);
         }
     
         /* Erase invalidated listeners */
-        for (auto e : to_erase)
-            listeners.remove(e);
+        listeners.remove_if(
+            [](weak_ptr<listener> e) { return e.expired(); });
 
         stack.clear(); // TODO not so efficient
     }
@@ -114,9 +143,9 @@ signal::signal( object *sender,
                 priority_t priority)
 
     :   labelled(id, true), 
+        prioritized(priority),
         sender(sender), 
-        m_package(package(data)), 
-        priority(priority)
+        m_package(package(data))
 {
 }
 
@@ -136,8 +165,7 @@ bool signal::emit(const string& chan) const
 
 /* listener_s class */
 
-listener::listener(   callback_t m_callback,
-                      const initializer_list<string>& filters)
+listener::listener(callback m_callback, const initializer_list<string>& filters)
 
     : m_callback(m_callback), filters(filters)
 {
@@ -176,17 +204,17 @@ bool listener::connect(const string& chan)
     if (!c)
         c->connect(this);
 
-    return c;
+    return bool(c);
 }
 
 bool listener::disconnect(const string& chan)
 {
-    channel::ptr c = channel::find_channel(chan);
+    channel::ptr c = channel::find(chan);
 
     if (!c)
         c->disconnect(this);
 
-    return c;
+    return bool(c);
 }
 
 void listener::invoke(const signal& sig)

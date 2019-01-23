@@ -6,7 +6,7 @@ using namespace std;
 using namespace flat::core;
 
 labelled::labelled(const std::string& label, bool allow_null) 
-    : label((!allow_null && label.empty()) ? object::random_label() : label) {}
+    : label((!allow_null && label.empty()) ? random_label() : label) {}
 
 string labelled::random_label(uint8_t length) {
     

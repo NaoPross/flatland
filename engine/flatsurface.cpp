@@ -6,14 +6,12 @@ using namespace std;
 
 FlatSurface::FlatSurface(const char *filename, uint32_t format, SDL_Surface *parent)
 
-    : flat::core::object(), parent(parent), hide(false)
+    : flat::core::labelled(filename, true), parent(parent), hide(false)
 {
-    setID(filename);
-
     cout << "FlatSurface: loading " << filename << endl;
-    surface = loadOptimizedSurface(filename, format);
+    sdl_surface = loadOptimizedSurface(filename, format);
 
-    if (!surface)
+    if (!sdl_surface)
     {
         cout << "Warning: could not load surface " << filename << endl;
     }
@@ -22,36 +20,36 @@ FlatSurface::FlatSurface(const char *filename, uint32_t format, SDL_Surface *par
 
     offset->x = 0;
     offset->y = 0;
-    offset->w = surface->w;
-    offset->h = surface->h;
+    offset->w = sdl_surface->w;
+    offset->h = sdl_surface->h;
 
     viewport = new SDL_Rect;
 
     viewport->x = 0;
     viewport->y = 0;
-    viewport->w = surface->w;
-    viewport->h = surface->h;
+    viewport->w = sdl_surface->w;
+    viewport->h = sdl_surface->h;
 }
 
-FlatSurface::FlatSurface(SDL_Surface *surface, SDL_Surface *parent)
+FlatSurface::FlatSurface(SDL_Surface *sdl_surface, SDL_Surface *parent)
 
     : flat::core::object(), parent(parent), hide(false)
 {
-    this->surface = new SDL_Surface(*surface);
+    this->sdl_surface = new SDL_Surface(*sdl_surface);
 
     offset = new SDL_Rect;
 
     offset->x = 0;
     offset->y = 0;
-    offset->w = surface->w;
-    offset->h = surface->h;
+    offset->w = sdl_surface->w;
+    offset->h = sdl_surface->h;
 
     viewport = new SDL_Rect;
 
     viewport->x = 0;
     viewport->y = 0;
-    viewport->w = surface->w;
-    viewport->h = surface->h;
+    viewport->w = sdl_surface->w;
+    viewport->h = sdl_surface->h;
 }
 
 FlatSurface::FlatSurface(const FlatSurface &sprite)
@@ -63,12 +61,12 @@ FlatSurface::FlatSurface(const FlatSurface &sprite)
 
     viewport = new SDL_Rect(*sprite.viewport);
 
-    surface = copySurface(sprite.surface);
+    sdl_surface = copySurface(sprite.surface);
 }
 
 FlatSurface::~FlatSurface()
 {
-    SDL_FreeSurface(surface);
+    SDL_FreeSurface(sdl_surface);
 
     delete offset;
     delete viewport;
@@ -127,7 +125,7 @@ SDL_Surface * FlatSurface::getParent()
 
 SDL_Surface * FlatSurface::getSurface()
 {
-    return surface;
+    return sdl_surface;
 }
 
 void FlatSurface::setHidden(bool flag)
@@ -143,7 +141,7 @@ bool FlatSurface::isHidden() const
 void FlatSurface::blit()
 {
     if (!hide)
-        SDL_BlitSurface(surface, viewport, parent, offset);
+        SDL_BlitSurface(sdl_surface, viewport, parent, offset);
 }
 
 SDL_Surface * FlatSurface::loadOptimizedSurface(const char *filename, uint32_t format)

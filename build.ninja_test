@@ -1,0 +1,66 @@
+include ninja/rules.ninja
+
+#
+#build lib/libmm/build/libmm.so: ninja lib/libmm
+#build lib/libmm/build/libmm.a: ninja lib/libmm
+#
+#
+#build lib/libwsdl2/build/libwsdl2.so: ninja lib/libmm
+#build lib/libwsdl2/build/libwsdl2.a: ninja lib/libmm
+#
+#
+#build build/engine: mkdir
+#build build/test: mkdir
+#
+
+#build build/engine/flatlayer.o: cpp engine/flatlayer.cpp
+build build/engine/object.o: cpp engine/object.cpp
+build build/engine/task.o: cpp engine/task.cpp
+#build build/engine/focusable.o: cpp engine/focusable.cpp
+#build build/engine/flatsurface.o: cpp engine/flatsurface.cpp
+#build build/engine/flatcomponent.o: cpp engine/flatcomponent.cpp
+#build build/engine/flatserial.o: cpp engine/flatserial.cpp
+#build build/engine/flatactor.o: cpp engine/flatactor.cpp
+#build build/engine/keyfocusable.o: cpp engine/keyfocusable.cpp
+#build build/engine/flatland.o: cpp engine/flatland.cpp
+#build build/engine/flatexception.o: cpp engine/flatexception.cpp
+#build build/engine/signal.o: cpp engine/signal.cpp
+#build build/engine/flatwindow.o: cpp engine/flatwindow.cpp
+#build build/engine/flatcollector.o: cpp engine/flatcollector.cpp
+#build build/libflatland.so: link-shared build/engine/flatlayer.o build/engine/object.o build/engine/task.o build/engine/focusable.o build/engine/flatsurface.o build/engine/flatcomponent.o build/engine/flatserial.o build/engine/flatactor.o build/engine/keyfocusable.o build/engine/flatland.o build/engine/flatexception.o build/engine/signal.o build/engine/flatwindow.o build/engine/flatcollector.o
+#build build/libflatland.a: link-static build/engine/flatlayer.o build/engine/object.o build/engine/task.o build/engine/focusable.o build/engine/flatsurface.o build/engine/flatcomponent.o build/engine/flatserial.o build/engine/flatactor.o build/engine/keyfocusable.o build/engine/flatland.o build/engine/flatexception.o build/engine/signal.o build/engine/flatwindow.o build/engine/flatcollector.o
+
+build build/test/task_test.o: cpp test/task_test.cpp
+build build/test/task_test: link build/test/task_test.o build/engine/task.o
+
+#
+#
+#build build/test/main.o: cpp test/main.cpp
+#build build/test/main: link build/test/main.o
+#    lflags = $lflags ../build/libflatland.so
+#
+#
+#build build/test/test1.o: cpp test/test1.cpp
+#build build/test/test1: link build/test/test1.o
+#    lflags = $lflags ../build/libflatland.so
+#
+#
+#build build/test/test2.o: cpp test/test2.cpp
+#build build/test/test2: link build/test/test2.o
+#    lflags = $lflags ../build/libflatland.so
+#
+#
+#build build/test/task_test.o: cpp test/task_test.cpp
+#build build/test/task_test: link build/test/task_test.o
+##    lflags = $lflags ../build/libflatland.so
+#
+#
+#build build/test/test3.o: cpp test/test3.cpp
+#build build/test/test3: link build/test/test3.o
+#    lflags = $lflags ../build/libflatland.so
+#
+#
+#
+#
+#
+#

@@ -2,11 +2,14 @@
 #define __FLATSURFACE_H__
 
 #include "core/object.hpp"
+#include "core/labelled.hpp"
 #include <SDL2/SDL.h>
 
-class FlatSurface : public flat::core::object
+namespace flat {
+
+class surface : virtual public core::object, virtual public core::labelled
 {
-    SDL_Surface * surface;
+    SDL_Surface * sdl_surface;
     SDL_Surface * parent;
 
     SDL_Rect * offset;
@@ -16,12 +19,12 @@ class FlatSurface : public flat::core::object
 
 public:
 
-    FlatSurface(const char *filename, uint32_t format = SDL_PIXELFORMAT_RGBA32, SDL_Surface *parent = 0);
-    FlatSurface(SDL_Surface *surface, SDL_Surface *parent = 0);
+    surface(const char *filename, uint32_t format = SDL_PIXELFORMAT_RGBA32, SDL_Surface *parent = 0);
+    surface(SDL_Surface *surf, SDL_Surface *parent = 0);
 
-    FlatSurface(const FlatSurface&);
+    surface(const surface&);
 
-    ~FlatSurface();
+    ~surface();
 
     void setOffset(int, int, int w = -1, int h = -1);
 
@@ -51,5 +54,7 @@ public:
 
     static SDL_Surface * copySurface(SDL_Surface*);
 };
+
+}
 
 #endif

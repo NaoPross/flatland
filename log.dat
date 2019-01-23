@@ -1,0 +1,1249 @@
+[1/19] compiling engine/flatwindow.cpp
+FAILED: build/engine/flatwindow.o 
+g++ -fdiagnostics-color -g -Wall -pedantic -fPIC -std=c++17 -DDEBUG -I lib/include -I engine/include -c engine/flatwindow.cpp -o build/engine/flatwindow.o
+engine/flatwindow.cpp:6:10: fatal error: signal.hpp: No such file or directory
+ #include "signal.hpp"
+          ^~~~~~~~~~~~
+compilation terminated.
+[2/19] compiling engine/flatsurface.cpp
+FAILED: build/engine/flatsurface.o 
+g++ -fdiagnostics-color -g -Wall -pedantic -fPIC -std=c++17 -DDEBUG -I lib/include -I engine/include -c engine/flatsurface.cpp -o build/engine/flatsurface.o
+engine/flatsurface.cpp:7:1: error: ‘FlatSurface’ does not name a type; did you mean ‘SDL_Surface’?
+ FlatSurface::FlatSurface(const char *filename, uint32_t format, SDL_Surface *parent)
+ ^~~~~~~~~~~
+ SDL_Surface
+engine/flatsurface.cpp:34:1: error: ‘FlatSurface’ does not name a type; did you mean ‘SDL_Surface’?
+ FlatSurface::FlatSurface(SDL_Surface *sdl_surface, SDL_Surface *parent)
+ ^~~~~~~~~~~
+ SDL_Surface
+engine/flatsurface.cpp:55:1: error: ‘FlatSurface’ does not name a type; did you mean ‘SDL_Surface’?
+ FlatSurface::FlatSurface(const FlatSurface &sprite)
+ ^~~~~~~~~~~
+ SDL_Surface
+engine/flatsurface.cpp:67:1: error: ‘FlatSurface’ does not name a type; did you mean ‘SDL_Surface’?
+ FlatSurface::~FlatSurface()
+ ^~~~~~~~~~~
+ SDL_Surface
+engine/flatsurface.cpp:75:6: error: ‘FlatSurface’ has not been declared
+ void FlatSurface::setOffset(int x, int y, int w, int h)
+      ^~~~~~~~~~~
+engine/flatsurface.cpp: In function ‘void setOffset(int, int, int, int)’:
+engine/flatsurface.cpp:77:5: error: ‘offset’ was not declared in this scope
+     offset->x = x;
+     ^~~~~~
+engine/flatsurface.cpp:77:5: note: suggested alternative: ‘off_t’
+     offset->x = x;
+     ^~~~~~
+     off_t
+engine/flatsurface.cpp: At global scope:
+engine/flatsurface.cpp:87:6: error: ‘FlatSurface’ has not been declared
+ void FlatSurface::setViewport(int x, int y, int w, int h)
+      ^~~~~~~~~~~
+engine/flatsurface.cpp: In function ‘void setViewport(int, int, int, int)’:
+engine/flatsurface.cpp:89:5: error: ‘viewport’ was not declared in this scope
+     viewport->x = x;
+     ^~~~~~~~
+engine/flatsurface.cpp:89:5: note: suggested alternative: ‘setViewport’
+     viewport->x = x;
+     ^~~~~~~~
+     setViewport
+engine/flatsurface.cpp: At global scope:
+engine/flatsurface.cpp:95:6: error: ‘FlatSurface’ has not been declared
+ void FlatSurface::setViewport(const SDL_Rect &rect)
+      ^~~~~~~~~~~
+engine/flatsurface.cpp: In function ‘void setViewport(const SDL_Rect&)’:
+engine/flatsurface.cpp:97:6: error: ‘viewport’ was not declared in this scope
+     *viewport = rect;
+      ^~~~~~~~
+engine/flatsurface.cpp:97:6: note: suggested alternative: ‘setViewport’
+     *viewport = rect;
+      ^~~~~~~~
+      setViewport
+engine/flatsurface.cpp: At global scope:
+engine/flatsurface.cpp:101:6: error: ‘FlatSurface’ has not been declared
+ void FlatSurface::setOffset(const SDL_Rect &offset)
+      ^~~~~~~~~~~
+engine/flatsurface.cpp: In function ‘void setOffset(const SDL_Rect&)’:
+engine/flatsurface.cpp:103:6: error: invalid use of ‘this’ in non-member function
+     *this->offset = offset;
+      ^~~~
+engine/flatsurface.cpp: At global scope:
+engine/flatsurface.cpp:106:18: error: ‘FlatSurface’ has not been declared
+ const SDL_Rect * FlatSurface::getOffset() const
+                  ^~~~~~~~~~~
+engine/flatsurface.cpp:106:43: error: non-member function ‘const SDL_Rect* getOffset()’ cannot have cv-qualifier
+ const SDL_Rect * FlatSurface::getOffset() const
+                                           ^~~~~
+engine/flatsurface.cpp: In function ‘const SDL_Rect* getOffset()’:
+engine/flatsurface.cpp:108:12: error: ‘offset’ was not declared in this scope
+     return offset;
+            ^~~~~~
+engine/flatsurface.cpp:108:12: note: suggested alternative: ‘off_t’
+     return offset;
+            ^~~~~~
+            off_t
+engine/flatsurface.cpp: At global scope:
+engine/flatsurface.cpp:111:18: error: ‘FlatSurface’ has not been declared
+ const SDL_Rect * FlatSurface::getViewport() const
+                  ^~~~~~~~~~~
+engine/flatsurface.cpp:111:45: error: non-member function ‘const SDL_Rect* getViewport()’ cannot have cv-qualifier
+ const SDL_Rect * FlatSurface::getViewport() const
+                                             ^~~~~
+engine/flatsurface.cpp: In function ‘const SDL_Rect* getViewport()’:
+engine/flatsurface.cpp:113:12: error: ‘viewport’ was not declared in this scope
+     return viewport;
+            ^~~~~~~~
+engine/flatsurface.cpp:113:12: note: suggested alternative: ‘getViewport’
+     return viewport;
+            ^~~~~~~~
+            getViewport
+engine/flatsurface.cpp: At global scope:
+engine/flatsurface.cpp:116:6: error: ‘FlatSurface’ has not been declared
+ void FlatSurface::setParent(SDL_Surface *parent)
+      ^~~~~~~~~~~
+engine/flatsurface.cpp: In function ‘void setParent(SDL_Surface*)’:
+engine/flatsurface.cpp:118:5: error: invalid use of ‘this’ in non-member function
+     this->parent = parent;
+     ^~~~
+engine/flatsurface.cpp: At global scope:
+engine/flatsurface.cpp:121:15: error: ‘FlatSurface’ has not been declared
+ SDL_Surface * FlatSurface::getParent()
+               ^~~~~~~~~~~
+engine/flatsurface.cpp: In function ‘SDL_Surface* getParent()’:
+engine/flatsurface.cpp:123:12: error: ‘parent’ was not declared in this scope
+     return parent;
+            ^~~~~~
+engine/flatsurface.cpp:123:12: note: suggested alternative: ‘__rint’
+     return parent;
+            ^~~~~~
+            __rint
+engine/flatsurface.cpp: At global scope:
+engine/flatsurface.cpp:126:15: error: ‘FlatSurface’ has not been declared
+ SDL_Surface * FlatSurface::getSurface()
+               ^~~~~~~~~~~
+engine/flatsurface.cpp: In function ‘SDL_Surface* getSurface()’:
+engine/flatsurface.cpp:128:12: error: ‘sdl_surface’ was not declared in this scope
+     return sdl_surface;
+            ^~~~~~~~~~~
+engine/flatsurface.cpp:128:12: note: suggested alternative: ‘SDL_Surface’
+     return sdl_surface;
+            ^~~~~~~~~~~
+            SDL_Surface
+engine/flatsurface.cpp: At global scope:
+engine/flatsurface.cpp:131:6: error: ‘FlatSurface’ has not been declared
+ void FlatSurface::setHidden(bool flag)
+      ^~~~~~~~~~~
+engine/flatsurface.cpp: In function ‘void setHidden(bool)’:
+engine/flatsurface.cpp:133:5: error: ‘hide’ was not declared in this scope
+     hide = flag;
+     ^~~~
+engine/flatsurface.cpp:133:5: note: suggested alternative: ‘time’
+     hide = flag;
+     ^~~~
+     time
+engine/flatsurface.cpp: At global scope:
+engine/flatsurface.cpp:136:6: error: ‘FlatSurface’ has not been declared
+ bool FlatSurface::isHidden() const
+      ^~~~~~~~~~~
+engine/flatsurface.cpp:136:30: error: non-member function ‘bool isHidden()’ cannot have cv-qualifier
+ bool FlatSurface::isHidden() const
+                              ^~~~~
+engine/flatsurface.cpp: In function ‘bool isHidden()’:
+engine/flatsurface.cpp:138:12: error: ‘hide’ was not declared in this scope
+     return hide;
+            ^~~~
+engine/flatsurface.cpp:138:12: note: suggested alternative: ‘time’
+     return hide;
+            ^~~~
+            time
+engine/flatsurface.cpp: At global scope:
+engine/flatsurface.cpp:141:6: error: ‘FlatSurface’ has not been declared
+ void FlatSurface::blit()
+      ^~~~~~~~~~~
+engine/flatsurface.cpp: In function ‘void blit()’:
+engine/flatsurface.cpp:143:10: error: ‘hide’ was not declared in this scope
+     if (!hide)
+          ^~~~
+engine/flatsurface.cpp:143:10: note: suggested alternative: ‘time’
+     if (!hide)
+          ^~~~
+          time
+engine/flatsurface.cpp:144:25: error: ‘sdl_surface’ was not declared in this scope
+         SDL_BlitSurface(sdl_surface, viewport, parent, offset);
+                         ^~~~~~~~~~~
+engine/flatsurface.cpp:144:25: note: suggested alternative: ‘SDL_Surface’
+         SDL_BlitSurface(sdl_surface, viewport, parent, offset);
+                         ^~~~~~~~~~~
+                         SDL_Surface
+engine/flatsurface.cpp:144:38: error: ‘viewport’ was not declared in this scope
+         SDL_BlitSurface(sdl_surface, viewport, parent, offset);
+                                      ^~~~~~~~
+engine/flatsurface.cpp:144:38: note: suggested alternative: ‘getViewport’
+         SDL_BlitSurface(sdl_surface, viewport, parent, offset);
+                                      ^~~~~~~~
+                                      getViewport
+engine/flatsurface.cpp:144:48: error: ‘parent’ was not declared in this scope
+         SDL_BlitSurface(sdl_surface, viewport, parent, offset);
+                                                ^~~~~~
+engine/flatsurface.cpp:144:48: note: suggested alternative: ‘__rint’
+         SDL_BlitSurface(sdl_surface, viewport, parent, offset);
+                                                ^~~~~~
+                                                __rint
+engine/flatsurface.cpp:144:56: error: ‘offset’ was not declared in this scope
+         SDL_BlitSurface(sdl_surface, viewport, parent, offset);
+                                                        ^~~~~~
+engine/flatsurface.cpp:144:56: note: suggested alternative: ‘off_t’
+         SDL_BlitSurface(sdl_surface, viewport, parent, offset);
+                                                        ^~~~~~
+                                                        off_t
+engine/flatsurface.cpp: At global scope:
+engine/flatsurface.cpp:147:15: error: ‘FlatSurface’ has not been declared
+ SDL_Surface * FlatSurface::loadOptimizedSurface(const char *filename, uint32_t format)
+               ^~~~~~~~~~~
+engine/flatsurface.cpp:162:15: error: ‘FlatSurface’ has not been declared
+ SDL_Surface * FlatSurface::copySurface(SDL_Surface *src)
+               ^~~~~~~~~~~
+[3/19] compiling engine/signal.cpp
+FAILED: build/engine/signal.o 
+g++ -fdiagnostics-color -g -Wall -pedantic -fPIC -std=c++17 -DDEBUG -I lib/include -I engine/include -c engine/signal.cpp -o build/engine/signal.o
+In file included from engine/signal.cpp:3:0:
+engine/include/flatland.h: In constructor ‘flat::flat_status::flat_status(unsigned char, unsigned char, unsigned char, unsigned char, unsigned char, unsigned char, unsigned char, unsigned char, unsigned char, unsigned char)’:
+engine/include/flatland.h:34:26: warning: ‘flat::flat_status::events’ will be initialized after [-Wreorder]
+     unsigned char events:1;
+                          ^
+engine/include/flatland.h:31:28: warning:   ‘unsigned char:1 flat::flat_status::joystick’ [-Wreorder]
+     unsigned char joystick:1;
+                            ^
+engine/include/flatland.h:13:5: warning:   when initialized here [-Wreorder]
+     flat_status(unsigned char video = 1,
+     ^~~~~~~~~~~
+engine/signal.cpp: In member function ‘void flat::core::channel::start(flat::core::priority_t)’:
+engine/signal.cpp:24:93: error: no matching function for call to ‘flat::core::job::delegate_task<flat::core::channel>(void (flat::core::channel::*)(), flat::core::channel&, flat::core::priority_t&)’
+     checker = flat::game_job().delegate_task<channel>(&channel::check_and_call, *this, prior);
+                                                                                             ^
+In file included from engine/include/core/signal.hpp:8:0,
+                 from engine/signal.cpp:1:
+engine/include/core/task.hpp:41:42: note: candidate: template<class R, class T> std::shared_ptr<flat::core::task> flat::core::job::delegate_task(R T::*, T&, flat::core::priority_t)
+             inline std::shared_ptr<task> delegate_task(R T::*mf, T& obj, priority_t p = priority_t::none) {
+                                          ^~~~~~~~~~~~~
+engine/include/core/task.hpp:41:42: note:   template argument deduction/substitution failed:
+engine/signal.cpp:24:93: note:   mismatched types ‘flat::core::channel’ and ‘void()’
+     checker = flat::game_job().delegate_task<channel>(&channel::check_and_call, *this, prior);
+                                                                                             ^
+engine/signal.cpp: In member function ‘void flat::core::channel::check_and_call()’:
+engine/signal.cpp:106:22: error: base operand of ‘->’ has non-pointer type ‘std::weak_ptr<flat::core::listener>’
+                     l->invoke(sig);
+                      ^~
+engine/signal.cpp: In constructor ‘flat::core::signal::signal(flat::core::object*, const string&, void*, flat::core::priority_t)’:
+engine/signal.cpp:131:9: error: class ‘flat::core::signal’ does not have any field named ‘priority’
+         priority(priority)
+         ^~~~~~~~
+engine/signal.cpp: At global scope:
+engine/signal.cpp:151:19: error: expected constructor, destructor, or type conversion before ‘(’ token
+ listener::listener(   callback_t m_callback,
+                   ^
+engine/signal.cpp: In member function ‘bool flat::core::listener::connect(const string&)’:
+engine/signal.cpp:189:24: error: no matching function for call to ‘flat::core::channel::connect(flat::core::listener*)’
+         c->connect(this);
+                        ^
+engine/signal.cpp:48:6: note: candidate: bool flat::core::channel::connect(flat::core::listener::ptr)
+ bool channel::connect(listener::ptr l)
+      ^~~~~~~
+engine/signal.cpp:48:6: note:   no known conversion for argument 1 from ‘flat::core::listener*’ to ‘flat::core::listener::ptr {aka std::shared_ptr<flat::core::listener>}’
+engine/signal.cpp:191:12: error: cannot convert ‘flat::core::channel::ptr {aka std::shared_ptr<flat::core::channel>}’ to ‘bool’ in return
+     return c;
+            ^
+engine/signal.cpp: In member function ‘bool flat::core::listener::disconnect(const string&)’:
+engine/signal.cpp:196:31: error: ‘find_channel’ is not a member of ‘flat::core::channel’
+     channel::ptr c = channel::find_channel(chan);
+                               ^~~~~~~~~~~~
+engine/signal.cpp:199:27: error: no matching function for call to ‘flat::core::channel::disconnect(flat::core::listener*)’
+         c->disconnect(this);
+                           ^
+engine/signal.cpp:63:6: note: candidate: void flat::core::channel::disconnect(flat::core::listener::ptr)
+ void channel::disconnect(listener::ptr l)
+      ^~~~~~~
+engine/signal.cpp:63:6: note:   no known conversion for argument 1 from ‘flat::core::listener*’ to ‘flat::core::listener::ptr {aka std::shared_ptr<flat::core::listener>}’
+engine/signal.cpp:201:12: error: cannot convert ‘flat::core::channel::ptr {aka std::shared_ptr<flat::core::channel>}’ to ‘bool’ in return
+     return c;
+            ^
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc: In instantiation of ‘void std::__cxx11::list<_Tp, _Alloc>::remove(const value_type&) [with _Tp = std::weak_ptr<flat::core::listener>; _Alloc = std::allocator<std::weak_ptr<flat::core::listener> >; std::__cxx11::list<_Tp, _Alloc>::value_type = std::weak_ptr<flat::core::listener>]’:
+engine/signal.cpp:65:23:   required from here
+/usr/include/c++/7/bits/list.tcc:334:17: error: no match for ‘operator==’ (operand types are ‘std::weak_ptr<flat::core::listener>’ and ‘const value_type {aka const std::weak_ptr<flat::core::listener>}’)
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from engine/include/core/task.hpp:7:0,
+                 from engine/include/core/signal.hpp:8,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/variant:844:3: note: candidate: constexpr bool std::operator==(std::monostate, std::monostate)
+   _VARIANT_RELATION_FUNCTION_TEMPLATE(==, equal)
+   ^
+/usr/include/c++/7/variant:844:3: note:   no known conversion for argument 1 from ‘std::weak_ptr<flat::core::listener>’ to ‘std::monostate’
+/usr/include/c++/7/variant:844:3: note: candidate: template<class ... _Types> constexpr bool std::operator==(const std::variant<_Types ...>&, const std::variant<_Types ...>&)
+   _VARIANT_RELATION_FUNCTION_TEMPLATE(==, equal)
+   ^
+/usr/include/c++/7/variant:844:3: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::variant<_Types ...>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/vector:64:0,
+                 from /usr/include/c++/7/functional:61,
+                 from engine/include/core/task.hpp:6,
+                 from engine/include/core/signal.hpp:8,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/stl_vector.h:1596:5: note: candidate: template<class _Tp, class _Alloc> bool std::operator==(const std::vector<_Tp, _Alloc>&, const std::vector<_Tp, _Alloc>&)
+     operator==(const vector<_Tp, _Alloc>& __x, const vector<_Tp, _Alloc>& __y)
+     ^~~~~~~~
+/usr/include/c++/7/bits/stl_vector.h:1596:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::vector<_Tp, _Alloc>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/unordered_map:48:0,
+                 from /usr/include/c++/7/functional:60,
+                 from engine/include/core/task.hpp:6,
+                 from engine/include/core/signal.hpp:8,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/unordered_map.h:1923:5: note: candidate: template<class _Key, class _Tp, class _Hash, class _Pred, class _Alloc> bool std::operator==(const std::unordered_multimap<_Key, _Tp, _Hash, _Pred, _Alloc>&, const std::unordered_multimap<_Key, _Tp, _Hash, _Pred, _Alloc>&)
+     operator==(const unordered_multimap<_Key, _Tp, _Hash, _Pred, _Alloc>& __x,
+     ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:1923:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::unordered_multimap<_Key, _Tp, _Hash, _Pred, _Alloc>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/unordered_map:48:0,
+                 from /usr/include/c++/7/functional:60,
+                 from engine/include/core/task.hpp:6,
+                 from engine/include/core/signal.hpp:8,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/unordered_map.h:1911:5: note: candidate: template<class _Key, class _Tp, class _Hash, class _Pred, class _Alloc> bool std::operator==(const std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>&, const std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>&)
+     operator==(const unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>& __x,
+     ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:1911:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/functional:58:0,
+                 from engine/include/core/task.hpp:6,
+                 from engine/include/core/signal.hpp:8,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/std_function.h:770:5: note: candidate: template<class _Res, class ... _Args> bool std::operator==(std::nullptr_t, const std::function<_Res(_ArgTypes ...)>&)
+     operator==(nullptr_t, const function<_Res(_Args...)>& __f) noexcept
+     ^~~~~~~~
+/usr/include/c++/7/bits/std_function.h:770:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘const value_type {aka const std::weak_ptr<flat::core::listener>}’ is not derived from ‘const std::function<_Res(_ArgTypes ...)>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/functional:58:0,
+                 from engine/include/core/task.hpp:6,
+                 from engine/include/core/signal.hpp:8,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/std_function.h:764:5: note: candidate: template<class _Res, class ... _Args> bool std::operator==(const std::function<_Res(_ArgTypes ...)>&, std::nullptr_t)
+     operator==(const function<_Res(_Args...)>& __f, nullptr_t) noexcept
+     ^~~~~~~~
+/usr/include/c++/7/bits/std_function.h:764:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::function<_Res(_ArgTypes ...)>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/unordered_set:48:0,
+                 from engine/include/core/task.hpp:5,
+                 from engine/include/core/signal.hpp:8,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/unordered_set.h:1547:5: note: candidate: template<class _Value, class _Hash, class _Pred, class _Alloc> bool std::operator==(const std::unordered_multiset<_Value, _Hash, _Pred, _Alloc>&, const std::unordered_multiset<_Value, _Hash, _Pred, _Alloc>&)
+     operator==(const unordered_multiset<_Value, _Hash, _Pred, _Alloc>& __x,
+     ^~~~~~~~
+/usr/include/c++/7/bits/unordered_set.h:1547:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::unordered_multiset<_Value, _Hash, _Pred, _Alloc>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/unordered_set:48:0,
+                 from engine/include/core/task.hpp:5,
+                 from engine/include/core/signal.hpp:8,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/unordered_set.h:1535:5: note: candidate: template<class _Value, class _Hash, class _Pred, class _Alloc> bool std::operator==(const std::unordered_set<_Value, _Hash, _Pred, _Alloc>&, const std::unordered_set<_Value, _Hash, _Pred, _Alloc>&)
+     operator==(const unordered_set<_Value, _Hash, _Pred, _Alloc>& __x,
+     ^~~~~~~~
+/usr/include/c++/7/bits/unordered_set.h:1535:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::unordered_set<_Value, _Hash, _Pred, _Alloc>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/memory:81:0,
+                 from engine/include/core/priority.hpp:3,
+                 from engine/include/core/task.hpp:3,
+                 from engine/include/core/signal.hpp:8,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/shared_ptr.h:378:5: note: candidate: template<class _Tp> bool std::operator==(std::nullptr_t, const std::shared_ptr<_Tp>&)
+     operator==(nullptr_t, const shared_ptr<_Tp>& __a) noexcept
+     ^~~~~~~~
+/usr/include/c++/7/bits/shared_ptr.h:378:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘const value_type {aka const std::weak_ptr<flat::core::listener>}’ is not derived from ‘const std::shared_ptr<_Tp>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/memory:81:0,
+                 from engine/include/core/priority.hpp:3,
+                 from engine/include/core/task.hpp:3,
+                 from engine/include/core/signal.hpp:8,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/shared_ptr.h:373:5: note: candidate: template<class _Tp> bool std::operator==(const std::shared_ptr<_Tp>&, std::nullptr_t)
+     operator==(const shared_ptr<_Tp>& __a, nullptr_t) noexcept
+     ^~~~~~~~
+/usr/include/c++/7/bits/shared_ptr.h:373:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::shared_ptr<_Tp>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/memory:81:0,
+                 from engine/include/core/priority.hpp:3,
+                 from engine/include/core/task.hpp:3,
+                 from engine/include/core/signal.hpp:8,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/shared_ptr.h:368:5: note: candidate: template<class _Tp, class _Up> bool std::operator==(const std::shared_ptr<_Tp>&, const std::shared_ptr<_Up>&)
+     operator==(const shared_ptr<_Tp>& __a, const shared_ptr<_Up>& __b) noexcept
+     ^~~~~~~~
+/usr/include/c++/7/bits/shared_ptr.h:368:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::shared_ptr<_Tp>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/bits/shared_ptr.h:52:0,
+                 from /usr/include/c++/7/memory:81,
+                 from engine/include/core/priority.hpp:3,
+                 from engine/include/core/task.hpp:3,
+                 from engine/include/core/signal.hpp:8,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/shared_ptr_base.h:1420:5: note: candidate: template<class _Tp, __gnu_cxx::_Lock_policy _Lp> bool std::operator==(std::nullptr_t, const std::__shared_ptr<_Tp, _Lp>&)
+     operator==(nullptr_t, const __shared_ptr<_Tp, _Lp>& __a) noexcept
+     ^~~~~~~~
+/usr/include/c++/7/bits/shared_ptr_base.h:1420:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘const value_type {aka const std::weak_ptr<flat::core::listener>}’ is not derived from ‘const std::__shared_ptr<_Tp, _Lp>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/bits/shared_ptr.h:52:0,
+                 from /usr/include/c++/7/memory:81,
+                 from engine/include/core/priority.hpp:3,
+                 from engine/include/core/task.hpp:3,
+                 from engine/include/core/signal.hpp:8,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/shared_ptr_base.h:1415:5: note: candidate: template<class _Tp, __gnu_cxx::_Lock_policy _Lp> bool std::operator==(const std::__shared_ptr<_Tp, _Lp>&, std::nullptr_t)
+     operator==(const __shared_ptr<_Tp, _Lp>& __a, nullptr_t) noexcept
+     ^~~~~~~~
+/usr/include/c++/7/bits/shared_ptr_base.h:1415:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::__shared_ptr<_Tp, _Lp>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/bits/shared_ptr.h:52:0,
+                 from /usr/include/c++/7/memory:81,
+                 from engine/include/core/priority.hpp:3,
+                 from engine/include/core/task.hpp:3,
+                 from engine/include/core/signal.hpp:8,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/shared_ptr_base.h:1409:5: note: candidate: template<class _Tp1, class _Tp2, __gnu_cxx::_Lock_policy _Lp> bool std::operator==(const std::__shared_ptr<_Tp1, _Lp>&, const std::__shared_ptr<_Tp2, _Lp>&)
+     operator==(const __shared_ptr<_Tp1, _Lp>& __a,
+     ^~~~~~~~
+/usr/include/c++/7/bits/shared_ptr_base.h:1409:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::__shared_ptr<_Tp1, _Lp>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/memory:80:0,
+                 from engine/include/core/priority.hpp:3,
+                 from engine/include/core/task.hpp:3,
+                 from engine/include/core/signal.hpp:8,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/unique_ptr.h:694:5: note: candidate: template<class _Tp, class _Dp> bool std::operator==(std::nullptr_t, const std::unique_ptr<_Tp, _Dp>&)
+     operator==(nullptr_t, const unique_ptr<_Tp, _Dp>& __x) noexcept
+     ^~~~~~~~
+/usr/include/c++/7/bits/unique_ptr.h:694:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘const value_type {aka const std::weak_ptr<flat::core::listener>}’ is not derived from ‘const std::unique_ptr<_Tp, _Dp>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/memory:80:0,
+                 from engine/include/core/priority.hpp:3,
+                 from engine/include/core/task.hpp:3,
+                 from engine/include/core/signal.hpp:8,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/unique_ptr.h:689:5: note: candidate: template<class _Tp, class _Dp> bool std::operator==(const std::unique_ptr<_Tp, _Dp>&, std::nullptr_t)
+     operator==(const unique_ptr<_Tp, _Dp>& __x, nullptr_t) noexcept
+     ^~~~~~~~
+/usr/include/c++/7/bits/unique_ptr.h:689:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::unique_ptr<_Tp, _Dp>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/memory:80:0,
+                 from engine/include/core/priority.hpp:3,
+                 from engine/include/core/task.hpp:3,
+                 from engine/include/core/signal.hpp:8,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/unique_ptr.h:683:5: note: candidate: template<class _Tp, class _Dp, class _Up, class _Ep> bool std::operator==(const std::unique_ptr<_Tp, _Dp>&, const std::unique_ptr<_Up, _Ep>&)
+     operator==(const unique_ptr<_Tp, _Dp>& __x,
+     ^~~~~~~~
+/usr/include/c++/7/bits/unique_ptr.h:683:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::unique_ptr<_Tp, _Dp>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/set:62:0,
+                 from engine/include/core/signal.hpp:5,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/stl_multiset.h:896:5: note: candidate: template<class _Key, class _Compare, class _Alloc> bool std::operator==(const std::multiset<_Key, _Compare, _Alloc>&, const std::multiset<_Key, _Compare, _Alloc>&)
+     operator==(const multiset<_Key, _Compare, _Alloc>& __x,
+     ^~~~~~~~
+/usr/include/c++/7/bits/stl_multiset.h:896:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::multiset<_Key, _Compare, _Alloc>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/set:61:0,
+                 from engine/include/core/signal.hpp:5,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/stl_set.h:913:5: note: candidate: template<class _Key, class _Compare, class _Alloc> bool std::operator==(const std::set<_Key, _Compare, _Alloc>&, const std::set<_Key, _Compare, _Alloc>&)
+     operator==(const set<_Key, _Compare, _Alloc>& __x,
+     ^~~~~~~~
+/usr/include/c++/7/bits/stl_set.h:913:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::set<_Key, _Compare, _Alloc>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/list:63:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/stl_list.h:1884:5: note: candidate: template<class _Tp, class _Alloc> bool std::operator==(const std::__cxx11::list<_Tp, _Alloc>&, const std::__cxx11::list<_Tp, _Alloc>&)
+     operator==(const list<_Tp, _Alloc>& __x, const list<_Tp, _Alloc>& __y)
+     ^~~~~~~~
+/usr/include/c++/7/bits/stl_list.h:1884:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::__cxx11::list<_Tp, _Alloc>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/list:63:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/stl_list.h:287:5: note: candidate: template<class _Val> bool std::operator==(const std::_List_iterator<_Tp>&, const std::_List_const_iterator<_Tp>&)
+     operator==(const _List_iterator<_Val>& __x,
+     ^~~~~~~~
+/usr/include/c++/7/bits/stl_list.h:287:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::_List_iterator<_Tp>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/map:62:0,
+                 from engine/include/core/signal.hpp:3,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/stl_multimap.h:1061:5: note: candidate: template<class _Key, class _Tp, class _Compare, class _Alloc> bool std::operator==(const std::multimap<_Key, _Tp, _Compare, _Alloc>&, const std::multimap<_Key, _Tp, _Compare, _Alloc>&)
+     operator==(const multimap<_Key, _Tp, _Compare, _Alloc>& __x,
+     ^~~~~~~~
+/usr/include/c++/7/bits/stl_multimap.h:1061:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::multimap<_Key, _Tp, _Compare, _Alloc>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/map:61:0,
+                 from engine/include/core/signal.hpp:3,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/stl_map.h:1395:5: note: candidate: template<class _Key, class _Tp, class _Compare, class _Alloc> bool std::operator==(const std::map<_Key, _Tp, _Compare, _Alloc>&, const std::map<_Key, _Tp, _Compare, _Alloc>&)
+     operator==(const map<_Key, _Tp, _Compare, _Alloc>& __x,
+     ^~~~~~~~
+/usr/include/c++/7/bits/stl_map.h:1395:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::map<_Key, _Tp, _Compare, _Alloc>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/bits/stl_map.h:63:0,
+                 from /usr/include/c++/7/map:61,
+                 from engine/include/core/signal.hpp:3,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/tuple:1397:5: note: candidate: template<class ... _TElements, class ... _UElements> constexpr bool std::operator==(const std::tuple<_Tps ...>&, const std::tuple<_Args2 ...>&)
+     operator==(const tuple<_TElements...>& __t,
+     ^~~~~~~~
+/usr/include/c++/7/tuple:1397:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::tuple<_Tps ...>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/tuple:39:0,
+                 from /usr/include/c++/7/bits/stl_map.h:63,
+                 from /usr/include/c++/7/map:61,
+                 from engine/include/core/signal.hpp:3,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/array:252:5: note: candidate: template<class _Tp, long unsigned int _Nm> bool std::operator==(const std::array<_Tp, _Nm>&, const std::array<_Tp, _Nm>&)
+     operator==(const array<_Tp, _Nm>& __one, const array<_Tp, _Nm>& __two)
+     ^~~~~~~~
+/usr/include/c++/7/array:252:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::array<_Tp, _Nm>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/map:60:0,
+                 from engine/include/core/signal.hpp:3,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/stl_tree.h:1533:5: note: candidate: template<class _Key, class _Val, class _KeyOfValue, class _Compare, class _Alloc> bool std::operator==(const std::_Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>&, const std::_Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>&)
+     operator==(const _Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>& __x,
+     ^~~~~~~~
+/usr/include/c++/7/bits/stl_tree.h:1533:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::_Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/map:60:0,
+                 from engine/include/core/signal.hpp:3,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/stl_tree.h:406:5: note: candidate: template<class _Val> bool std::operator==(const std::_Rb_tree_iterator<_Tp>&, const std::_Rb_tree_const_iterator<_Val>&)
+     operator==(const _Rb_tree_iterator<_Val>& __x,
+     ^~~~~~~~
+/usr/include/c++/7/bits/stl_tree.h:406:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::_Rb_tree_iterator<_Tp>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/bits/node_handle.h:39:0,
+                 from /usr/include/c++/7/bits/stl_tree.h:72,
+                 from /usr/include/c++/7/map:60,
+                 from engine/include/core/signal.hpp:3,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/optional:910:5: note: candidate: template<class _Tp, class _Up> constexpr std::__optional_relop_t<decltype ((declval<_Up>() == declval<_Tp>()))> std::operator==(const _Up&, const std::optional<_Tp>&)
+     operator==(const _Up& __lhs, const optional<_Tp>& __rhs)
+     ^~~~~~~~
+/usr/include/c++/7/optional:910:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘const value_type {aka const std::weak_ptr<flat::core::listener>}’ is not derived from ‘const std::optional<_Tp>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/bits/node_handle.h:39:0,
+                 from /usr/include/c++/7/bits/stl_tree.h:72,
+                 from /usr/include/c++/7/map:60,
+                 from engine/include/core/signal.hpp:3,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/optional:904:5: note: candidate: template<class _Tp, class _Up> constexpr std::__optional_relop_t<decltype ((declval<_Tp>() == declval<_Up>()))> std::operator==(const std::optional<_Tp>&, const _Up&)
+     operator==(const optional<_Tp>& __lhs, const _Up& __rhs)
+     ^~~~~~~~
+/usr/include/c++/7/optional:904:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::optional<_Tp>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/bits/node_handle.h:39:0,
+                 from /usr/include/c++/7/bits/stl_tree.h:72,
+                 from /usr/include/c++/7/map:60,
+                 from engine/include/core/signal.hpp:3,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/optional:848:5: note: candidate: template<class _Tp> constexpr bool std::operator==(std::nullopt_t, const std::optional<_Tp>&)
+     operator==(nullopt_t, const optional<_Tp>& __rhs) noexcept
+     ^~~~~~~~
+/usr/include/c++/7/optional:848:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘const value_type {aka const std::weak_ptr<flat::core::listener>}’ is not derived from ‘const std::optional<_Tp>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/bits/node_handle.h:39:0,
+                 from /usr/include/c++/7/bits/stl_tree.h:72,
+                 from /usr/include/c++/7/map:60,
+                 from engine/include/core/signal.hpp:3,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/optional:843:5: note: candidate: template<class _Tp> constexpr bool std::operator==(const std::optional<_Tp>&, std::nullopt_t)
+     operator==(const optional<_Tp>& __lhs, nullopt_t) noexcept
+     ^~~~~~~~
+/usr/include/c++/7/optional:843:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::optional<_Tp>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/bits/node_handle.h:39:0,
+                 from /usr/include/c++/7/bits/stl_tree.h:72,
+                 from /usr/include/c++/7/map:60,
+                 from engine/include/core/signal.hpp:3,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/optional:792:5: note: candidate: template<class _Tp, class _Up> constexpr std::__optional_relop_t<decltype ((declval<_Tp>() == declval<_Up>()))> std::operator==(const std::optional<_Tp>&, const std::optional<_Up>&)
+     operator==(const optional<_Tp>& __lhs, const optional<_Up>& __rhs)
+     ^~~~~~~~
+/usr/include/c++/7/optional:792:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::optional<_Tp>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/string:52:0,
+                 from /usr/include/c++/7/stdexcept:39,
+                 from /usr/include/c++/7/optional:38,
+                 from /usr/include/c++/7/bits/node_handle.h:39,
+                 from /usr/include/c++/7/bits/stl_tree.h:72,
+                 from /usr/include/c++/7/map:60,
+                 from engine/include/core/signal.hpp:3,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/basic_string.h:6034:5: note: candidate: template<class _CharT, class _Traits, class _Alloc> bool std::operator==(const std::__cxx11::basic_string<_CharT, _Traits, _Alloc>&, const _CharT*)
+     operator==(const basic_string<_CharT, _Traits, _Alloc>& __lhs,
+     ^~~~~~~~
+/usr/include/c++/7/bits/basic_string.h:6034:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::__cxx11::basic_string<_CharT, _Traits, _Alloc>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/string:52:0,
+                 from /usr/include/c++/7/stdexcept:39,
+                 from /usr/include/c++/7/optional:38,
+                 from /usr/include/c++/7/bits/node_handle.h:39,
+                 from /usr/include/c++/7/bits/stl_tree.h:72,
+                 from /usr/include/c++/7/map:60,
+                 from engine/include/core/signal.hpp:3,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/basic_string.h:6022:5: note: candidate: template<class _CharT, class _Traits, class _Alloc> bool std::operator==(const _CharT*, const std::__cxx11::basic_string<_CharT, _Traits, _Alloc>&)
+     operator==(const _CharT* __lhs,
+     ^~~~~~~~
+/usr/include/c++/7/bits/basic_string.h:6022:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   mismatched types ‘const _CharT*’ and ‘std::weak_ptr<flat::core::listener>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/string:52:0,
+                 from /usr/include/c++/7/stdexcept:39,
+                 from /usr/include/c++/7/optional:38,
+                 from /usr/include/c++/7/bits/node_handle.h:39,
+                 from /usr/include/c++/7/bits/stl_tree.h:72,
+                 from /usr/include/c++/7/map:60,
+                 from engine/include/core/signal.hpp:3,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/basic_string.h:6008:5: note: candidate: template<class _CharT> typename __gnu_cxx::__enable_if<std::__is_char<_Tp>::__value, bool>::__type std::operator==(const std::__cxx11::basic_string<_CharT>&, const std::__cxx11::basic_string<_CharT>&)
+     operator==(const basic_string<_CharT>& __lhs,
+     ^~~~~~~~
+/usr/include/c++/7/bits/basic_string.h:6008:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::__cxx11::basic_string<_CharT>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/string:52:0,
+                 from /usr/include/c++/7/stdexcept:39,
+                 from /usr/include/c++/7/optional:38,
+                 from /usr/include/c++/7/bits/node_handle.h:39,
+                 from /usr/include/c++/7/bits/stl_tree.h:72,
+                 from /usr/include/c++/7/map:60,
+                 from engine/include/core/signal.hpp:3,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/basic_string.h:6000:5: note: candidate: template<class _CharT, class _Traits, class _Alloc> bool std::operator==(const std::__cxx11::basic_string<_CharT, _Traits, _Alloc>&, const std::__cxx11::basic_string<_CharT, _Traits, _Alloc>&)
+     operator==(const basic_string<_CharT, _Traits, _Alloc>& __lhs,
+     ^~~~~~~~
+/usr/include/c++/7/bits/basic_string.h:6000:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::__cxx11::basic_string<_CharT, _Traits, _Alloc>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/bits/basic_string.h:48:0,
+                 from /usr/include/c++/7/string:52,
+                 from /usr/include/c++/7/stdexcept:39,
+                 from /usr/include/c++/7/optional:38,
+                 from /usr/include/c++/7/bits/node_handle.h:39,
+                 from /usr/include/c++/7/bits/stl_tree.h:72,
+                 from /usr/include/c++/7/map:60,
+                 from engine/include/core/signal.hpp:3,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/string_view:462:5: note: candidate: template<class _CharT, class _Traits> constexpr bool std::operator==(std::__detail::__idt<std::basic_string_view<_CharT, _Traits> >, std::basic_string_view<_CharT, _Traits>)
+     operator==(__detail::__idt<basic_string_view<_CharT, _Traits>> __x,
+     ^~~~~~~~
+/usr/include/c++/7/string_view:462:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘std::basic_string_view<_CharT, _Traits>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/bits/basic_string.h:48:0,
+                 from /usr/include/c++/7/string:52,
+                 from /usr/include/c++/7/stdexcept:39,
+                 from /usr/include/c++/7/optional:38,
+                 from /usr/include/c++/7/bits/node_handle.h:39,
+                 from /usr/include/c++/7/bits/stl_tree.h:72,
+                 from /usr/include/c++/7/map:60,
+                 from engine/include/core/signal.hpp:3,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/string_view:456:5: note: candidate: template<class _CharT, class _Traits> constexpr bool std::operator==(std::basic_string_view<_CharT, _Traits>, std::__detail::__idt<std::basic_string_view<_CharT, _Traits> >)
+     operator==(basic_string_view<_CharT, _Traits> __x,
+     ^~~~~~~~
+/usr/include/c++/7/string_view:456:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘std::basic_string_view<_CharT, _Traits>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/bits/basic_string.h:48:0,
+                 from /usr/include/c++/7/string:52,
+                 from /usr/include/c++/7/stdexcept:39,
+                 from /usr/include/c++/7/optional:38,
+                 from /usr/include/c++/7/bits/node_handle.h:39,
+                 from /usr/include/c++/7/bits/stl_tree.h:72,
+                 from /usr/include/c++/7/map:60,
+                 from engine/include/core/signal.hpp:3,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/string_view:450:5: note: candidate: template<class _CharT, class _Traits> constexpr bool std::operator==(std::basic_string_view<_CharT, _Traits>, std::basic_string_view<_CharT, _Traits>)
+     operator==(basic_string_view<_CharT, _Traits> __x,
+     ^~~~~~~~
+/usr/include/c++/7/string_view:450:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘std::basic_string_view<_CharT, _Traits>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/bits/char_traits.h:40:0,
+                 from /usr/include/c++/7/string:40,
+                 from /usr/include/c++/7/stdexcept:39,
+                 from /usr/include/c++/7/optional:38,
+                 from /usr/include/c++/7/bits/node_handle.h:39,
+                 from /usr/include/c++/7/bits/stl_tree.h:72,
+                 from /usr/include/c++/7/map:60,
+                 from engine/include/core/signal.hpp:3,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/postypes.h:216:5: note: candidate: template<class _StateT> bool std::operator==(const std::fpos<_StateT>&, const std::fpos<_StateT>&)
+     operator==(const fpos<_StateT>& __lhs, const fpos<_StateT>& __rhs)
+     ^~~~~~~~
+/usr/include/c++/7/bits/postypes.h:216:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::fpos<_StateT>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/bits/stl_tree.h:64:0,
+                 from /usr/include/c++/7/map:60,
+                 from engine/include/core/signal.hpp:3,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/allocator.h:152:5: note: candidate: template<class _Tp> bool std::operator==(const std::allocator<_Tp1>&, const std::allocator<_Tp1>&)
+     operator==(const allocator<_Tp>&, const allocator<_Tp>&)
+     ^~~~~~~~
+/usr/include/c++/7/bits/allocator.h:152:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::allocator<_Tp1>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/bits/stl_tree.h:64:0,
+                 from /usr/include/c++/7/map:60,
+                 from engine/include/core/signal.hpp:3,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/allocator.h:146:5: note: candidate: template<class _T1, class _T2> bool std::operator==(const std::allocator<_Tp1>&, const std::allocator<_T2>&)
+     operator==(const allocator<_T1>&, const allocator<_T2>&)
+     ^~~~~~~~
+/usr/include/c++/7/bits/allocator.h:146:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::allocator<_Tp1>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/bits/stl_algobase.h:67:0,
+                 from /usr/include/c++/7/bits/stl_tree.h:63,
+                 from /usr/include/c++/7/map:60,
+                 from engine/include/core/signal.hpp:3,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/stl_iterator.h:1124:5: note: candidate: template<class _Iterator> constexpr bool std::operator==(const std::move_iterator<_IteratorL>&, const std::move_iterator<_IteratorL>&)
+     operator==(const move_iterator<_Iterator>& __x,
+     ^~~~~~~~
+/usr/include/c++/7/bits/stl_iterator.h:1124:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::move_iterator<_IteratorL>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/bits/stl_algobase.h:67:0,
+                 from /usr/include/c++/7/bits/stl_tree.h:63,
+                 from /usr/include/c++/7/map:60,
+                 from engine/include/core/signal.hpp:3,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/stl_iterator.h:1118:5: note: candidate: template<class _IteratorL, class _IteratorR> constexpr bool std::operator==(const std::move_iterator<_IteratorL>&, const std::move_iterator<_IteratorR>&)
+     operator==(const move_iterator<_IteratorL>& __x,
+     ^~~~~~~~
+/usr/include/c++/7/bits/stl_iterator.h:1118:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::move_iterator<_IteratorL>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/bits/stl_algobase.h:67:0,
+                 from /usr/include/c++/7/bits/stl_tree.h:63,
+                 from /usr/include/c++/7/map:60,
+                 from engine/include/core/signal.hpp:3,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/stl_iterator.h:337:5: note: candidate: template<class _IteratorL, class _IteratorR> constexpr bool std::operator==(const std::reverse_iterator<_Iterator>&, const std::reverse_iterator<_IteratorR>&)
+     operator==(const reverse_iterator<_IteratorL>& __x,
+     ^~~~~~~~
+/usr/include/c++/7/bits/stl_iterator.h:337:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::reverse_iterator<_Iterator>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/bits/stl_algobase.h:67:0,
+                 from /usr/include/c++/7/bits/stl_tree.h:63,
+                 from /usr/include/c++/7/map:60,
+                 from engine/include/core/signal.hpp:3,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/stl_iterator.h:299:5: note: candidate: template<class _Iterator> constexpr bool std::operator==(const std::reverse_iterator<_Iterator>&, const std::reverse_iterator<_Iterator>&)
+     operator==(const reverse_iterator<_Iterator>& __x,
+     ^~~~~~~~
+/usr/include/c++/7/bits/stl_iterator.h:299:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::reverse_iterator<_Iterator>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+In file included from /usr/include/c++/7/bits/stl_algobase.h:64:0,
+                 from /usr/include/c++/7/bits/stl_tree.h:63,
+                 from /usr/include/c++/7/map:60,
+                 from engine/include/core/signal.hpp:3,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/stl_pair.h:443:5: note: candidate: template<class _T1, class _T2> constexpr bool std::operator==(const std::pair<_T1, _T2>&, const std::pair<_T1, _T2>&)
+     operator==(const pair<_T1, _T2>& __x, const pair<_T1, _T2>& __y)
+     ^~~~~~~~
+/usr/include/c++/7/bits/stl_pair.h:443:5: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/7/list:64:0,
+                 from engine/include/core/signal.hpp:4,
+                 from engine/signal.cpp:1:
+/usr/include/c++/7/bits/list.tcc:334:17: note:   ‘std::weak_ptr<flat::core::listener>’ is not derived from ‘const std::pair<_T1, _T2>’
+    if (*__first == __value)
+        ~~~~~~~~~^~~~~~~~~~
+[4/19] compiling engine/focusable.cpp
+FAILED: build/engine/focusable.o 
+g++ -fdiagnostics-color -g -Wall -pedantic -fPIC -std=c++17 -DDEBUG -I lib/include -I engine/include -c engine/focusable.cpp -o build/engine/focusable.o
+engine/focusable.cpp: In constructor ‘Focusable::Focusable(bool)’:
+engine/focusable.cpp:7:25: error: ‘flat::core::task’ is not a template
+     event_trigger = new flat::core::task<Focusable>(this, &Focusable::serial_precall, 0);
+                         ^~~~
+engine/focusable.cpp:7:88: error: no matching function for call to ‘flat::core::task::task(Focusable*, void (Focusable::*)(void*), int)’
+     event_trigger = new flat::core::task<Focusable>(this, &Focusable::serial_precall, 0);
+                                                                                        ^
+In file included from engine/focusable.cpp:2:0:
+engine/include/core/task.hpp:22:13: note: candidate: flat::core::task::task(flat::core::task::callback, flat::core::priority_t)
+             task(callback f, priority_t p = priority_t::none);
+             ^~~~
+engine/include/core/task.hpp:22:13: note:   candidate expects 2 arguments, 3 provided
+engine/include/core/task.hpp:16:15: note: candidate: flat::core::task::task(const flat::core::task&)
+         class task : public prioritized {
+               ^~~~
+engine/include/core/task.hpp:16:15: note:   candidate expects 1 argument, 3 provided
+engine/include/core/task.hpp:16:15: note: candidate: flat::core::task::task(flat::core::task&&)
+engine/include/core/task.hpp:16:15: note:   candidate expects 1 argument, 3 provided
+engine/focusable.cpp: In destructor ‘virtual Focusable::~Focusable()’:
+engine/focusable.cpp:12:12: warning: possible problem detected in invocation of delete operator: [-Wdelete-incomplete]
+     delete event_trigger;
+            ^~~~~~~~~~~~~
+engine/focusable.cpp:12:12: warning: invalid use of incomplete type ‘class task_s’
+In file included from engine/include/serial/focusable.h:5:0,
+                 from engine/focusable.cpp:1:
+engine/include/types.hpp:32:7: note: forward declaration of ‘class task_s’
+ class task_s;
+       ^~~~~~
+engine/focusable.cpp:12:12: note: neither the destructor nor the class-specific operator delete will be called, even if they are declared when the class is defined
+     delete event_trigger;
+            ^~~~~~~~~~~~~
+[5/19] compiling engine/flatserial.cpp
+FAILED: build/engine/flatserial.o 
+g++ -fdiagnostics-color -g -Wall -pedantic -fPIC -std=c++17 -DDEBUG -I lib/include -I engine/include -c engine/flatserial.cpp -o build/engine/flatserial.o
+engine/flatserial.cpp: In constructor ‘SDL_EventCollector::SDL_EventCollector()’:
+engine/flatserial.cpp:7:19: error: ‘flat::core::task’ is not a template
+     checker = new flat::core::task<SDL_EventCollector>(this, &SDL_EventCollector::collect, 0, true, 0);
+                   ^~~~
+engine/flatserial.cpp:7:102: error: no matching function for call to ‘flat::core::task::task(SDL_EventCollector*, void (SDL_EventCollector::*)(void*), int, bool, int)’
+     checker = new flat::core::task<SDL_EventCollector>(this, &SDL_EventCollector::collect, 0, true, 0);
+                                                                                                      ^
+In file included from engine/flatserial.cpp:2:0:
+engine/include/core/task.hpp:22:13: note: candidate: flat::core::task::task(flat::core::task::callback, flat::core::priority_t)
+             task(callback f, priority_t p = priority_t::none);
+             ^~~~
+engine/include/core/task.hpp:22:13: note:   candidate expects 2 arguments, 5 provided
+engine/include/core/task.hpp:16:15: note: candidate: flat::core::task::task(const flat::core::task&)
+         class task : public prioritized {
+               ^~~~
+engine/include/core/task.hpp:16:15: note:   candidate expects 1 argument, 5 provided
+engine/include/core/task.hpp:16:15: note: candidate: flat::core::task::task(flat::core::task&&)
+engine/include/core/task.hpp:16:15: note:   candidate expects 1 argument, 5 provided
+engine/flatserial.cpp:10:18: error: ‘flat::core::task’ is not a template
+     eraser = new flat::core::task<SDL_EventCollector>(this, &SDL_EventCollector::erase, 0, false, 0xff);
+                  ^~~~
+engine/flatserial.cpp:10:103: error: no matching function for call to ‘flat::core::task::task(SDL_EventCollector*, void (SDL_EventCollector::*)(void*), int, bool, int)’
+     eraser = new flat::core::task<SDL_EventCollector>(this, &SDL_EventCollector::erase, 0, false, 0xff);
+                                                                                                       ^
+In file included from engine/flatserial.cpp:2:0:
+engine/include/core/task.hpp:22:13: note: candidate: flat::core::task::task(flat::core::task::callback, flat::core::priority_t)
+             task(callback f, priority_t p = priority_t::none);
+             ^~~~
+engine/include/core/task.hpp:22:13: note:   candidate expects 2 arguments, 5 provided
+engine/include/core/task.hpp:16:15: note: candidate: flat::core::task::task(const flat::core::task&)
+         class task : public prioritized {
+               ^~~~
+engine/include/core/task.hpp:16:15: note:   candidate expects 1 argument, 5 provided
+engine/include/core/task.hpp:16:15: note: candidate: flat::core::task::task(flat::core::task&&)
+engine/include/core/task.hpp:16:15: note:   candidate expects 1 argument, 5 provided
+engine/flatserial.cpp: In destructor ‘SDL_EventCollector::~SDL_EventCollector()’:
+engine/flatserial.cpp:15:12: warning: possible problem detected in invocation of delete operator: [-Wdelete-incomplete]
+     delete checker;
+            ^~~~~~~
+engine/flatserial.cpp:15:12: warning: invalid use of incomplete type ‘class task_s’
+In file included from engine/include/flatserial.h:4:0,
+                 from engine/flatserial.cpp:1:
+engine/include/types.hpp:32:7: note: forward declaration of ‘class task_s’
+ class task_s;
+       ^~~~~~
+engine/flatserial.cpp:15:12: note: neither the destructor nor the class-specific operator delete will be called, even if they are declared when the class is defined
+     delete checker;
+            ^~~~~~~
+engine/flatserial.cpp:16:12: warning: possible problem detected in invocation of delete operator: [-Wdelete-incomplete]
+     delete eraser;
+            ^~~~~~
+engine/flatserial.cpp:16:12: warning: invalid use of incomplete type ‘class task_s’
+In file included from engine/include/flatserial.h:4:0,
+                 from engine/flatserial.cpp:1:
+engine/include/types.hpp:32:7: note: forward declaration of ‘class task_s’
+ class task_s;
+       ^~~~~~
+engine/flatserial.cpp:16:12: note: neither the destructor nor the class-specific operator delete will be called, even if they are declared when the class is defined
+     delete eraser;
+            ^~~~~~
+engine/flatserial.cpp: In member function ‘const std::vector<SDL_Event>& SDL_EventCollector::getStack(uint32_t) const’:
+engine/flatserial.cpp:94:1: warning: control reaches end of non-void function [-Wreturn-type]
+ }
+ ^
+[6/19] compiling engine/flatland.cpp
+FAILED: build/engine/flatland.o 
+g++ -fdiagnostics-color -g -Wall -pedantic -fPIC -std=c++17 -DDEBUG -I lib/include -I engine/include -c engine/flatland.cpp -o build/engine/flatland.o
+In file included from engine/flatland.cpp:1:0:
+engine/include/flatland.h: In constructor ‘flat::flat_status::flat_status(unsigned char, unsigned char, unsigned char, unsigned char, unsigned char, unsigned char, unsigned char, unsigned char, unsigned char, unsigned char)’:
+engine/include/flatland.h:34:26: warning: ‘flat::flat_status::events’ will be initialized after [-Wreorder]
+     unsigned char events:1;
+                          ^
+engine/include/flatland.h:31:28: warning:   ‘unsigned char:1 flat::flat_status::joystick’ [-Wreorder]
+     unsigned char joystick:1;
+                            ^
+engine/include/flatland.h:13:5: warning:   when initialized here [-Wreorder]
+     flat_status(unsigned char video = 1,
+     ^~~~~~~~~~~
+engine/flatland.cpp: At global scope:
+engine/flatland.cpp:23:1: error: ‘SignalChannel’ does not name a type
+ SignalChannel * core = 0;
+ ^~~~~~~~~~~~~
+engine/flatland.cpp:25:1: error: ‘gameloop’ does not name a type
+ gameloop loop_function;
+ ^~~~~~~~
+engine/flatland.cpp:27:1: error: ‘flat_status’ does not name a type; did you mean ‘window_status’?
+ flat_status status;
+ ^~~~~~~~~~~
+ window_status
+engine/flatland.cpp:32:32: error: ‘flat_status’ does not name a type; did you mean ‘window_status’?
+ uint32_t status_to_flags(const flat_status& s)
+                                ^~~~~~~~~~~
+                                window_status
+engine/flatland.cpp: In function ‘uint32_t status_to_flags(const int&)’:
+engine/flatland.cpp:36:11: error: request for member ‘audio’ in ‘s’, which is of non-class type ‘const int’
+     if (s.audio)
+           ^~~~~
+engine/flatland.cpp:38:11: error: request for member ‘timer’ in ‘s’, which is of non-class type ‘const int’
+     if (s.timer)
+           ^~~~~
+engine/flatland.cpp:40:11: error: request for member ‘video’ in ‘s’, which is of non-class type ‘const int’
+     if (s.video)
+           ^~~~~
+engine/flatland.cpp:42:11: error: request for member ‘joystick’ in ‘s’, which is of non-class type ‘const int’
+     if (s.joystick)
+           ^~~~~~~~
+engine/flatland.cpp:44:11: error: request for member ‘haptic’ in ‘s’, which is of non-class type ‘const int’
+     if (s.haptic)
+           ^~~~~~
+engine/flatland.cpp:46:11: error: request for member ‘controller’ in ‘s’, which is of non-class type ‘const int’
+     if (s.controller)
+           ^~~~~~~~~~
+engine/flatland.cpp:48:11: error: request for member ‘events’ in ‘s’, which is of non-class type ‘const int’
+     if (s.events)
+           ^~~~~~
+engine/flatland.cpp:50:11: error: request for member ‘haptic’ in ‘s’, which is of non-class type ‘const int’
+     if (s.haptic)
+           ^~~~~~
+engine/flatland.cpp:52:11: error: request for member ‘controller’ in ‘s’, which is of non-class type ‘const int’
+     if (s.controller)
+           ^~~~~~~~~~
+engine/flatland.cpp:54:11: error: request for member ‘events’ in ‘s’, which is of non-class type ‘const int’
+     if (s.events)
+           ^~~~~~
+engine/flatland.cpp: At global scope:
+engine/flatland.cpp:62:1: error: expected class-name before ‘{’ token
+ {
+ ^
+engine/flatland.cpp:63:18: error: ‘virtual void QuitListener::callback(flat::core::object*, void*)’ marked ‘override’, but does not override
+     virtual void callback(flat::core::object*, void*) override
+                  ^~~~~~~~
+engine/flatland.cpp: In member function ‘virtual void QuitListener::callback(flat::core::object*, void*)’:
+engine/flatland.cpp:66:9: error: ‘quit_flatland’ was not declared in this scope
+         quit_flatland();
+         ^~~~~~~~~~~~~
+engine/flatland.cpp:66:9: note: suggested alternative:
+In file included from engine/flatland.cpp:1:0:
+engine/include/flatland.h:41:6: note:   ‘flat::quit_flatland’
+ void quit_flatland();
+      ^~~~~~~~~~~~~
+engine/flatland.cpp: In constructor ‘QuitListener::QuitListener()’:
+engine/flatland.cpp:73:9: error: ‘addFilter’ was not declared in this scope
+         addFilter("quit");
+         ^~~~~~~~~
+engine/flatland.cpp:74:9: error: ‘core’ was not declared in this scope
+         core->connect(this);
+         ^~~~
+engine/flatland.cpp:74:9: note: suggested alternative:
+In file included from engine/flatland.cpp:1:0:
+engine/include/flatland.h:43:11: note:   ‘flat::core’
+ namespace core {
+           ^~~~
+engine/flatland.cpp: At global scope:
+engine/flatland.cpp:78:34: error: ‘gameloop’ has not been declared
+ int init_flatland(FlatWindow* w, gameloop loop, const flat_status& s, float _fps)
+                                  ^~~~~~~~
+engine/flatland.cpp:78:55: error: ‘flat_status’ does not name a type; did you mean ‘window_status’?
+ int init_flatland(FlatWindow* w, gameloop loop, const flat_status& s, float _fps)
+                                                       ^~~~~~~~~~~
+                                                       window_status
+engine/flatland.cpp: In function ‘int init_flatland(FlatWindow*, int, const int&, float)’:
+engine/flatland.cpp:84:5: error: ‘core’ was not declared in this scope
+     core = new SignalChannel("core");
+     ^~~~
+engine/flatland.cpp:84:5: note: suggested alternative:
+In file included from engine/flatland.cpp:1:0:
+engine/include/flatland.h:43:11: note:   ‘flat::core’
+ namespace core {
+           ^~~~
+engine/flatland.cpp:84:16: error: expected type-specifier before ‘SignalChannel’
+     core = new SignalChannel("core");
+                ^~~~~~~~~~~~~
+engine/flatland.cpp:92:5: error: ‘loop_function’ was not declared in this scope
+     loop_function = loop;
+     ^~~~~~~~~~~~~
+engine/flatland.cpp:92:5: note: suggested alternative: ‘SDL_LoadFunction’
+     loop_function = loop;
+     ^~~~~~~~~~~~~
+     SDL_LoadFunction
+engine/flatland.cpp:93:5: error: ‘status’ was not declared in this scope
+     status = s;
+     ^~~~~~
+engine/flatland.cpp:93:5: note: suggested alternative: ‘static’
+     status = s;
+     ^~~~~~
+     static
+engine/flatland.cpp:135:29: error: incomplete type ‘task_s’ used in nested name specifier
+                     task_s::executePreProcess();
+                             ^~~~~~~~~~~~~~~~~
+engine/flatland.cpp:157:29: error: incomplete type ‘task_s’ used in nested name specifier
+                     task_s::executePostProcess();
+                             ^~~~~~~~~~~~~~~~~~
+engine/flatland.cpp:170:17: error: ‘quit_flatland’ was not declared in this scope
+                 quit_flatland();
+                 ^~~~~~~~~~~~~
+engine/flatland.cpp:170:17: note: suggested alternative:
+In file included from engine/flatland.cpp:1:0:
+engine/include/flatland.h:41:6: note:   ‘flat::quit_flatland’
+ void quit_flatland();
+      ^~~~~~~~~~~~~
+engine/flatland.cpp:189:12: error: type ‘<type error>’ argument given to ‘delete’, expected pointer
+     delete core;
+            ^~~~
+engine/flatland.cpp: In function ‘void quit_flatland()’:
+engine/flatland.cpp:201:5: error: ‘status’ was not declared in this scope
+     status.running = 0;
+     ^~~~~~
+engine/flatland.cpp:201:5: note: suggested alternative: ‘static’
+     status.running = 0;
+     ^~~~~~
+     static
+engine/flatland.cpp: At global scope:
+engine/flatland.cpp:205:1: error: ‘flat_status’ does not name a type; did you mean ‘window_status’?
+ flat_status flatland_status()
+ ^~~~~~~~~~~
+ window_status
+engine/flatland.cpp:210:1: error: ‘SignalChannel’ does not name a type
+ SignalChannel * getCoreChannel()
+ ^~~~~~~~~~~~~
+ninja: build stopped: subcommand failed.
