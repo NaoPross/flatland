@@ -6,20 +6,18 @@
 using namespace flat::core;
 
 // test class
-struct message {
-
-    message(job& m_job, bool date)
-    {
-        if (date)
-            mytask = m_job.make_task(std::bind(&message::print_date, *this));
-        else
-            mytask = m_job.make_task(std::bind(&message::print_motd, *this));
-    }
-
-    std::shared_ptr<task> mytask;
+class message {
+private:
+    task::ptr mytask;
 
     std::string motd = "today we have no motd!";
     std::string date = "1 Jan 1970";
+
+public:
+    message(job& job) {
+        // add an example job
+        mytask = job.delegate_task(&message::print_motd, *this);
+    }
 
     void print_date() {
         std::cout << date << std::endl;
@@ -49,26 +47,27 @@ int main(int argc, char *argv[]) {
     job f_job;
 
     // test a function
-    auto ciao_fn_task = f_job.make_task(hello);
+    auto hello_fn_task = f_job.delegate_task(hello);
 
     // test a function ad make the pointer go out of scope
     {
-        auto hello_fn_task = f_job.make_task(ciao);
+        auto ciao_fn_task = f_job.delegate_task(ciao);
     }
 
-    f_job.invoke_tasks();
+    f_job();
 
     std::cout << std::endl;
     std::cout << "Testing methods" << std::endl;
-    std::cout << "  should print once: today we have no motd!" << std::endl;
+    std::cout << "should print once: today we have no motd!" << std::endl;
+
     job m_job;
 
     // test a method
-    message m(m_job, false);
+    message m(m_job);
 
     // test a method of an object that goes out of scope
     {
-        message out(m_job, true);
+        message out(m_job);
     }
 
     // invoke tasks
@@ -76,7 +75,7 @@ int main(int argc, char *argv[]) {
     //
     //  hello!
     //  hello world!
-    m_job.invoke_tasks();
+    m_job();
 
     return 0;
 }
