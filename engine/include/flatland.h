@@ -1,6 +1,8 @@
 #ifndef __FLATLAND_H__
 #define __FLATLAND_H__
 
+namespace flat {
+
 class FlatWindow;
 
 typedef void (*gameloop)(float);
@@ -38,11 +40,21 @@ struct flat_status
 int init_flatland(FlatWindow*, gameloop, const flat_status&, float fps = 60);
 void quit_flatland();
 
-/* Core channel */
+namespace core {
+    
+    class job;
+    class task;
+    class channel;
+}
 
-class SignalChannel;
+/* Engine channels */
 
-SignalChannel * getCoreChannel();
+channel& core_chan();
+channel& error_chan();
+
+/* Main job access */
+
+job& game_job();
 
 /* Window and status accessors */
 
@@ -57,5 +69,7 @@ void load_flatland_status(const flat_status&);
 /* Common defined variables */
 
 extern float flatland_dt;
+
+}
 
 #endif

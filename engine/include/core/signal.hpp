@@ -8,73 +8,92 @@
 #include "task.hpp"
 #include "types.h"
 #include <functional>
+#include <memory>
 #include "priority.hpp"
+#include "labelled.hpp"
 
 namespace flat
 {
     namespace core
     {
 
-    class signal : virtual public object, public prioritized
+    class signal : virtual public labelled, virtual public prioritized
     {
     
     public:
     
         object * sender;
-        void * data; // TODO, avoid this void pointer
+        package m_package;
         priority_t prior;
     
         signal(     object * sender, 
                     const std::string& id = "", 
-                    void * data,
+                    void * data = 0,
                     priority_t prior = priority_t::none);
 
         /* Alias to flat::core::channel::emit() */
         bool emit(const std::string& channel) const;
+
+        struct package
+        {
+            package(void *data) : data(data) {}
+
+            template<class T>
+            T * get() {
+
+                return dynamic_cast<T>(data);
+            }
+
+            void * data;
+        };
     };
 
     
     /* Channel class */
-    class channel : virtual public object
+    class channel : virtual public labelled
     {
         /* Post processing signal stacking */
         queue<signal> stack;
     
         /* Listeners list */
-        std::list<listener*> listeners;
+        std::list<std::weak_ptr<listener>> listeners;
     
         /* Synchronous task checking for signals */
-        task * checker;
+        task::ptr checker;
         
         /* Channel mapping */
-        static std::map<std::string, channel*> channels;    
+        static std::map<std::string, std::weak_ptr<channel>> channels;    
      
     public:
     
         channel(const std::string& id = "", priority_t task_priority = priority_t::none);
         ~channel();
+
+        void start();
+        bool map();
     
         void emit(const signal&);
 
-        void connect(const listener*);
-        void disconnect(const listener*);
+        bool connect(listener::ptr l);
+        void disconnect(listener::ptr l);
        
-        static channel * find_channel(const std::string&); 
+        static ptr find(const std::string&); 
+
+        static ptr create(const string& id, priority_t prior);
     
-        void post_processing();
+        void check_and_call();
+
+        typedef shared_ptr<channel> ptr;
     };
     
     /* Listener class */
-    class listener : virtual public object
+    class listener
     {
-
         std::list<std::string> filters;
     
         bool check_in_filters(const std::string&) const;
     
         callback_t m_callback;
-
-        channel * parent;
     
     public:
     
@@ -93,14 +112,15 @@ namespace flat
 
         /* Allow to safely bind e functor */
         template<class T>
-        static listener create(  const (T::*method(const object*, void*))& fct,
-                                  T* ptr,
-                                  const std::initializer_list<std::string>& filters = {})
+        static ptr make(  const (T::*method(const object*, void*))& fct,
+                          T* obj,
+                          const std::initializer_list<std::string>& filters = {})
         {
-            return listener(std::bind(fct, ptr), filters);
+            return new listener(std::bind(fct, ptr), filters);
         }
 
-        typedef std::function<void(const object*, void*)> callback_t;
+        typedef std::function<void(const object*, signal::package)> callback_t;
+        typedef shared_ptr<listener> ptr;
     };
 
     }
