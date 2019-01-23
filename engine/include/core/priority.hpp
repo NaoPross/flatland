@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <set>
 
 namespace flat {
@@ -32,8 +33,20 @@ namespace flat {
                 return lhs.priority() < rhs.priority();
             }
 
-            bool operator()(const prioritized * const& lhs, const prioritized * const& rhs) {
-                return lhs->priority() < rhs->priority();
+            bool operator()(const std::weak_ptr<prioritized> lhs, const std::weak_ptr<prioritized>& rhs) {
+                if (auto l = lhs.lock()) {
+                    if (auto r = rhs.lock()) {
+                        // if both valid, check their priority
+                        // in case they are the same, left is prioritized
+                        return l->priority() < r->priority();
+                    } else {
+                        // if right is expired, left is prioritized
+                        return true;
+                    }
+                } else {
+                    // if left is expired, the right is prioritized
+                    return false;
+                }
             }
         };
 
