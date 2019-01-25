@@ -21,9 +21,9 @@ component::~component()
 
 void component::set_parent(component *parent)
 {
-    if (parent == 0)
+    if (parent == 0) {
         // TODO set screen as parent layer
-        ;
+    }
 
     this->m_parent = m_parent;
 }

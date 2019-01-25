@@ -6,8 +6,7 @@ using namespace std;
 using namespace flat;
 
 surface::surface(const char *filename, uint32_t format, SDL_Surface *parent)
-
-    : flat::core::labelled(filename, true), parent(parent), hide(false)
+    : core::labelled(filename, true), parent(parent), hide(false)
 {
     cout << "surface: loading " << filename << endl;
     sdl_surface = loadOptimizedSurface(filename, format);
@@ -33,8 +32,7 @@ surface::surface(const char *filename, uint32_t format, SDL_Surface *parent)
 }
 
 surface::surface(SDL_Surface *sdl_surface, SDL_Surface *parent)
-
-    : flat::core::object(), parent(parent), hide(false)
+    : core::object(), parent(parent), hide(false)
 {
     this->sdl_surface = new SDL_Surface(*sdl_surface);
 
@@ -54,8 +52,7 @@ surface::surface(SDL_Surface *sdl_surface, SDL_Surface *parent)
 }
 
 surface::surface(const surface &sprite)
-
-    : flat::core::object(sprite), parent(sprite.parent),
+    : core::object(sprite), parent(sprite.parent),
         hide(sprite.hide)
 {
     offset = new SDL_Rect(*sprite.offset);
