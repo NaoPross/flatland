@@ -14,7 +14,7 @@ using namespace std;
 namespace flat {
     namespace core {
         task::task(task::callback f, priority_t p)
-            : m_callback(f) {}
+            : prioritized(p), m_callback(f) {}
 
         std::shared_ptr<task> job::delegate_task(task::callback f, priority_t p) {
             auto shared = std::make_shared<task>(f, p);
