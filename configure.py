@@ -47,6 +47,9 @@ with open("build.ninja", "w") as bf:
     print("build build/libflatland.a: link-static " + " ".join(objects), file=bf)
     print("\n", file=bf)
 
+    # set as default
+    print("default build/libflatland.so build/libflatland.a", file=bf)
+    print("\n", file=bf)
 
     # find test sources
     sources, objects = find_sources("test")
