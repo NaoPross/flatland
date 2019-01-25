@@ -12,22 +12,51 @@ using namespace flat;
 
 #include "core/task.hpp"
 #include "core/signal.hpp"
+#include "object.hpp"
 #include "window.hpp"
 #include "exception.hpp"
 #include "exceptions/forcequit.hpp"
 
+/* Global fields definitions */
+
 float flatland_dt;
 
-set<flat::core::object*> objects;
-
 FlatWindow * window = 0;
-
-gameloop loop_function;
 
 flat_status status;
 
 float fps;
 float fps_pause = 5;
+
+core::job mainsync_job;
+
+core::channel core_chan("core");
+
+core::listener::ptr quit_listener;
+core::listener::ptr print_listener;
+
+/* channels listeners callback */
+
+void quit_callback(object *sender, signal::package)
+{
+    cout << "Flatland: quit request attempted" << endl;
+    flat::quit();
+}
+
+void print_callback(object *sender, signal::package p)
+{
+    const char * out = p.get<const char>();
+    string * sout = p.get<string>();
+
+    if (!out)
+        cout << "Flatland: " << out << endl;
+    else if (!sout)
+        cout << "Flatland: " << sout << endl;
+
+    // else fail silently
+}
+
+/* Functions implementation */
 
 uint32_t status_to_flags(const flat_status& s)
 {
@@ -57,16 +86,67 @@ uint32_t status_to_flags(const flat_status& s)
     return flags; 
 }
 
+/* Accessors */
+
+channel& core_channel()
+{
+    return core_chan;
+}
+
+job& main_job()
+{
+    return mainsync_job;
+}
+
+/* Main loop */
+
 int init_flatland(FlatWindow* w, gameloop loop, const flat_status& s, float _fps)
 {
     cout << "Flatland: Initializing flatland" << endl;
+
+    // init core channel
+    
+    cout << "Flatland: Initializing core channel" << endl;
+    
+    core_chan.start(priority_t::max);
+
+    if (!core_chan.map()) {
+
+        cout << "Flatland: Could not map 'core' channel" << endl;
+        cout << "Flatland: Do not call another channel 'core' before flatland initialization" << endl;
+        cout << "Flatland: Aborting" << endl;
+        return -1;
+    }
+
+    // bind listeners
+    
+    quit_listener = core_chan.connect(&quit_callback, {"quit"});
+
+    // control if quit was not already connected
+    if (!quit_listener) {
+        
+        cout << "Flatland: Could not connect 'quit' listener" << endl;
+        cout << "Flatland: Do not connect to core channel another listener with filter name 'quit' before flatland initialization" << endl;
+        cout << "Flatland: Aborting" << endl;
+        return -1;
+    }
+
+    print_listener = core_chan.connect(&print_callback, {"print"});
+
+    // control if print was not already connected
+    if (!print_listener) {
+        
+        cout << "Flatland: Could not connect 'print' listener" << endl;
+        cout << "Flatland: Do not connect to core channel another listener with filter name 'print' before flatland initialization" << endl;
+        cout << "Flatland: Aborting" << endl;
+        return -1;
+    }
 
     // init variables
     
     cout << "Flatland: Initializing window" << endl;
 
     window = w;
-    loop_function = loop;
     status = s;
     fps = _fps;
 
@@ -106,16 +186,8 @@ int init_flatland(FlatWindow* w, gameloop loop, const flat_status& s, float _fps
 
             try {
 
-                try {
-
-                    /* Execute loop function */
-                    loop_function(flatland_dt);
-
-                } catch (const exception &e) {
-
-                    cerr << "Flatland: exception thrown while executing loop" << endl;
-                    cerr << e.what() << endl;
-                }
+                /* Invoke main sync job tasks */
+                mainsync_job();
 
             } catch (const ForceQuit& f) {
                 
@@ -146,7 +218,7 @@ int init_flatland(FlatWindow* w, gameloop loop, const flat_status& s, float _fps
     return status.error;
 }
 
-void quit_flatland()
+void quit()
 {
     status.running = 0;
     status.loop = 0;

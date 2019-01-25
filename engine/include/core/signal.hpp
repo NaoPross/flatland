@@ -4,7 +4,6 @@
 #include <list>
 #include <set>
 #include <initializer_list>
-#include "object.hpp"
 #include "task.hpp"
 #include "types.hpp"
 #include <functional>
@@ -14,6 +13,8 @@
 
 namespace flat
 {
+    class object;
+
     namespace core
     {
 
@@ -70,8 +71,7 @@ namespace flat
         template<typename R, typename T>
         static ptr create(  R T::*mf,
                             T& obj,
-                            const std::initializer_list<std::string>& filters = {})
-        {
+                            const std::initializer_list<std::string>& filters = {}) {
             return std::make_shared<listener>(std::bind(mf, obj), filters);
         }
 
@@ -118,10 +118,17 @@ namespace flat
 
         bool connect(listener* l);
         void disconnect(listener* l);
+
+        listener::ptr connect(listener::callback f, const std::initializer_list<std::string>& filters = {});
+
+        template<typename R, typename T>
+        inline listener::ptr connect(R T::*mf, T& obj, const std::initializer_list<std::string>& filters = {}) {
+            return connect(std::bind(mf, obj));
+        }
        
         static ptr find(const std::string&); 
 
-        static ptr create(const std::string& id, priority_t prior);
+        static ptr create(const std::string& id, priority_t prior = priority_t::none);
     
         void check_and_call();
     };

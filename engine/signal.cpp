@@ -1,4 +1,5 @@
 #include "core/signal.hpp"
+#include "object.hpp"
 #include <functional>
 #include "flatland.hpp"
 
@@ -21,7 +22,7 @@ channel::~channel()
 void channel::start(priority_t prior)
 {
     // Initialize task
-    checker = flat::game_job().delegate_task(&channel::check_and_call, *this, prior);
+    checker = flat::main_job().delegate_task(&channel::check_and_call, *this, prior);
 }
 
 bool channel::map()
@@ -80,6 +81,16 @@ void channel::disconnect(listener* l)
 {
     listener::ptr pt(l);
     disconnect(pt);
+}
+
+listener::ptr channel::connect(listener::callback f, const std::initializer_list<std::string>& filters)
+{
+    listener::ptr lis = std::make_shared<listener>(f, filters);
+
+    if (connect(lis))
+        return lis;
+
+    return nullptr;
 }
 
 channel::ptr channel::create(const string& id, priority_t prior)
