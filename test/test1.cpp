@@ -1,6 +1,8 @@
 #include "flatland.hpp"
 #include "window.hpp"
 
+using namespace flat;
+
 int count = 0;
 
 void loop(float);

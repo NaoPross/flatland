@@ -3,6 +3,8 @@
 
 #include <exception>
 
+namespace flat {
+
 class FlatException : public std::exception
 {
     const char * error;
@@ -18,5 +20,7 @@ public:
 
     virtual const char* what() const throw() override;
 };
+
+}
 
 #endif

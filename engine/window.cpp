@@ -6,6 +6,7 @@
 #include "core/signal.hpp"
 
 using namespace std;
+using namespace flat;
 
 FlatWindow::FlatWindow( int x, int y,
                         int width, int height, 
@@ -15,8 +16,6 @@ FlatWindow::FlatWindow( int x, int y,
     :   title(title), status(status),
         sdl_window(0), screen(0)
 {
-    set_id(title);
-
     bounds = new SDL_Rect;
     
     bounds->x = x;
@@ -166,8 +165,8 @@ void FlatWindow::key_cb(const SDL_KeyboardEvent *event)
         close();
 
         /* Say flatland to quit */
-        flat::core::signal quit(this, "quit", 0, 0xff);
-        quit.emit("core");
+        // flat::core::signal quit(this, "quit", 0, 0xff);
+        // quit.emit("core");
     }
 }
 

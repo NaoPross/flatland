@@ -4,14 +4,13 @@
 #include "core/object.hpp"
 #include "types.hpp"
 
-class task_s;
 union SDL_Event;
+
+namespace flat {
 
 class Focusable : virtual public flat::core::object
 {
     bool focused;
-
-    task_s * event_trigger;
 
 protected:
 
@@ -33,5 +32,7 @@ public:
 
     void serial_precall(void*);
 };
+
+}
 
 #endif

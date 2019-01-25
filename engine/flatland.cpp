@@ -8,6 +8,7 @@
 #include <ctime>
 
 using namespace std;
+using namespace flat;
 
 #include "core/task.hpp"
 #include "core/signal.hpp"
@@ -20,7 +21,6 @@ float flatland_dt;
 set<flat::core::object*> objects;
 
 FlatWindow * window = 0;
-SignalChannel * core = 0;
 
 gameloop loop_function;
 
@@ -57,32 +57,9 @@ uint32_t status_to_flags(const flat_status& s)
     return flags; 
 }
 
-/* Listen to simple quit calls */
-class QuitListener : public FlatListener
-{
-    virtual void callback(flat::core::object*, void*) override
-    {
-        /* Order to quit */
-        quit_flatland();        
-    }
-
-public:
-
-    QuitListener()
-    {
-        addFilter("quit");
-        core->connect(this);
-    }
-};
-
 int init_flatland(FlatWindow* w, gameloop loop, const flat_status& s, float _fps)
 {
     cout << "Flatland: Initializing flatland" << endl;
-
-    // Init core channel 
-
-    core = new SignalChannel("core");
-    QuitListener quitter;
 
     // init variables
     
@@ -130,17 +107,6 @@ int init_flatland(FlatWindow* w, gameloop loop, const flat_status& s, float _fps
             try {
 
                 try {
-                
-                    /* Execute tasks */
-                    task_s::executePreProcess();
-                
-                } catch (const exception &e) {
-                    
-                    cerr << "Flatland: exception thrown while executing pre-process tasks" << endl;
-                    cerr << e.what() << endl;
-                }
-
-                try {
 
                     /* Execute loop function */
                     loop_function(flatland_dt);
@@ -148,17 +114,6 @@ int init_flatland(FlatWindow* w, gameloop loop, const flat_status& s, float _fps
                 } catch (const exception &e) {
 
                     cerr << "Flatland: exception thrown while executing loop" << endl;
-                    cerr << e.what() << endl;
-                }
-            
-                try {
-                
-                    /* Execute tasks */
-                    task_s::executePostProcess();
-                
-                } catch (const exception &e) {
-                    
-                    cerr << "Flatland: exception thrown while executing post-process tasks" << endl;
                     cerr << e.what() << endl;
                 }
 
@@ -184,11 +139,6 @@ int init_flatland(FlatWindow* w, gameloop loop, const flat_status& s, float _fps
 
     window->close();
 
-    cout << "Flatland: destroying core channel" << endl;
-
-    delete core;
-    core = 0;
-
     cout << "Flatland: quitting SDL" << endl;
 
     SDL_Quit();
@@ -205,10 +155,5 @@ void quit_flatland()
 flat_status flatland_status()
 {
     return status;
-}
-
-SignalChannel * getCoreChannel()
-{
-    return core;
 }
 

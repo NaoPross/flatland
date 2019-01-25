@@ -4,6 +4,8 @@
 #include "core/object.hpp"
 #include <set>
 
+namespace flat {
+
 class FlatCollector : virtual public flat::core::object
 {
     FlatCollector * parent;
@@ -41,5 +43,7 @@ public:
     std::set<FlatCollector*>::const_iterator begin() const;
     std::set<FlatCollector*>::const_iterator end() const;
 };
+
+}
 
 #endif

@@ -3,13 +3,14 @@
 
 #include "collector.hpp"
 
-class FlatLayer : public FlatCollector
-{
-    
-public:
+namespace flat {
+    class FlatLayer : public FlatCollector
+    {
+        
+    public:
 
-    FlatLayer(FlatLayer *parent); 
-    ~FlatLayer();
-};
-
+        FlatLayer(FlatLayer *parent); 
+        ~FlatLayer();
+    };
+}
 #endif

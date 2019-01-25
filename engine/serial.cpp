@@ -1,19 +1,21 @@
 #include "serial.hpp"
 #include "core/task.hpp"
 
+using namespace flat;
+
 SDL_EventCollector::SDL_EventCollector()
 {
     /* Checker task, pre-process, maximum priority */
-    checker = new flat::core::task<SDL_EventCollector>(this, &SDL_EventCollector::collect, 0, true, 0);
+    // checker = new flat::core::task<SDL_EventCollector>(this, &SDL_EventCollector::collect, 0, true, 0);
 
     /* Eraser task, post-process, minimum priority */
-    eraser = new flat::core::task<SDL_EventCollector>(this, &SDL_EventCollector::erase, 0, false, 0xff);
+    // eraser = new flat::core::task<SDL_EventCollector>(this, &SDL_EventCollector::erase, 0, false, 0xff);
 }
 
 SDL_EventCollector::~SDL_EventCollector()
 {
-    delete checker;
-    delete eraser;
+    // delete checker;
+    // delete eraser;
 }
 
 void SDL_EventCollector::collect(void*)

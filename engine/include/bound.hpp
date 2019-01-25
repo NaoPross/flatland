@@ -4,6 +4,8 @@
 #include "object.hpp"
 #include "svector.h"
 
+namespace flat {
+
 typedef SVector<int, 2> pixel;
 
 class FlatBound : virtual public flat::core::object
@@ -34,5 +36,7 @@ public:
         this->location = loc;
     }
 };
+
+}
 
 #endif

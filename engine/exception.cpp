@@ -1,6 +1,8 @@
 #include "exception.hpp"
 #include <stdio.h>
 
+using namespace flat;
+
 FlatException::FlatException(const char* error) : error(error) {}
 
 FlatException::~FlatException() {}

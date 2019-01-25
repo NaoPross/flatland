@@ -1,6 +1,7 @@
 #include "collector.hpp"
 
 using namespace std;
+using namespace flat;
 
 FlatCollector::FlatCollector(FlatCollector *parent)
 

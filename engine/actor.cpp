@@ -2,6 +2,8 @@
 
 #include "flatland.hpp"
 
+using namespace flat;
+
 FlatActor::FlatActor(FlatCollector *parent, FlatBound *bounds)
 
     : FlatCollector(parent), bounds(bounds)

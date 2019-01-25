@@ -28,10 +28,10 @@ struct flat_status
     unsigned char video:1;
     unsigned char audio:1;
     unsigned char timer:1;
+    unsigned char events:1;
     unsigned char joystick:1;
     unsigned char controller:1;
     unsigned char haptic:1;
-    unsigned char events:1;
     unsigned char error:1;
     unsigned char running:1;
     unsigned char loop:1;
@@ -65,10 +65,6 @@ flat_status flatland_status();
 /* Window and status modifiers */
 
 void load_flatland_status(const flat_status&);
-
-/* Common defined variables */
-
-extern float flatland_dt;
 
 }
 

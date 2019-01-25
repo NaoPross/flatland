@@ -10,26 +10,24 @@ namespace flat
         class object;
     }
 
+    class FlatActor;
+    class FlatSprite;
+
+    class Focusable;
+
+    class KeyFocusable;
+    class MouseFocusable;
+
+    class FlatEvent;
+    class EventListener;
+    class Eventrigger;
+
+    class FlatWindow;
+
+    class FlatSpriter;
+    class FlatMultiSpriter;
 }
 
-class FlatActor;
-class FlatSprite;
-
-class Focusable;
-
-class KeyFocusable;
-class MouseFocusable;
-
-class FlatEvent;
-class EventListener;
-class Eventrigger;
-
-class FlatWindow;
-
-class FlatSpriter;
-class FlatMultiSpriter;
-
-class task_s;
 
 /* SDL types */
 

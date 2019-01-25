@@ -2,14 +2,16 @@
 #include "core/task.hpp"
 #include "serial.hpp"
 
+using namespace flat;
+
 Focusable::Focusable(bool focused) : focused(focused) 
 {
-    event_trigger = new flat::core::task<Focusable>(this, &Focusable::serial_precall, 0); 
+    // event_trigger = new flat::core::task<Focusable>(this, &Focusable::serial_precall, 0); 
 }
 
 Focusable::~Focusable()
 {
-    delete event_trigger;
+    // delete event_trigger;
 }
 
 void Focusable::setFocused(bool flag)

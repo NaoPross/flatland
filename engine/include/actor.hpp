@@ -3,6 +3,8 @@
 
 #include "collector.hpp"
 
+namespace flat {
+
 class FlatBound;
 
 class FlatActor : public FlatCollector
@@ -23,5 +25,7 @@ public:
     void setBounds(FlatBound * bounds);
     FlatBound * getBounds() const;
 };
+
+}
 
 #endif

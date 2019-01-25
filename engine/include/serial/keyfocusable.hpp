@@ -5,6 +5,8 @@
 
 struct SDL_KeyboardEvent;
 
+namespace flat {
+
 class KeyFocusable : virtual public Focusable
 {
 
@@ -15,10 +17,8 @@ class KeyFocusable : virtual public Focusable
 protected:
 
     virtual void key_cb(const SDL_KeyboardEvent*) = 0;
-
-public: 
-
-    using Focusable::Focusable;
 };
+
+}
 
 #endif

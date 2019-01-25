@@ -1,7 +1,15 @@
 #ifndef __FLATWINDOW_H__
 #define __FLATWINDOW_H__
 
+#include "core/object.hpp"
+#include "serial/keyfocusable.hpp"
+
 #include <string>
+
+class SDL_Window;
+class SDL_KeyEvent;
+
+namespace flat {
 
 struct window_status
 {
@@ -26,15 +34,10 @@ struct window_status
     unsigned char focus:1;
 };
 
-#include "core/object.hpp"
-#include "serial/keyfocusable.hpp"
 
-class SDL_Window;
 class FlatLayer;
 
-class SDL_KeyEvent;
-
-class FlatWindow : virtual public flat::core::object, public KeyFocusable
+class FlatWindow : virtual public core::object, public KeyFocusable
 {
     std::string title;
     window_status status;
@@ -94,4 +97,5 @@ public:
     static uint32_t winstatus_to_flags(window_status);
 };
 
+}
 #endif
