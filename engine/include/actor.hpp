@@ -1,7 +1,7 @@
 #ifndef __FLATACTOR_H__
 #define __FLATACTOR_H__
 
-#include "flatcollector.h"
+#include "collector.hpp"
 
 class FlatBound;
 

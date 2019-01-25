@@ -1,4 +1,4 @@
-#include "flatexception.h"
+#include "exception.hpp"
 #include <stdio.h>
 
 FlatException::FlatException(const char* error) : error(error) {}

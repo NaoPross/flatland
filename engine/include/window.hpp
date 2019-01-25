@@ -27,7 +27,7 @@ struct window_status
 };
 
 #include "core/object.hpp"
-#include "serial/keyfocusable.h"
+#include "serial/keyfocusable.hpp"
 
 class SDL_Window;
 class FlatLayer;

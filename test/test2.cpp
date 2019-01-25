@@ -1,6 +1,6 @@
-#include "flatland.h"
-#include "flatwindow.h"
-#include "exceptions/forcequit.h"
+#include "flatland.hpp"
+#include "window.hpp"
+#include "exceptions/forcequit.hpp"
 
 int count = 0;
 

@@ -1,9 +1,9 @@
-#include "flatwindow.h"
+#include "window.hpp"
 
 #include <SDL2/SDL.h>
 #include <iostream>
-#include "flatlayer.h"
-#include "signal.hpp"
+#include "layer.hpp"
+#include "core/signal.hpp"
 
 using namespace std;
 

@@ -1,4 +1,4 @@
-#include "flatcollector.h"
+#include "collector.hpp"
 
 using namespace std;
 

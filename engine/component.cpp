@@ -1,4 +1,4 @@
-#include "flatcomponent.h"
+#include "component.hpp"
 #include "signal.h"
 
 using namespace flat;

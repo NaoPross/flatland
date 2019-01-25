@@ -1,5 +1,5 @@
-#include "flatland.h"
-#include "flatwindow.h"
+#include "flatland.hpp"
+#include "window.hpp"
 
 int count = 0;
 

@@ -1,6 +1,6 @@
 #include "core/signal.hpp"
 #include <functional>
-#include "flatland.h"
+#include "flatland.hpp"
 
 using namespace std;
 using namespace flat::core;

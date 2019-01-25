@@ -1,14 +1,14 @@
-#include "flatland.h"
-#include "flatwindow.h"
-#include "exceptions/forcequit.h"
+#include "flatland.hpp"
+#include "window.hpp"
+#include "exceptions/forcequit.hpp"
 
-#include "serial/keyfocusable.h"
+#include "serial/keyfocusable.hpp"
 #include <SDL2/SDL.h>
 
 #include <iostream>
 #include <string>
 
-#include "flatsignal.h"
+#include "core/signal.hpp"
 
 using namespace std;
 

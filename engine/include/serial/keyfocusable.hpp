@@ -1,7 +1,7 @@
 #ifndef __KEYFOCUSABLE_H__
 #define __KEYFOCUSABLE_H__
 
-#include "focusable.h"
+#include "focusable.hpp"
 
 struct SDL_KeyboardEvent;
 

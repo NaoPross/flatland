@@ -1,4 +1,4 @@
-#include "serial/keyfocusable.h"
+#include "serial/keyfocusable.hpp"
 #include "SDL2/SDL.h"
 
 void KeyFocusable::serial_cb(const SDL_Event *event)

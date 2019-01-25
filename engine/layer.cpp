@@ -1,4 +1,4 @@
-#include "flatlayer.h"
+#include "layer.hpp"
 
 FlatLayer::FlatLayer(FlatLayer *parent)
 {

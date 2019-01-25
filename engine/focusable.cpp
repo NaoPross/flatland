@@ -1,6 +1,6 @@
-#include "serial/focusable.h"
+#include "serial/focusable.hpp"
 #include "core/task.hpp"
-#include "flatserial.h"
+#include "serial.hpp"
 
 Focusable::Focusable(bool focused) : focused(focused) 
 {

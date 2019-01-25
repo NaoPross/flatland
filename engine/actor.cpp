@@ -1,6 +1,6 @@
-#include "flatactor.h"
+#include "actor.hpp"
 
-#include "flatland.h"
+#include "flatland.hpp"
 
 FlatActor::FlatActor(FlatCollector *parent, FlatBound *bounds)
 

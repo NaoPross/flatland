@@ -1,4 +1,4 @@
-#include "flatland.h"
+#include "flatland.hpp"
 
 #include <set>
 #include <iostream>
@@ -11,9 +11,9 @@ using namespace std;
 
 #include "core/task.hpp"
 #include "core/signal.hpp"
-#include "flatwindow.h"
-#include "flatexception.h"
-#include "exceptions/forcequit.h"
+#include "window.hpp"
+#include "exception.hpp"
+#include "exceptions/forcequit.hpp"
 
 float flatland_dt;
 
