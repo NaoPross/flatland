@@ -1,159 +1,49 @@
 #include "flatland.hpp"
-
-#include <set>
-#include <iostream>
-
-#include <SDL2/SDL.h>
-
-#include <ctime>
-
-using namespace std;
-using namespace flat;
-
 #include "core/task.hpp"
 #include "core/signal.hpp"
+#include "debug.hpp"
+
 #include "window.hpp"
 #include "exception.hpp"
 #include "exceptions/forcequit.hpp"
 
-float flatland_dt;
+#include "wsdl2/wsdl2.hpp"
+#include "wsdl2/video.hpp"
 
-set<flat::core::object*> objects;
+#include <set>
+#include <iostream>
+#include <ctime>
 
-FlatWindow * window = 0;
-
-gameloop loop_function;
-
-flat_status status;
-
-float fps;
-float fps_pause = 5;
-
-uint32_t status_to_flags(const flat_status& s)
-{
-    uint32_t flags = 0;
-
-    if (s.audio)
-        flags |= SDL_INIT_AUDIO;
-    if (s.timer)
-        flags |= SDL_INIT_TIMER;
-    if (s.video)
-        flags |= SDL_INIT_VIDEO;
-    if (s.joystick)
-        flags |= SDL_INIT_JOYSTICK;
-    if (s.haptic)
-        flags |= SDL_INIT_HAPTIC;
-    if (s.controller)
-        flags |= SDL_INIT_GAMECONTROLLER;
-    if (s.events)
-        flags |= SDL_INIT_EVENTS;
-    if (s.haptic)
-        flags |= SDL_INIT_HAPTIC;
-    if (s.controller)
-        flags |= SDL_INIT_GAMECONTROLLER;
-    if (s.events)
-        flags |= SDL_INIT_EVENTS;
-    
-    return flags; 
+extern "C" {
+#include <SDL2/SDL.h>
 }
 
-int init_flatland(FlatWindow* w, gameloop loop, const flat_status& s, float _fps)
-{
-    cout << "Flatland: Initializing flatland" << endl;
+using namespace flat;
 
-    // init variables
-    
-    cout << "Flatland: Initializing window" << endl;
+static std::set<flat::core::object*> objects;
 
-    window = w;
-    loop_function = loop;
-    status = s;
-    fps = _fps;
+static bool running;
+static core::job game;
 
-    // init SDL
-    
-    cout << "Flatland: Initializing SDL" << endl;
-    
-    uint32_t flags = status_to_flags(s);
-    
-    if ( SDL_Init(flags | SDL_INIT_NOPARACHUTE) < 0)
-    {
-        cout << "Error: SDL_Init failed" << endl;
-        return -1;
-    }
 
-    // init window
+void initialize(std::function<void()> loop) {
+    wsdl2::initialize();
+    game.add_task(static_cast<core::task::callback>(loop));
 
-    cout << "Flatland: Opening window" << endl;
-    window->open();
-    
-    /* Game loop */
-
-    status.running = 1;
-    status.loop = 1;
-
-    clock_t delay = 0;
-
-    cout << "Flatland: Entering game-loop" << endl;
-
-    do
-    {
-        do {
-
-            flatland_dt = 1.0f / fps + delay / CLOCKS_PER_SEC;
-
-            delay = clock();
-
-            try {
-
-                try {
-
-                    /* Execute loop function */
-                    loop_function(flatland_dt);
-
-                } catch (const exception &e) {
-
-                    cerr << "Flatland: exception thrown while executing loop" << endl;
-                    cerr << e.what() << endl;
-                }
-
-            } catch (const ForceQuit& f) {
-                
-                cerr << "Flatland: a force quit call was thrown" << endl;
-                cerr << "Possible reason: " << f.reason << endl;
-
-                quit_flatland();
-            }
-
-            SDL_Delay((uint32_t) (1000.0f / fps));
-
-            delay -= clock();
-
-        } while (status.loop);
-        
-        SDL_Delay((uint32_t)(1000 / fps_pause));
-    }
-    while(status.running);
-
-    cout << "Flatland: closing window" << endl;
-
-    window->close();
-
-    cout << "Flatland: quitting SDL" << endl;
-
-    SDL_Quit();
-
-    return status.error;
+    npdebug("initialized flatland");
 }
 
-void quit_flatland()
-{
-    status.running = 0;
-    status.loop = 0;
+void run(unsigned framerate) {
+    running = true;
+
+    do {
+        game();
+        wsdl2::delay(1.0 / static_cast<double>(framerate));
+    } while(running);
 }
 
-flat_status flatland_status()
+void quit()
 {
-    return status;
+    wsdl2::quit();
+    npdebug("deinitialized (quit) flatland");
 }
-

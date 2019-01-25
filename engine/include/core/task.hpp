@@ -30,7 +30,7 @@ namespace flat {
         class job : protected queue<std::weak_ptr<task>> {
         public:
             /// add a task function owned by the job object
-            void add_task(task::callback f, priority_t p);
+            void add_task(task::callback f, priority_t p = priority_t::none);
 
             /// add a task function not owned by the job object (weak_ptr)
             std::shared_ptr<task> delegate_task(task::callback f, priority_t p = priority_t::none);
