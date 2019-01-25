@@ -1,5 +1,10 @@
 includes = -I lib/include -I engine/include
-cflags = -g -Wall -Wextra -pedantic -fPIC -std=c++17 -DDEBUG $includes
+cflags = -g -pedantic -fPIC -std=c++17 -DDEBUG $includes
+
+# brutal number of warning flags
+cflags = $cflags -Wall -Wextra -Wcast-qual -Wcast-align -Wstrict-aliasing 
+cflags = $cflags -Wpointer-arith -Winit-self -Wshadow -Wswitch-enum 
+cflags = $cflags -Wredundant-decls -Wfloat-equal -Wundef -Wvla 
 
 libs = -lSDL2 lib/libmm/build/libmm.a lib/libwsdl2/build/libwsdl2.a
 lflags = $libs
