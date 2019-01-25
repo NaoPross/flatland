@@ -36,7 +36,7 @@ struct flat_status
 };
 
 int init_flatland(FlatWindow*, const flat_status&, float fps = 60);
-void quit_flatland();
+void quit();
 
 namespace core {
     

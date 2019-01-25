@@ -5,10 +5,7 @@
 
 namespace flat
 {
-    namespace core
-    {
-        class object;
-    }
+    class object;
 
     class FlatActor;
     class FlatSprite;

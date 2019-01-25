@@ -6,6 +6,7 @@
 #include <initializer_list>
 #include "task.hpp"
 #include "types.hpp"
+#include "object.hpp"
 #include <functional>
 #include <memory>
 #include "priority.hpp"
@@ -13,7 +14,7 @@
 
 namespace flat
 {
-    class object;
+    //class object;
 
     namespace core
     {
@@ -30,7 +31,7 @@ namespace flat
             template<class T>
             T * get() {
 
-                return dynamic_cast<T>(data);
+                return reinterpret_cast<T*>(data);
             }
 
             void * data;
@@ -123,7 +124,7 @@ namespace flat
 
         template<typename R, typename T>
         inline listener::ptr connect(R T::*mf, T& obj, const std::initializer_list<std::string>& filters = {}) {
-            return connect(std::bind(mf, obj));
+            return connect(std::bind(mf, obj), filters);
         }
        
         static ptr find(const std::string&); 

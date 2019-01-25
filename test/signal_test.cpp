@@ -1,10 +1,11 @@
 #include "core/signal.hpp"
 #include "core/task.hpp"
-#include "object.h"
+#include "object.hpp"
 #include "flatland.hpp"
 #include <iostream>
 
 using namespace std;
+using namespace flat;
 using namespace flat::core;
 
 
@@ -26,24 +27,24 @@ public:
     }
 };
 
-void function_listener(const object*, signal::package msg)
+void function_listener(const object*, core::signal::package msg)
 {
     cout << "Funzione: " << msg.get<const char>() << endl;
-};
+}
 
-class class_listener
+class c_listener
 {
 
     listener::ptr lis;
 
 public:
 
-    class_listener(channel::ptr chan)
+    c_listener(channel::ptr chan)
     {
-        lis = chan->connect(&class_listener::listen, *this);
+        lis = chan->connect(&c_listener::method_listener, *this);
     }
 
-    void listen(const object*, signal::package)
+    void method_listener(const object *o, signal::package msg)
     {
         cout << "Metodo" << msg.get<const char>() << endl;
     }
@@ -53,20 +54,20 @@ public:
 
 channel::ptr alpha;
 sender * m_sender;
-class_listener * m_listener;
+c_listener * m_listener;
 listener::ptr f_listener;
 
-int count = 0;
+int steps = 0;
 
 void lifeloop()
 {
-    if (!(count % 10))
-        cout << "Step: " << count << endl;
+    if (!(steps % 10))
+        cout << "Step: " << steps << endl;
 
-    if (!(count % 40))
-        m_sender.send();
+    if (!(steps % 40))
+        m_sender->send();
 
-    if (++count > 2000)
+    if (++steps > 2000)
     {
         signal quit(0, "quit");
 
@@ -84,13 +85,13 @@ int main()
 
     // create sender
     m_sender = new sender("Ciao", alpha);
-    m_listener = new class_listener(alpha);
+    m_listener = new c_listener(alpha);
 
     // Connect listener to alpha channel
-    f_listener = alpha.connect(&function_listener);
+    f_listener = alpha->connect(&function_listener);
 
     // bind counter task
-    task::ptr looptask = flat::main_job().delegate_task(&lifeloop);
+    task::ptr looptask = flat::main_job().delegate_task(lifeloop);
 
     init_flatland(&win, status, 60);
 

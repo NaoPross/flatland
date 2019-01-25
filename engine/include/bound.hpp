@@ -8,7 +8,7 @@ namespace flat {
 
 typedef SVector<int, 2> pixel;
 
-class FlatBound : virtual public flat::core::object
+class FlatBound : virtual public flat::object
 {
     pixel location;
 

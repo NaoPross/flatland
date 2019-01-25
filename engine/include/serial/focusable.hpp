@@ -1,14 +1,14 @@
 #ifndef __FOCUSABLE_H__
 #define __FOCUSABLE_H__
 
-#include "core/object.hpp"
+#include "object.hpp"
 #include "types.hpp"
 
 union SDL_Event;
 
 namespace flat {
 
-class Focusable : virtual public flat::core::object
+class Focusable : virtual public flat::object
 {
     bool focused;
 

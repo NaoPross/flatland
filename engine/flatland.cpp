@@ -37,13 +37,13 @@ core::listener::ptr print_listener;
 
 /* channels listeners callback */
 
-void quit_callback(object *sender, signal::package)
+void quit_callback(const object *sender, core::signal::package)
 {
     cout << "Flatland: quit request attempted" << endl;
     flat::quit();
 }
 
-void print_callback(object *sender, signal::package p)
+void print_callback(const object *sender, core::signal::package p)
 {
     const char * out = p.get<const char>();
     string * sout = p.get<string>();
@@ -88,19 +88,19 @@ uint32_t status_to_flags(const flat_status& s)
 
 /* Accessors */
 
-channel& core_channel()
+core::channel& core_channel()
 {
     return core_chan;
 }
 
-job& main_job()
+core::job& main_job()
 {
     return mainsync_job;
 }
 
 /* Main loop */
 
-int init_flatland(FlatWindow* w, gameloop loop, const flat_status& s, float _fps)
+int init_flatland(FlatWindow* w, const flat_status& s, float _fps)
 {
     cout << "Flatland: Initializing flatland" << endl;
 
@@ -108,7 +108,7 @@ int init_flatland(FlatWindow* w, gameloop loop, const flat_status& s, float _fps
     
     cout << "Flatland: Initializing core channel" << endl;
     
-    core_chan.start(priority_t::max);
+    core_chan.start(core::priority_t::max);
 
     if (!core_chan.map()) {
 
@@ -120,7 +120,7 @@ int init_flatland(FlatWindow* w, gameloop loop, const flat_status& s, float _fps
 
     // bind listeners
     
-    quit_listener = core_chan.connect(&quit_callback, {"quit"});
+    quit_listener = core_chan.connect(quit_callback, initializer_list<string>({string("quit")}));
 
     // control if quit was not already connected
     if (!quit_listener) {
@@ -131,7 +131,7 @@ int init_flatland(FlatWindow* w, gameloop loop, const flat_status& s, float _fps
         return -1;
     }
 
-    print_listener = core_chan.connect(&print_callback, {"print"});
+    print_listener = core_chan.connect(print_callback, initializer_list<string>({string("print")}));
 
     // control if print was not already connected
     if (!print_listener) {
@@ -194,7 +194,7 @@ int init_flatland(FlatWindow* w, gameloop loop, const flat_status& s, float _fps
                 cerr << "Flatland: a force quit call was thrown" << endl;
                 cerr << "Possible reason: " << f.reason << endl;
 
-                quit_flatland();
+                quit();
             }
 
             SDL_Delay((uint32_t) (1000.0f / fps));
