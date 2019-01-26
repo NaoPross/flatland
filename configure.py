@@ -18,14 +18,39 @@ def build_library(path, commands):
 def find_sources(path):
     print("searching sources under {}".format(path))
 
+    # find files
     sources = tuple(filter(lambda f: f.endswith(".cpp"), os.listdir(path)))
+
+    # replace extension
     objects = tuple(map(lambda f: re.sub(".cpp$", ".o", f), sources))
 
-    # add path prefix to files
+    # add path prefix
     sources = tuple(map(lambda f: path + "/" + f, sources))
     objects = tuple(map(lambda f: "build/" + path + "/" + f, objects))
 
     return sources, objects
+
+def add_test(bf, test_source, tested_sources):
+    print("adding test {}".format(test_source) + " to test {}".format(tested_sources))
+
+    # replace extension
+    test_object = re.sub(".cpp$", ".o", test_source)
+    test_binary = re.sub(".o$", "", test_object)
+
+    tested_objects = tuple(map(lambda f: re.sub(".cpp$", ".o", f), tested_sources))
+
+    # add path prefix
+    test_source = "test/" + test_source
+    test_object = "build/test/" + test_object
+    test_binary = "build/test/" + test_binary
+
+    tested_objects = tuple(map(lambda f: "build/" + f, tested_objects))
+
+    # append to build file
+    print("build {}: cpp {}".format(test_object, test_source), file=bf)
+    print("build {}: link {} {}".format(test_binary, test_object, " ".join(tested_objects)), file=bf)
+    print("\n", file=bf)
+
 
 
 # -- prepare build.ninja --
@@ -48,7 +73,6 @@ with open("build.ninja", "w") as bf:
     print("build build/test: mkdir", file=bf)
     print("\n", file=bf)
 
-
     # build engine files
     for s, o in zip(sources, objects):
         print("build {}: cpp {}".format(o, s), file=bf)
@@ -62,13 +86,5 @@ with open("build.ninja", "w") as bf:
     print("default build/libflatland.so build/libflatland.a", file=bf)
     print("\n", file=bf)
 
-    # find test sources
-    sources, objects = find_sources("test")
-    binaries = tuple(map(lambda f: re.sub(".o$", "", f), objects))
-
-    # build tests
-    for s, o, b in zip(sources, objects, binaries):
-        print("build {}: cpp {}".format(o, s), file=bf)
-        print("build {}: link {}".format(b, o), file=bf)
-        print("    lflags = $lflags ../build/libflatland.so", file=bf)
-        print("\n", file=bf)
+    # add tests
+    add_test(bf, "task_test.cpp", ["engine/task.cpp"])
