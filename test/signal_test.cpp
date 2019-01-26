@@ -1,7 +1,9 @@
 #include "core/signal.hpp"
 #include "core/task.hpp"
 #include "object.hpp"
+#include "window.hpp"
 #include "flatland.hpp"
+
 #include <iostream>
 
 using namespace std;

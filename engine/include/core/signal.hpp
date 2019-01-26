@@ -120,11 +120,15 @@ namespace flat
         bool connect(listener* l);
         void disconnect(listener* l);
 
-        listener::ptr connect(listener::callback f, const std::initializer_list<std::string>& filters = {});
+        listener::ptr connect(listener::callback f,
+            const std::initializer_list<std::string>& filters = {});
 
         template<typename R, typename T>
-        inline listener::ptr connect(R T::*mf, T& obj, const std::initializer_list<std::string>& filters = {}) {
-            return connect(std::bind(mf, obj), filters);
+        inline listener::ptr connect(R T::*mf, T& obj,
+            const std::initializer_list<std::string>& filters = {})
+        {
+            using namespace std::placeholders;
+            return connect(std::bind(mf, obj, _1, _2), filters);
         }
        
         static ptr find(const std::string&); 
