@@ -9,7 +9,7 @@ cflags = $cflags -Wconversion
 
 libs = -lSDL2 
 #lib/libmm/build/libmm.a lib/libwsdl2/build/libwsdl2.a
-lflags = $libs
+lflags = $libs -fuse-ld=gold
 
 flags = -fdiagnostics-color
 
