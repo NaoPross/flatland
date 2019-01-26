@@ -21,7 +21,7 @@ channel::~channel()
 void channel::start(priority_t prior)
 {
     // Initialize task
-    checker = flat::gamejob().delegate_task(&channel::check_and_call, *this, prior);
+    checker = flat::game_job().delegate_task(&channel::check_and_call, *this, prior);
 }
 
 bool channel::map()
