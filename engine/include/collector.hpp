@@ -1,12 +1,12 @@
 #ifndef __FLATCOLLECTOR_H__
 #define __FLATCOLLECTOR_H__
 
-#include "core/object.hpp"
+#include "object.hpp"
 #include <set>
 
 namespace flat {
 
-class FlatCollector : virtual public flat::core::object
+class FlatCollector : virtual public flat::object
 {
     FlatCollector * parent;
 

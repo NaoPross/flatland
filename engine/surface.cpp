@@ -32,7 +32,7 @@ surface::surface(const char *filename, uint32_t format, SDL_Surface *parent)
 }
 
 surface::surface(SDL_Surface *sdl_surface, SDL_Surface *parent)
-    : core::object(), parent(parent), hide(false)
+    : flat::object(), parent(parent), hide(false)
 {
     this->sdl_surface = new SDL_Surface(*sdl_surface);
 
@@ -52,8 +52,7 @@ surface::surface(SDL_Surface *sdl_surface, SDL_Surface *parent)
 }
 
 surface::surface(const surface &sprite)
-    : core::object(sprite), parent(sprite.parent),
-        hide(sprite.hide)
+    : flat::object(sprite), parent(sprite.parent), hide(sprite.hide)
 {
     offset = new SDL_Rect(*sprite.offset);
 

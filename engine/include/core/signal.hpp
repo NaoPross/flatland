@@ -4,9 +4,9 @@
 #include <list>
 #include <set>
 #include <initializer_list>
-#include "object.hpp"
 #include "task.hpp"
 #include "types.hpp"
+#include "object.hpp"
 #include <functional>
 #include <memory>
 #include "priority.hpp"
@@ -14,6 +14,8 @@
 
 namespace flat
 {
+    //class object;
+
     namespace core
     {
 
@@ -29,7 +31,7 @@ namespace flat
             template<class T>
             T * get() {
 
-                return dynamic_cast<T>(data);
+                return reinterpret_cast<T*>(data);
             }
 
             void * data;
@@ -70,8 +72,7 @@ namespace flat
         template<typename R, typename T>
         static ptr create(  R T::*mf,
                             T& obj,
-                            const std::initializer_list<std::string>& filters = {})
-        {
+                            const std::initializer_list<std::string>& filters = {}) {
             return std::make_shared<listener>(std::bind(mf, obj), filters);
         }
 
@@ -118,10 +119,21 @@ namespace flat
 
         bool connect(listener* l);
         void disconnect(listener* l);
+
+        listener::ptr connect(listener::callback f,
+            const std::initializer_list<std::string>& filters = {});
+
+        template<typename R, typename T>
+        inline listener::ptr connect(R T::*mf, T& obj,
+            const std::initializer_list<std::string>& filters = {})
+        {
+            using namespace std::placeholders;
+            return connect(std::bind(mf, obj, _1, _2), filters);
+        }
        
         static ptr find(const std::string&); 
 
-        static ptr create(const std::string& id, priority_t prior);
+        static ptr create(const std::string& id, priority_t prior = priority_t::none);
     
         void check_and_call();
     };

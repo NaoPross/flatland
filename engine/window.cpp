@@ -46,7 +46,7 @@ FlatWindow::FlatWindow( int width, int height,
 
 FlatWindow::FlatWindow(const FlatWindow& win)
 
-    :   flat::core::object(win),
+    :   flat::object(win),
         title(win.title), status(win.status),
         sdl_window(0), screen(0)
 {

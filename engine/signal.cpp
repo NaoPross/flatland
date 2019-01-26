@@ -1,4 +1,5 @@
 #include "core/signal.hpp"
+#include "object.hpp"
 #include <functional>
 #include "flatland.hpp"
 
@@ -21,7 +22,7 @@ channel::~channel()
 void channel::start(priority_t prior)
 {
     // Initialize task
-    checker = flat::game_job().delegate_task(&channel::check_and_call, *this, prior);
+    checker = flat::main_job().delegate_task(&channel::check_and_call, *this, prior);
 }
 
 bool channel::map()
@@ -40,8 +41,11 @@ bool channel::map()
     return mapped;
 }
 
+#include <iostream>
+
 void channel::emit(const signal& sig)
 {
+    //cout << "React" << endl;
     stack.insert(sig);
 }
 
@@ -82,6 +86,16 @@ void channel::disconnect(listener* l)
     disconnect(pt);
 }
 
+listener::ptr channel::connect(listener::callback f, const std::initializer_list<std::string>& filters)
+{
+    listener::ptr lis = std::make_shared<listener>(f, filters);
+
+    if (connect(lis))
+        return lis;
+
+    return nullptr;
+}
+
 channel::ptr channel::create(const string& id, priority_t prior)
 {
     ptr out = std::make_shared<channel>(id);
@@ -106,7 +120,13 @@ channel::ptr channel::find(const string& id)
 
 void channel::check_and_call()
 {
+    //std::cout << "Signal check" << std::endl;
+    // check
+    //std::cout << "Stack size: " << stack.size() << endl;
+
     if (!stack.empty()) {
+
+        std::cout << "Signal detected" << std::endl;
 
         vector<weak_ptr<listener>> to_erase;
 

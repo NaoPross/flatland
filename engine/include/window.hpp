@@ -1,7 +1,7 @@
 #ifndef __FLATWINDOW_H__
 #define __FLATWINDOW_H__
 
-#include "core/object.hpp"
+#include "object.hpp"
 #include "serial/keyfocusable.hpp"
 
 #include <string>
@@ -37,7 +37,7 @@ struct window_status
 
 class FlatLayer;
 
-class FlatWindow : virtual public core::object, public KeyFocusable
+class FlatWindow : virtual public object, public KeyFocusable
 {
     std::string title;
     window_status status;

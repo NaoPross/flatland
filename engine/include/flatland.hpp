@@ -5,8 +5,6 @@ namespace flat {
 
 class FlatWindow;
 
-typedef void (*gameloop)(float);
-
 struct flat_status
 {
 
@@ -37,8 +35,8 @@ struct flat_status
     unsigned char loop:1;
 };
 
-int init_flatland(FlatWindow*, gameloop, const flat_status&, float fps = 60);
-void quit_flatland();
+int init_flatland(FlatWindow*, const flat_status&, float fps = 60);
+void quit();
 
 namespace core {
     
@@ -49,12 +47,11 @@ namespace core {
 
 /* Engine channels */
 
-core::channel& core_chan();
-core::channel& error_chan();
+core::channel& core_channel();
 
 /* Main job access */
 
-core::job& game_job();
+core::job& main_job();
 
 /* Window and status accessors */
 
@@ -64,7 +61,7 @@ flat_status flatland_status();
 
 /* Window and status modifiers */
 
-void load_flatland_status(const flat_status&);
+//void load_flatland_status(const flat_status&);
 
 }
 
