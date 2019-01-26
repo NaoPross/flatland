@@ -70,5 +70,5 @@ with open("build.ninja", "w") as bf:
     for s, o, b in zip(sources, objects, binaries):
         print("build {}: cpp {}".format(o, s), file=bf)
         print("build {}: link {}".format(b, o), file=bf)
-        print("    lflags = $lflags ../build/libflatland.so", file=bf)
+        print("    lflags = $lflags build/libflatland.so", file=bf)
         print("\n", file=bf)

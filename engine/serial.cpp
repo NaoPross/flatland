@@ -93,6 +93,8 @@ const std::vector<SDL_Event>& SDL_EventCollector::getStack(uint32_t id) const
 
         // TODO other events
     }
+
+    return user;
 }
 
 SDL_EventCollector * FlatSerial::collector = new SDL_EventCollector();

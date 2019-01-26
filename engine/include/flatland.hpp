@@ -61,7 +61,7 @@ flat_status flatland_status();
 
 /* Window and status modifiers */
 
-void load_flatland_status(const flat_status&);
+//void load_flatland_status(const flat_status&);
 
 }
 

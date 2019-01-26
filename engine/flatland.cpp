@@ -88,19 +88,19 @@ uint32_t status_to_flags(const flat_status& s)
 
 /* Accessors */
 
-core::channel& core_channel()
+core::channel& flat::core_channel()
 {
     return core_chan;
 }
 
-core::job& main_job()
+core::job& flat::main_job()
 {
     return mainsync_job;
 }
 
 /* Main loop */
 
-int init_flatland(FlatWindow* w, const flat_status& s, float _fps)
+int flat::init_flatland(FlatWindow* w, const flat_status& s, float _fps)
 {
     cout << "Flatland: Initializing flatland" << endl;
 
@@ -218,13 +218,13 @@ int init_flatland(FlatWindow* w, const flat_status& s, float _fps)
     return status.error;
 }
 
-void quit()
+void flat::quit()
 {
     status.running = 0;
     status.loop = 0;
 }
 
-flat_status flatland_status()
+flat_status flat::flatland_status()
 {
     return status;
 }

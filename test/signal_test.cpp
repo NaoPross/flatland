@@ -3,6 +3,7 @@
 #include "object.hpp"
 #include "window.hpp"
 #include "flatland.hpp"
+#include "exceptions/forcequit.hpp"
 
 #include <iostream>
 
@@ -76,6 +77,9 @@ void lifeloop()
         // quit request
         flat::core_channel().emit(quit);
     }
+
+    if (steps > 2100)
+        throw flat::ForceQuit("Too many steps");
 }
 
 int main()
@@ -84,6 +88,12 @@ int main()
     flat_status status;
 
     alpha = channel::create("alpha");
+
+    if (alpha == nullptr)
+    {
+        cout << "Could not create channel alpha" << endl;
+        return -1;
+    }
 
     // create sender
     m_sender = new sender("Ciao", alpha);

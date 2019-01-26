@@ -41,8 +41,11 @@ bool channel::map()
     return mapped;
 }
 
+#include <iostream>
+
 void channel::emit(const signal& sig)
 {
+    //cout << "React" << endl;
     stack.insert(sig);
 }
 
@@ -117,7 +120,13 @@ channel::ptr channel::find(const string& id)
 
 void channel::check_and_call()
 {
+    //std::cout << "Signal check" << std::endl;
+    // check
+    //std::cout << "Stack size: " << stack.size() << endl;
+
     if (!stack.empty()) {
+
+        std::cout << "Signal detected" << std::endl;
 
         vector<weak_ptr<listener>> to_erase;
 
