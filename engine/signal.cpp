@@ -67,12 +67,16 @@ bool channel::connect(listener::ptr l)
 
 void channel::disconnect(listener::ptr l)
 {
-    listeners.remove_if(
-                [l](std::weak_ptr<listener> p){ 
-                    
-                    listener::ptr pt = p.lock();
-                    return pt.get() == l.get(); 
-                });
+    listeners.erase(
+        std::remove_if(
+            listeners.begin(),
+            listeners.end(),
+            [&l](std::weak_ptr<listener> p){ 
+                listener::ptr pt = p.lock();
+                return pt.get() == l.get(); 
+            }
+        )
+    );
 }
 
 bool channel::connect(listener* l)
@@ -146,8 +150,13 @@ void channel::check_and_call()
         }
     
         /* Erase invalidated listeners */
-        listeners.remove_if(
-            [](std::weak_ptr<listener> e) { return e.expired(); });
+        listeners.erase(
+            std::remove_if(
+                listeners.begin(),
+                listeners.end(),
+                [](std::weak_ptr<listener> e) { return e.expired(); }
+            )
+        );
 
         stack.clear(); // TODO not so efficient
     }
