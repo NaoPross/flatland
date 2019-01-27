@@ -23,16 +23,16 @@ struct flat_status
           joystick(joystick), controller(controller), haptic(haptic),
           error(error), running(running), loop(loop) {}
 
-    unsigned char video:1;
-    unsigned char audio:1;
-    unsigned char timer:1;
-    unsigned char events:1;
-    unsigned char joystick:1;
-    unsigned char controller:1;
-    unsigned char haptic:1;
-    unsigned char error:1;
-    unsigned char running:1;
-    unsigned char loop:1;
+    unsigned char video;
+    unsigned char audio;
+    unsigned char timer;
+    unsigned char events;
+    unsigned char joystick;
+    unsigned char controller;
+    unsigned char haptic;
+    unsigned char error;
+    unsigned char running;
+    unsigned char loop;
 };
 
 int init_flatland(FlatWindow*, const flat_status&, float fps = 60);

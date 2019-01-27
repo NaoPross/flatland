@@ -25,13 +25,13 @@ struct window_status
           resizable(resizable), minimized(minimized), maximized(maximized),
           focus(focus) {}
 
-    unsigned char fullscreen:1;
-    unsigned char hidden:1;
-    unsigned char borderless:1;
-    unsigned char resizable:1;
-    unsigned char minimized:1;
-    unsigned char maximized:1;
-    unsigned char focus:1;
+    unsigned char fullscreen;
+    unsigned char hidden;
+    unsigned char borderless;
+    unsigned char resizable;
+    unsigned char minimized;
+    unsigned char maximized;
+    unsigned char focus;
 };
 
 
