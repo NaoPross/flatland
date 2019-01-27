@@ -44,7 +44,7 @@ public:
 
     c_listener(channel::ptr chan)
     {
-        lis = chan->connect(&c_listener::method_listener, *this);
+        lis = chan->connect(&c_listener::method_listener, this);
     }
 
     void method_listener(const object *o, signal::package msg)

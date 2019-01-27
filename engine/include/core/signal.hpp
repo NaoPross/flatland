@@ -124,7 +124,7 @@ namespace flat
             const std::initializer_list<std::string>& filters = {});
 
         template<typename R, typename T>
-        inline listener::ptr connect(R T::*mf, T& obj,
+        inline listener::ptr connect(R T::*mf, T* obj,
             const std::initializer_list<std::string>& filters = {})
         {
             using namespace std::placeholders;
