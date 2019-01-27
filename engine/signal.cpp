@@ -3,12 +3,13 @@
 #include <functional>
 #include "flatland.hpp"
 
-using namespace std;
+#include "debug.hpp"
+
 using namespace flat::core;
 
-map<string, weak_ptr<channel>> channel::channels;    
+std::map<std::string, std::weak_ptr<channel>> channel::channels;    
 
-channel::channel(const string& id) : labelled(id), mapped(false)
+channel::channel(const std::string& id) : labelled(id), mapped(false)
 {
 }
 
@@ -21,8 +22,10 @@ channel::~channel()
 
 void channel::start(priority_t prior)
 {
+    npdebug("Starting channel: ", label);
+
     // Initialize task
-    checker = flat::main_job().delegate_task(&channel::check_and_call, *this, prior);
+    checker = flat::main_job().delegate_task(&channel::check_and_call, this, prior);
 }
 
 bool channel::map()
@@ -33,7 +36,7 @@ bool channel::map()
 
         if (!other) {
 
-            channels.insert(pair<string, weak_ptr<channel>>(label, weak_from_this())); 
+            channels.insert(std::pair<std::string, std::weak_ptr<channel>>(label, weak_from_this())); 
             mapped = true;
         }
     }
@@ -41,12 +44,10 @@ bool channel::map()
     return mapped;
 }
 
-#include <iostream>
-
 void channel::emit(const signal& sig)
 {
-    //cout << "React" << endl;
     stack.insert(sig);
+    npdebug("Emitted signal: ", sig.label, " ", this);
 }
 
 bool channel::connect(listener::ptr l)
@@ -67,7 +68,7 @@ bool channel::connect(listener::ptr l)
 void channel::disconnect(listener::ptr l)
 {
     listeners.remove_if(
-                [l](weak_ptr<listener> p){ 
+                [l](std::weak_ptr<listener> p){ 
                     
                     listener::ptr pt = p.lock();
                     return pt.get() == l.get(); 
@@ -96,7 +97,7 @@ listener::ptr channel::connect(listener::callback f, const std::initializer_list
     return nullptr;
 }
 
-channel::ptr channel::create(const string& id, priority_t prior)
+channel::ptr channel::create(const std::string& id, priority_t prior)
 {
     ptr out = std::make_shared<channel>(id);
 
@@ -108,7 +109,7 @@ channel::ptr channel::create(const string& id, priority_t prior)
     return out;
 }
    
-channel::ptr channel::find(const string& id)
+channel::ptr channel::find(const std::string& id)
 {
     if (id.empty())
         return nullptr;
@@ -118,17 +119,15 @@ channel::ptr channel::find(const string& id)
     return (it == channels.end()) ? nullptr : (*it).second.lock();
 }
 
+int step = 0;
+
 void channel::check_and_call()
 {
-    //std::cout << "Signal check" << std::endl;
-    // check
-    //std::cout << "Stack size: " << stack.size() << endl;
-
     if (!stack.empty()) {
 
-        std::cout << "Signal detected" << std::endl;
+        npdebug("Signal detected: ", label, " ", this)
 
-        vector<weak_ptr<listener>> to_erase;
+        std::vector<std::weak_ptr<listener>> to_erase;
 
         // TODO, maybe it exists pop
         /* for each listener_s, catch signal */
@@ -148,7 +147,7 @@ void channel::check_and_call()
     
         /* Erase invalidated listeners */
         listeners.remove_if(
-            [](weak_ptr<listener> e) { return e.expired(); });
+            [](std::weak_ptr<listener> e) { return e.expired(); });
 
         stack.clear(); // TODO not so efficient
     }
@@ -158,7 +157,7 @@ void channel::check_and_call()
 /* signal class */
 
 signal::signal( object *sender, 
-                const string& id, 
+                const std::string& id, 
                 void *data, 
                 priority_t priority)
 
@@ -169,7 +168,7 @@ signal::signal( object *sender,
 {
 }
 
-bool signal::emit(const string& chan) const
+bool signal::emit(const std::string& chan) const
 {
     channel::ptr c = channel::find(chan);
     
@@ -185,7 +184,7 @@ bool signal::emit(const string& chan) const
 
 /* listener_s class */
 
-listener::listener(callback m_callback, const initializer_list<string>& filters)
+listener::listener(callback m_callback, const std::initializer_list<std::string>& filters)
 
     : m_callback(m_callback), filters(filters)
 {
@@ -196,7 +195,7 @@ listener::~listener()
 {
 }
 
-bool listener::check_in_filters(const string& filter) const
+bool listener::check_in_filters(const std::string& filter) const
 {
     for (const auto& f : filters)
     {
@@ -207,17 +206,17 @@ bool listener::check_in_filters(const string& filter) const
     return false;
 }
 
-void listener::add_filter(const string& f)
+void listener::add_filter(const std::string& f)
 {
     filters.push_back(f);
 }
 
-void listener::remove_filter(const string& f)
+void listener::remove_filter(const std::string& f)
 {
     filters.remove(f);
 }
 
-bool listener::connect(const string& chan)
+bool listener::connect(const std::string& chan)
 {    
     channel::ptr c = channel::find(chan);
 
@@ -227,7 +226,7 @@ bool listener::connect(const string& chan)
     return bool(c);
 }
 
-bool listener::disconnect(const string& chan)
+bool listener::disconnect(const std::string& chan)
 {
     channel::ptr c = channel::find(chan);
 

@@ -16,7 +16,7 @@ private:
 public:
     message(job& job) {
         // add an example job
-        mytask = job.delegate_task(&message::print_motd, *this);
+        mytask = job.delegate_task(&message::print_motd, this);
     }
 
     void print_date() {

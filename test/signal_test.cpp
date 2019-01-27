@@ -5,7 +5,7 @@
 #include "flatland.hpp"
 #include "exceptions/forcequit.hpp"
 
-#include <iostream>
+#include "debug.hpp"
 
 using namespace std;
 using namespace flat;
@@ -44,7 +44,7 @@ public:
 
     c_listener(channel::ptr chan)
     {
-        lis = chan->connect(&c_listener::method_listener, *this);
+        lis = chan->connect(&c_listener::method_listener, this);
     }
 
     void method_listener(const object *o, signal::package msg)
@@ -70,7 +70,7 @@ void lifeloop()
     if (!(steps % 40))
         m_sender->send();
 
-    if (++steps > 2000)
+    if (++steps > 200)
     {
         signal quit(0, "quit");
 
@@ -78,7 +78,7 @@ void lifeloop()
         flat::core_channel().emit(quit);
     }
 
-    if (steps > 2100)
+    if (steps > 205)
         throw flat::ForceQuit("Too many steps");
 }
 
@@ -107,8 +107,13 @@ int main()
 
     init_flatland(&win, status, 60);
 
+    npdebug("Deleting m_sender")
     delete m_sender;
+
+    npdebug("Deleting m_listener")
     delete m_listener;
+
+    npdebug("Exiting")
 
     return 0;
 }
