@@ -8,6 +8,9 @@ build
 .ninja_log
 build.ninja
 
+# ctag files
+tags
+
 # vim editor
 **/*.swp
 

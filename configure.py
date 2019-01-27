@@ -30,8 +30,27 @@ def find_sources(path):
 
     return sources, objects
 
-def add_test(bf, test_source, tested_sources):
-    print("adding test {}".format(test_source) + " to test {}".format(tested_sources))
+
+def add_test(bf, test_source, library):
+    print("adding test {}".format(test_source))
+    
+    # replace extension
+    test_object = re.sub(".cpp$", ".o", test_source)
+    test_binary = re.sub(".o$", "", test_object)
+
+    # add path prefix
+    test_source = "test/" + test_source
+    test_object = "build/test/" + test_object
+    test_binary = "build/test/" + test_binary
+    
+    print("build {}: cpp {}".format(test_object, test_source), file=bf)
+    print("build {}: link {}".format(test_binary, test_object), file=bf)
+    print("    lflags = $lflags {}".format(library), file=bf)
+    print("\n", file=bf)
+
+
+def add_specific_test(bf, test_source, tested_sources):
+    print("adding specific test {}".format(test_source) + " to test {}".format(tested_sources))
 
     # replace extension
     test_object = re.sub(".cpp$", ".o", test_source)
@@ -87,4 +106,11 @@ with open("build.ninja", "w") as bf:
     print("\n", file=bf)
 
     # add tests
-    add_test(bf, "task_test.cpp", ["engine/task.cpp"])
+    add_specific_test(bf, "task_test.cpp", ["engine/task.cpp"])
+    add_test(bf, "signal_test.cpp", "build/libflatland.so")
+
+    print("default build/test/signal_test", file=bf)
+
+# run ctags for vim :)
+os.system("if type ctags; then ctags -R . ; fi")
+
