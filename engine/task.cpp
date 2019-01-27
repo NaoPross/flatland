@@ -8,6 +8,7 @@
 #include <vector>
 
 #include <iostream>
+#include "debug.hpp"
 
 using namespace std;
 
@@ -20,6 +21,8 @@ namespace flat {
             auto shared = std::make_shared<task>(f, p);
             insert(shared);
 
+            npdebug("Task number: ", this->size());
+
             return shared;
         }
 
@@ -28,14 +31,15 @@ namespace flat {
         }
 
         void job::invoke_tasks() {
+            
             // expired tasks to remove
             std::vector<job::value_type> to_erase;
 
             for (auto tp : *this) {
                 // check that the task has not expired
-                if (std::shared_ptr<task> t = tp.lock())
+                if (std::shared_ptr<task> t = tp.lock()) {
                     std::invoke(*t);
-                else
+                } else
                     to_erase.push_back(tp);
             }
 
