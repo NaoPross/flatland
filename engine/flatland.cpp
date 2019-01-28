@@ -107,10 +107,10 @@ int flat::init_flatland(FlatWindow* w, const flat_status& s, float _fps)
     // init core channel
     
     cout << "Flatland: Initializing core channel" << endl;
-    
-    core_chan.start(core::priority_t::max);
-
-    if (!core_chan.map()) {
+   
+    // start core channel
+    // assure that NO OTHER core channel was present before initialization
+    if (!core_chan.start(core::priority_t::max, &mainsync_job)) {
 
         cout << "Flatland: Could not map 'core' channel" << endl;
         cout << "Flatland: Do not call another channel 'core' before flatland initialization" << endl;
