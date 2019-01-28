@@ -9,8 +9,36 @@
 #include "object.hpp"
 #include <functional>
 #include <memory>
+#include <cstddef>
+#include <type_traits>
 #include "priority.hpp"
 #include "labelled.hpp"
+
+/*
+ * Some tools for variadic binding templates
+ */
+ 
+namespace helper
+{
+        
+    template<int...> struct int_sequence {};
+
+    template<int N, int... Is> struct make_int_sequence
+        : make_int_sequence<N-1, N-1, Is...> {};
+    template<int... Is> struct make_int_sequence<0, Is...>
+        : int_sequence<Is...> {};
+
+    template<int>
+    struct placeholder_template {};
+}
+
+namespace std
+{
+    template<int N>
+    struct is_placeholder< helper::placeholder_template<N> >
+        : integral_constant<int, N+1> // the one is important
+    {};
+}
 
 namespace flat
 {
@@ -19,80 +47,106 @@ namespace flat
     namespace core
     {
 
-    class signal : virtual public labelled, virtual public prioritized
+    /* 
+     * Signal class
+     */
+
+    struct abstract_signal : public labelled, public prioritized
+    {
+        abstract_signal(const std::string& id = "", priority_t prior = priority_t::none);
+
+        // virtual destructor, sure to call right class destructor
+        virtual ~abstract_signal() {}
+    };
+
+    template <class ...Args> 
+    struct signal : public abstract_signal
     {
     
-    public:
+        std::tuple<Args...> args;
 
-        struct package
-        {
-            package(void *data) : data(data) {}
-
-            template<class T>
-            T * get() {
-
-                return reinterpret_cast<T*>(data);
-            }
-
-            void * data;
-        };
-    
-        object * sender;
-        package m_package;
-    
-        signal(     object * sender, 
+        signal(     Args&& ... args,
                     const std::string& id = "", 
-                    void * data = 0,
-                    priority_t prior = priority_t::none);
+                    priority_t prior = priority_t::none)
+
+            : abstract_signal(id, prior), args(std::forward<Args>(args)...)
+        {
+
+        }
 
         /* Alias to flat::core::channel::emit() */
-        bool emit(const std::string& channel) const;
+        //bool emit(const std::string& channel) const;
     };
-        
-    /* Listener class */
-    class listener
+
+    class abstract_listener
     {
+        std::list<std::string> filters;
+
+    protected:
+    
+        bool check_in_filters(const std::string&) const;
+
+        bool match_filters(const abstract_signal *sig) const;
+
     public:
 
-        using callback = std::function<void(const object*, signal::package)>;
-        using ptr = std::shared_ptr<listener>;
-
-        listener(callback m_callback, const std::initializer_list<std::string>& filters = {});
-        ~listener();
+        abstract_listener(const std::initializer_list<std::string>& filters = {});
+        virtual ~abstract_listener();
 
         void add_filter(const std::string&);
         void remove_filter(const std::string&);
 
-        bool connect(const std::string&);
-        bool disconnect(const std::string&);
+        virtual void invoke(const abstract_signal&) = 0;
+    };
+        
+    /* Listener class */
+    template <class ...Args>
+    class listener : public abstract_listener
+    {
+    public:
 
-        void invoke(const signal&);
+        using callback = std::function<void(Args...)>;
+        using ptr = std::shared_ptr<listener<Args...>>;
 
-        /* Allow to safely bind a functor */
-        template<typename R, typename T>
-        static ptr create(  R T::*mf,
-                            T& obj,
-                            const std::initializer_list<std::string>& filters = {}) {
-            return std::make_shared<listener>(std::bind(mf, obj), filters);
+        listener(callback m_callback, const std::initializer_list<std::string>& filters = {})
+            : abstract_listener(filters), m_callback(m_callback)
+        {
+
+        }
+
+        //bool connect(const std::string&);
+        //bool disconnect(const std::string&);
+
+        template<int ...Is>
+        void invoke(abstract_signal *sig, helper::int_sequence<Is...>)
+        {
+            signal<Args...>* pt = dynamic_cast<signal<Args...>*>(sig);
+
+            // check if the arguments and the filters match
+            if (pt && match_filters(sig))
+                m_callback(std::get<Is>(pt->args)...);
+        }
+
+        // implement base class method
+        virtual bool invoke(abstract_signal* sig) override
+        {
+            return invoke(sig, helper::make_int_sequence<sizeof...(Args)>{});
         }
 
     private:
 
         callback m_callback;
-
-        std::list<std::string> filters;
-    
-        bool check_in_filters(const std::string&) const;
     };
 
+    
     /* Channel class */
     class channel : virtual public labelled, public std::enable_shared_from_this<channel>
     {
         /* Post processing signal stacking */
-        queue<signal> stack;
+        queue<std::unique_ptr<abstract_signal>> stack;
     
         /* Listeners list */
-        std::list<std::weak_ptr<listener>> listeners;
+        std::list<std::weak_ptr<abstract_listener>> listeners;
     
         /* Synchronous task checking for signals */
         task::ptr checker;
@@ -103,7 +157,9 @@ namespace flat
         bool mapped;
 
         bool map();
-     
+
+        bool connect(std::shared_ptr<abstract_listener> l);
+             
     public:
 
         using ptr = std::shared_ptr<channel>;
@@ -124,14 +180,32 @@ namespace flat
         // it does not have any sense to create a channel with the same name
         channel(const channel&) = delete;
         channel& operator=(const channel&) = delete;
-    
-        void emit(const signal&);
+   
+        template<class ...Args> 
+        void emit(const signal<Args...>& sig)
+        {   
+            stack.insert(std::make_unique<abstract_signal>(sig));
+            npdebug("Emitted signal: ", sig.label, " ", this);
+        }
+        
 
-        bool connect(listener::ptr l);
-        void disconnect(listener::ptr l);
+        template<class ...Args> 
+        void disconnect(listener<Args...>::ptr l)
+        {
+            listeners.remove_if(
+                [l](std::weak_ptr<listener> p){ 
+                    
+                    listener::ptr pt = p.lock();
+                    return pt.get() == l.get(); 
+                });
+        }
 
-        bool connect(listener* l);
-        void disconnect(listener* l);
+        template<class ...Args> 
+        void disconnect(listener<Args...>* l)
+        {
+            listener<Args...>::ptr pt(l);
+            disconnect<Args...>(pt);
+        }
 
         /* 
          * Check for legacy
@@ -148,17 +222,40 @@ namespace flat
          */
         bool start(priority_t task_priority = priority_t::none, job * _job = NULL);
 
+        /* 
+         * Successfully stops the channel
+         * Any related job is then detached
+         */
         void finalize();
 
-        listener::ptr connect(listener::callback f,
-            const std::initializer_list<std::string>& filters = {});
+        /* 
+         * Connects any bound function to the channel and 
+         * returns the corresponding listener
+         */
+        template<class ...Args>
+        listener<Args...>::ptr connect( listener<Args...>::callback f,
+                                        const std::initializer_list<std::string>& filters = {})
+        {
+            listener<Args...>::ptr lis = std::make_shared<listener<Args..>>(f, filters);
 
-        template<typename R, typename T>
+            if (connect(static_pointer_cast<abstract_listener>(lis)))
+                return lis;
+
+            return nullptr;
+        }
+
+        /*
+         * Connect a class member function and returns the
+         * corresponding listener
+         */
+        template<typename R, typename T, class Args...>
         inline listener::ptr connect(R T::*mf, T* obj,
             const std::initializer_list<std::string>& filters = {})
         {
-            using namespace std::placeholders;
-            return connect(std::bind(mf, obj, _1, _2), filters);
+            //using namespace std::placeholders;
+            //return connect<Args...>(std::bind(mf, obj, _1, _2), filters);
+            using namespace helper;
+            return connect<Args...>(std::bind(mf, obj, make_int_sequence<sizeof...(Args)>{}), filters);
         }
       
         /* 

@@ -68,13 +68,7 @@ bool channel::map()
     return mapped;
 }
 
-void channel::emit(const signal& sig)
-{
-    stack.insert(sig);
-    npdebug("Emitted signal: ", sig.label, " ", this);
-}
-
-bool channel::connect(listener::ptr l)
+bool channel::connect(std::shared_ptr<abstract_listener> l)
 {
     /* Control not to double */
     for (auto lis : listeners)
@@ -87,38 +81,6 @@ bool channel::connect(listener::ptr l)
 
     listeners.push_back(l);
     return true;
-}
-
-void channel::disconnect(listener::ptr l)
-{
-    listeners.remove_if(
-                [l](std::weak_ptr<listener> p){ 
-                    
-                    listener::ptr pt = p.lock();
-                    return pt.get() == l.get(); 
-                });
-}
-
-bool channel::connect(listener* l)
-{
-    listener::ptr pt(l);
-    return connect(pt);
-}
-
-void channel::disconnect(listener* l)
-{
-    listener::ptr pt(l);
-    disconnect(pt);
-}
-
-listener::ptr channel::connect(listener::callback f, const std::initializer_list<std::string>& filters)
-{
-    listener::ptr lis = std::make_shared<listener>(f, filters);
-
-    if (connect(lis))
-        return lis;
-
-    return nullptr;
 }
 
 bool channel::legit() const
@@ -150,19 +112,22 @@ void channel::check_and_call()
 
         npdebug("Signal detected: ", label, " ", this)
 
-        std::vector<std::weak_ptr<listener>> to_erase;
+        std::vector<std::weak_ptr<abstract_listener>> to_erase;
 
         // TODO, maybe it exists pop
         /* for each listener_s, catch signal */
 
         for (auto l : listeners)
         {
-            listener::ptr pt;
+            std::shared_ptr<abstract_listener> pt;
 
             if (pt = l.lock())
             {
                 for (const auto& sig : stack)
-                    pt->invoke(sig);
+                {
+                    // pass simple pointer
+                    pt->invoke(sig.get());
+                }
             }
             else
                 to_erase.push_back(l);
@@ -170,7 +135,7 @@ void channel::check_and_call()
     
         /* Erase invalidated listeners */
         listeners.remove_if(
-            [](std::weak_ptr<listener> e) { return e.expired(); });
+            [](std::weak_ptr<abstract_listener> e) { return e.expired(); });
 
         stack.clear(); // TODO not so efficient
     }
@@ -179,46 +144,40 @@ void channel::check_and_call()
 
 /* signal class */
 
-signal::signal( object *sender, 
-                const std::string& id, 
-                void *data, 
-                priority_t priority)
+abstract_signal::abstract_signal(const std::string& id, priority_t priority)
 
     :   labelled(id, true), 
         prioritized(priority),
-        sender(sender), 
-        m_package(package(data))
 {
 }
 
-bool signal::emit(const std::string& chan) const
+/*bool signal::emit(const std::string& chan) const
 {
     channel::ptr c = channel::find(chan);
     
     if (!c)
         return false;
     
-    /* Finally emit in channel */
     c->emit(*this);
 
     return true;
-}
+}*/
 
 
 /* listener_s class */
 
-listener::listener(callback m_callback, const std::initializer_list<std::string>& filters)
+abstract_listener::abstract_listener(const std::initializer_list<std::string>& filters)
 
-    : m_callback(m_callback), filters(filters)
+    : filters(filters)
 {
 
 }
 
-listener::~listener()
+abstract_listener::~abstract_listener()
 {
 }
 
-bool listener::check_in_filters(const std::string& filter) const
+bool abstract_listener::check_in_filters(const std::string& filter) const
 {
     for (const auto& f : filters)
     {
@@ -229,40 +188,19 @@ bool listener::check_in_filters(const std::string& filter) const
     return false;
 }
 
-void listener::add_filter(const std::string& f)
+void abstract_listener::add_filter(const std::string& f)
 {
     filters.push_back(f);
 }
 
-void listener::remove_filter(const std::string& f)
+void abstract_listener::remove_filter(const std::string& f)
 {
     filters.remove(f);
 }
 
-bool listener::connect(const std::string& chan)
-{    
-    channel::ptr c = channel::find(chan);
-
-    if (!c)
-        c->connect(this);
-
-    return bool(c);
-}
-
-bool listener::disconnect(const std::string& chan)
+bool abstract_listener::match_filters(const abstract_signal *sig) const
 {
-    channel::ptr c = channel::find(chan);
-
-    if (!c)
-        c->disconnect(this);
-
-    return bool(c);
-}
-
-void listener::invoke(const signal& sig)
-{
-    if (    (!sig.label.empty() && check_in_filters(sig.label)) || 
-            (sig.label.empty() && filters.empty()))
-        m_callback(sig.sender, sig.m_package);
+    return (!sig.label.empty() && check_in_filters(sig.label)) || 
+           (sig.label.empty() && filters.empty());
 }
 
