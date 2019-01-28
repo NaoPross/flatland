@@ -14,19 +14,19 @@ using namespace flat::core;
 
 class sender : public object
 {
-    const char * message;
-    channel::ptr chan; 
+    const char *m_message;
+    channel::ptr m_chan; 
 
 public:
 
-    sender(const char * message, channel::ptr chan) : message(message), chan(chan)
+    sender(const char * message, channel::ptr chan) : m_message(message), m_chan(chan)
     {
     }
 
     void send()
     {
-        signal msg(this, "", (void*)message);
-        chan->emit(msg);
+        signal msg(this, "", (void*)m_message);
+        m_chan->emit(msg);
     }
 };
 
@@ -38,13 +38,13 @@ void function_listener(const object*, core::signal::package msg)
 class c_listener
 {
 
-    listener::ptr lis;
+    listener::ptr m_lis;
 
 public:
 
     c_listener(channel::ptr chan)
     {
-        lis = chan->connect(&c_listener::method_listener, this);
+        m_lis = chan->connect(&c_listener::method_listener, this);
     }
 
     void method_listener(const object *o, signal::package msg)

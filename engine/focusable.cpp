@@ -4,7 +4,7 @@
 
 using namespace flat;
 
-Focusable::Focusable(bool focused) : focused(focused) 
+Focusable::Focusable(bool focused) : m_focused(focused) 
 {
     // event_trigger = new flat::core::task<Focusable>(this, &Focusable::serial_precall, 0); 
 }
@@ -16,12 +16,12 @@ Focusable::~Focusable()
 
 void Focusable::setFocused(bool flag)
 {
-    focused = flag;
+    m_focused = flag;
 }
 
 bool Focusable::isFocused() const
 {
-    return focused;
+    return m_focused;
 }
 
 void Focusable::serial_precall(void*)

@@ -7,7 +7,8 @@ namespace flat {
 
 class FlatException : public std::exception
 {
-    const char * error;
+private:
+    const char * m_error;
 
 protected:
 

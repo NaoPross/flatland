@@ -5,89 +5,86 @@
 #include "layer.hpp"
 #include "core/signal.hpp"
 
-using namespace std;
 using namespace flat;
 
 FlatWindow::FlatWindow( int x, int y,
                         int width, int height, 
-                        const string& title, 
+                        const std::string& title, 
                         window_status status)
 
-    :   title(title), status(status),
-        sdl_window(0), screen(0)
+    :   m_title(title), m_status(status),
+        m_sdl_window(nullptr), m_screen(nullptr)
 {
-    bounds = new SDL_Rect;
-    
-    bounds->x = x;
-    bounds->y = y;
-    bounds->w = width; 
-    bounds->h = height;
+    m_bounds = new SDL_Rect;
 
-    main_layer = new FlatLayer(0);
+    m_bounds->x = x;
+    m_bounds->y = y;
+    m_bounds->w = width; 
+    m_bounds->h = height;
+
+    m_main_layer = new FlatLayer(nullptr);
 }
 
 FlatWindow::FlatWindow( SDL_Rect *bounds, 
-                        const string& title,
+                        const std::string& title,
                         window_status status)
 
     : FlatWindow(bounds->x, bounds->y, bounds->w, bounds->h, title, status)
-{
-}
+{}
 
 FlatWindow::FlatWindow( int width, int height,
-                        const string &title,
+                        const std::string &title,
                         window_status status)
 
-    :   FlatWindow( SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
+    :   FlatWindow(SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
                     width, height,
                     title, status)
 {
 }
 
 FlatWindow::FlatWindow(const FlatWindow& win)
-
-    :   flat::object(win),
-        title(win.title), status(win.status),
-        sdl_window(0), screen(0)
+    : flat::object(win), Focusable(false),
+      m_title(win.m_title), m_status(win.m_status),
+      m_sdl_window(nullptr), m_screen(nullptr)
 {
-    bounds = new SDL_Rect;
+    m_bounds = new SDL_Rect;
 
-    *bounds = *win.bounds;
+    *m_bounds = *win.m_bounds;
 
-    main_layer = new FlatLayer(0);
+    m_main_layer = new FlatLayer(nullptr);
 }
 
 FlatWindow::~FlatWindow()
 {
     close();
 
-    delete bounds;
-    delete main_layer;
+    delete m_bounds;
+    delete m_main_layer;
 }
 
 int FlatWindow::open()
 {
-    uint32_t win_flags = winstatus_to_flags(status);
+    uint32_t win_flags = winstatus_to_flags(m_status);
     
-    sdl_window = SDL_CreateWindow(  title.c_str(), 
-                                    bounds->x,
-                                    bounds->y,
-                                    bounds->w,
-                                    bounds->h,
-                                    win_flags);
+    m_sdl_window = SDL_CreateWindow(m_title.c_str(), 
+                                  m_bounds->x,
+                                  m_bounds->y,
+                                  m_bounds->w,
+                                  m_bounds->h,
+                                  win_flags);
 
-    if (sdl_window == 0)
+    if (m_sdl_window == nullptr)
     {
-        cout << "Error: failed to initialize window" << endl;
+        std::cout << "Error: failed to initialize window" << std::endl;
         // throw exception
         return -1;
     }
 
-    screen = SDL_GetWindowSurface(sdl_window);
+    m_screen = SDL_GetWindowSurface(m_sdl_window);
 
-    if (screen == 0) 
+    if (m_screen == nullptr) 
     {
-		cout << "Error: SDL_SetVideoMode failed" << endl;
+		std::cout << "Error: SDL_SetVideoMode failed" << std::endl;
         // throw exception
         return -1;
 	}
@@ -97,62 +94,60 @@ int FlatWindow::open()
 
 void FlatWindow::close()
 {
-    if (screen != 0)
-    {
-        SDL_FreeSurface(screen);
-        screen = 0;
+    if (m_screen != nullptr) {
+        SDL_FreeSurface(m_screen);
+        m_screen = nullptr;
     }
 
-    if (sdl_window != 0)
-    {
-        SDL_DestroyWindow(sdl_window);
-        sdl_window = 0;
+    if (m_sdl_window != nullptr) {
+        SDL_DestroyWindow(m_sdl_window);
+        m_sdl_window = nullptr;
     }
 }
 
 int FlatWindow::getWidth() const
 {
-    return bounds->w;
+    return m_bounds->w;
 }
 
 int FlatWindow::getHeight() const
 {
-    return bounds->h;
+    return m_bounds->h;
 }
 
 const SDL_Rect * FlatWindow::getBounds() const
 {
-    return bounds;
+    return m_bounds;
 }
 
 SDL_Window * FlatWindow::getSDLWindow()
 {
-    return sdl_window;
+    return m_sdl_window;
 }
 
 SDL_Surface * FlatWindow::getScreenSurface()
 {
-    return screen;
+    return m_screen;
 }
 
 const std::string& FlatWindow::getTitle() const
 {
-    return title;
+    return m_title;
 }
 
 void FlatWindow::setTitle(const std::string& title)
 {
-   this->title = title; 
+   m_title = title; 
 }
 
 window_status FlatWindow::getWindowStatus() const
 {
-    return status;
+    return m_status;
 }
 
 void FlatWindow::setWindowStatus(window_status status)
 {
-    this->status = status;
+    m_status = status;
 }
 
 void FlatWindow::key_cb(const SDL_KeyboardEvent *event)

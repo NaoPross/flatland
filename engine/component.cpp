@@ -8,8 +8,7 @@ component::component(component *parent, const std::string& id)
 {
     // TODO, check flatland initialization
 
-    if (parent == 0)
-    {
+    if (parent == nullptr) {
         // TODO set screen as parent layer
     }
 }
@@ -21,11 +20,11 @@ component::~component()
 
 void component::set_parent(component *parent)
 {
-    if (parent == 0) {
+    if (parent == nullptr) {
         // TODO set screen as parent layer
     }
 
-    this->m_parent = m_parent;
+    m_parent = parent;
 }
 
 component * component::parent()

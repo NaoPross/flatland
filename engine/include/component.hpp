@@ -9,7 +9,7 @@ namespace flat {
 
 class component : virtual public object, virtual public core::labelled
 {
-    
+private:
     component * m_parent;
 
 public:

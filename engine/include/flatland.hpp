@@ -8,20 +8,20 @@ class FlatWindow;
 struct flat_status
 {
 
-    flat_status(unsigned char video = 1,
-                unsigned char audio = 1,
-                unsigned char timer = 1,
-                unsigned char events = 1,
-                unsigned char joystick = 0,
-                unsigned char controller = 0,
-                unsigned char haptic = 0,
-                unsigned char error = 0,
-                unsigned char running = 0,
-                unsigned char loop = 0)
+    flat_status(unsigned char _video = 1,
+                unsigned char _audio = 1,
+                unsigned char _timer = 1,
+                unsigned char _events = 1,
+                unsigned char _joystick = 0,
+                unsigned char _controller = 0,
+                unsigned char _haptic = 0,
+                unsigned char _error = 0,
+                unsigned char _running = 0,
+                unsigned char _loop = 0)
 
-        : video(video), audio(audio), timer(timer), events(events),
-          joystick(joystick), controller(controller), haptic(haptic),
-          error(error), running(running), loop(loop) {}
+        : video(_video), audio(_audio), timer(_timer), events(_events),
+          joystick(_joystick), controller(_controller), haptic(_haptic),
+          error(_error), running(_running), loop(_loop) {}
 
     unsigned char video;
     unsigned char audio;

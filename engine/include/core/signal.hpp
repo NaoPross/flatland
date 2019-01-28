@@ -12,13 +12,8 @@
 #include "priority.hpp"
 #include "labelled.hpp"
 
-namespace flat
+namespace flat::core
 {
-    //class object;
-
-    namespace core
-    {
-
     class signal : virtual public labelled, virtual public prioritized
     {
     
@@ -37,13 +32,13 @@ namespace flat
             void * data;
         };
     
-        object * sender;
+        object *m_sender;
         package m_package;
     
-        signal(     object * sender, 
-                    const std::string& id = "", 
-                    void * data = 0,
-                    priority_t prior = priority_t::none);
+        signal(object * sender, 
+               const std::string& id = "", 
+               void * data = 0,
+               priority_t prior = priority_t::none);
 
         /* Alias to flat::core::channel::emit() */
         bool emit(const std::string& channel) const;
@@ -80,7 +75,7 @@ namespace flat
 
         callback m_callback;
 
-        std::list<std::string> filters;
+        std::list<std::string> m_filters;
     
         bool check_in_filters(const std::string&) const;
     };
@@ -88,19 +83,20 @@ namespace flat
     /* Channel class */
     class channel : virtual public labelled, public std::enable_shared_from_this<channel>
     {
+    private:
         /* Post processing signal stacking */
-        queue<signal> stack;
+        queue<signal> m_stack;
     
         /* Listeners list */
-        std::list<std::weak_ptr<listener>> listeners;
+        std::list<std::weak_ptr<listener>> m_listeners;
     
         /* Synchronous task checking for signals */
-        task::ptr checker;
+        task::ptr m_checker;
         
         /* Channel mapping */
-        static std::map<std::string, std::weak_ptr<channel>> channels;    
+        static std::map<std::string, std::weak_ptr<channel>> m_channels;
 
-        bool mapped;
+        bool m_mapped;
      
     public:
 
@@ -137,8 +133,5 @@ namespace flat
     
         void check_and_call();
     };
-
-
-    }
 }
 
