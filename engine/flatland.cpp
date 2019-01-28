@@ -213,6 +213,9 @@ int flat::init_flatland(FlatWindow* w, const flat_status& s, float _fps)
 
     cout << "Flatland: quitting SDL" << endl;
 
+    // finalize core channel
+    core_chan.finalize();
+
     SDL_Quit();
 
     return status.error;

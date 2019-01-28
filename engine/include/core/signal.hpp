@@ -148,6 +148,8 @@ namespace flat
          */
         bool start(priority_t task_priority = priority_t::none, job * _job = NULL);
 
+        void finalize();
+
         listener::ptr connect(listener::callback f,
             const std::initializer_list<std::string>& filters = {});
 

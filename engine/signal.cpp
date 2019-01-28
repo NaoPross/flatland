@@ -41,6 +41,17 @@ bool channel::start(priority_t prior, job * _job)
     return true;
 }
 
+void channel::finalize()
+{
+    npdebug("Finalizing channel: ", label)
+    
+    if (mapped) {
+
+        channels.erase(label);
+        checker.reset();
+    }
+}
+
 bool channel::map()
 {
     if (!mapped) {

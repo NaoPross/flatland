@@ -37,7 +37,6 @@ void function_listener(const object*, core::signal::package msg)
 
 class c_listener
 {
-
     listener::ptr lis;
 
 public:
@@ -114,6 +113,12 @@ int main()
 
     npdebug("Deleting m_listener")
     delete m_listener;
+
+    alpha = nullptr; // out of scope
+    f_listener = nullptr;
+
+    npdebug("alpha use count: ", alpha.use_count())
+    npdebug("f_listener use count: ", f_listener.use_count())
 
     npdebug("Exiting")
 
