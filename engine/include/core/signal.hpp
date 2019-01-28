@@ -39,9 +39,6 @@ namespace flat::core
                const std::string& id = "", 
                void * data = 0,
                priority_t prior = priority_t::none);
-
-        /* Alias to flat::core::channel::emit() */
-        bool emit(const std::string& channel) const;
     };
         
     /* Listener class */

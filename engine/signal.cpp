@@ -175,19 +175,6 @@ signal::signal(object *sender,
 {
 }
 
-bool signal::emit(const std::string& chan) const
-{
-    channel::ptr c = channel::find(chan);
-    
-    if (!c)
-        return false;
-    
-    /* Finally emit in channel */
-    c->emit(*this);
-
-    return true;
-}
-
 
 /* listener_s class */
 
