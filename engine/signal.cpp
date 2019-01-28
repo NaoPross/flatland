@@ -20,12 +20,25 @@ channel::~channel()
         m_channels.erase(label);
 }
 
-void channel::start(priority_t prior)
+bool channel::start(priority_t prior, job * _job)
 {
+    npdebug("Trying to map channel: ", label);
+
+    if (map())
+        m_checker.reset(); // force count to zero, it should remove task too
+    else
+        return false;
+
     npdebug("Starting channel: ", label);
 
+    // take main job if no job is specified
+    if (!_job)
+        _job = &flat::main_job();
+
     // Initialize task
-    m_checker = flat::main_job().delegate_task(&channel::check_and_call, this, prior);
+    m_checker = _job->delegate_task(&channel::check_and_call, this, prior);
+
+    return true;
 }
 
 bool channel::map()
@@ -100,16 +113,17 @@ listener::ptr channel::connect(listener::callback f, const std::initializer_list
     return nullptr;
 }
 
-channel::ptr channel::create(const std::string& id, priority_t prior)
+bool channel::legit() const
+{
+    return m_mapped;
+}
+
+channel::ptr channel::create(const std::string& id, priority_t prior, job * _job)
 {
     ptr out = std::make_shared<channel>(id);
 
-    if (!out->map())
-        return nullptr;
-
-    out->start(prior);
-
-    return out;
+    // do not create a non-legit channel
+    return out->start(prior, _job) ? out : nullptr;
 }
    
 channel::ptr channel::find(const std::string& id)

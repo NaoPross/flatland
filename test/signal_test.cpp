@@ -87,6 +87,8 @@ int main()
     FlatWindow win(600, 900, "Test 3");
     flat_status status;
 
+    npdebug("Initializing channel alpha")
+
     alpha = channel::create("alpha");
 
     if (alpha == nullptr)

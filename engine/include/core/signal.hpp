@@ -94,16 +94,29 @@ namespace flat::core
         static std::map<std::string, std::weak_ptr<channel>> m_channels;
 
         bool m_mapped;
+
+        bool map();
      
     public:
 
         using ptr = std::shared_ptr<channel>;
-    
+   
+        /* 
+         * Constructs a new channel and try to bind it the specified job
+         * If no job is specified, then flat::main_job will be taken
+         *
+         * Note: Remember to check for channel legacy with legit() member function
+         *       A channel is legit if and only if there's no other channel
+         *       corresponding to the same label name
+         *       In general, a channel must be UNIQUE with its label
+         */ 
         channel(const std::string& id = "");
         ~channel();
 
-        void start(priority_t task_priority = priority_t::none);
-        bool map();
+        // do not allow to copy a channel
+        // it does not have any sense to create a channel with the same name
+        channel(const channel&) = delete;
+        channel& operator=(const channel&) = delete;
     
         void emit(const signal&);
 
@@ -112,6 +125,21 @@ namespace flat::core
 
         bool connect(listener* l);
         void disconnect(listener* l);
+
+        /* 
+         * Check for legacy
+         *
+         * Note: Channels are mapped by their label.
+         *       A channel is legit if and only if there's no other channel
+         *       corresponding to the same label name.
+         */
+        bool legit() const;
+
+        /*
+         * It tries binding the channel task and make the channel legit
+         * In case of success, true is returned, otherwise false
+         */
+        bool start(priority_t task_priority = priority_t::none, job * _job = NULL);
 
         listener::ptr connect(listener::callback f,
             const std::initializer_list<std::string>& filters = {});
@@ -123,10 +151,22 @@ namespace flat::core
             using namespace std::placeholders;
             return connect(std::bind(mf, obj, _1, _2), filters);
         }
-       
+      
+        /* 
+         * Find channel by its name
+         */ 
         static ptr find(const std::string&); 
 
-        static ptr create(const std::string& id, priority_t prior = priority_t::none);
+        /*
+         * Safer than constructor
+         * It constructs a new channel checking whether it is legit or not.
+         * It returns a nullptr if the legacy is not verified.
+         *
+         * Note: Channels are mapped by their label.
+         *       A channel is legit if and only if there's no other channel
+         *       corresponding to the same label name.
+         */
+        static ptr create(const std::string& id, priority_t prior = priority_t::none, job * _job = NULL);
     
         void check_and_call();
     };
