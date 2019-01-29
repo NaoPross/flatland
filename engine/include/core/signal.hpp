@@ -96,17 +96,18 @@ namespace flat
         void add_filter(const std::string&);
         void remove_filter(const std::string&);
 
-        virtual void invoke(const abstract_signal&) = 0;
+        virtual void invoke(const abstract_signal *) = 0;
     };
         
     /* Listener class */
     template <class ...Args>
     class listener : public abstract_listener
     {
+
     public:
 
-        using callback = std::function<void(Args...)>;
-        using ptr = std::shared_ptr<listener<Args...>>;
+        using callback = typename std::function<void(Args...)>;
+        using ptr = typename std::shared_ptr<listener<Args...>>;
 
         listener(callback m_callback, const std::initializer_list<std::string>& filters = {})
             : abstract_listener(filters), m_callback(m_callback)
@@ -118,9 +119,9 @@ namespace flat
         //bool disconnect(const std::string&);
 
         template<int ...Is>
-        void invoke(abstract_signal *sig, helper::int_sequence<Is...>)
+        void invoke(const abstract_signal * sig, helper::int_sequence<Is...>)
         {
-            signal<Args...>* pt = dynamic_cast<signal<Args...>*>(sig);
+            const signal<Args...> * pt = dynamic_cast<const signal<Args...>*>(sig);
 
             // check if the arguments and the filters match
             if (pt && match_filters(sig))
@@ -128,7 +129,7 @@ namespace flat
         }
 
         // implement base class method
-        virtual bool invoke(abstract_signal* sig) override
+        virtual bool invoke(const abstract_signal * sig) override
         {
             return invoke(sig, helper::make_int_sequence<sizeof...(Args)>{});
         }
@@ -190,12 +191,12 @@ namespace flat
         
 
         template<class ...Args> 
-        void disconnect(listener<Args...>::ptr l)
+        void disconnect(typename listener<Args...>::ptr l)
         {
             listeners.remove_if(
-                [l](std::weak_ptr<listener> p){ 
+                [l](std::weak_ptr<abstract_listener> p){ 
                     
-                    listener::ptr pt = p.lock();
+                    typename listener<Args...>::ptr pt = p.lock();
                     return pt.get() == l.get(); 
                 });
         }
@@ -203,7 +204,7 @@ namespace flat
         template<class ...Args> 
         void disconnect(listener<Args...>* l)
         {
-            listener<Args...>::ptr pt(l);
+            typename listener<Args...>::ptr pt(l);
             disconnect<Args...>(pt);
         }
 
@@ -233,12 +234,12 @@ namespace flat
          * returns the corresponding listener
          */
         template<class ...Args>
-        listener<Args...>::ptr connect( listener<Args...>::callback f,
+        typename listener<Args...>::ptr connect( typename listener<Args...>::callback f,
                                         const std::initializer_list<std::string>& filters = {})
         {
-            listener<Args...>::ptr lis = std::make_shared<listener<Args..>>(f, filters);
+            typename listener<Args...>::ptr lis = std::make_shared<listener<Args...>>(f, filters);
 
-            if (connect(static_pointer_cast<abstract_listener>(lis)))
+            if (connect(std::static_pointer_cast<abstract_listener>(lis)))
                 return lis;
 
             return nullptr;
@@ -248,9 +249,8 @@ namespace flat
          * Connect a class member function and returns the
          * corresponding listener
          */
-        template<typename R, typename T, class Args...>
-        inline listener::ptr connect(R T::*mf, T* obj,
-            const std::initializer_list<std::string>& filters = {})
+        template<typename R, typename T, class ...Args>
+        inline typename listener<Args...>::ptr connect(R T::*mf, T* obj, const std::initializer_list<std::string>& filters = {})
         {
             //using namespace std::placeholders;
             //return connect<Args...>(std::bind(mf, obj, _1, _2), filters);

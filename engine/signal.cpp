@@ -147,9 +147,7 @@ void channel::check_and_call()
 abstract_signal::abstract_signal(const std::string& id, priority_t priority)
 
     :   labelled(id, true), 
-        prioritized(priority),
-{
-}
+        prioritized(priority) {}
 
 /*bool signal::emit(const std::string& chan) const
 {
@@ -200,7 +198,7 @@ void abstract_listener::remove_filter(const std::string& f)
 
 bool abstract_listener::match_filters(const abstract_signal *sig) const
 {
-    return (!sig.label.empty() && check_in_filters(sig.label)) || 
-           (sig.label.empty() && filters.empty());
+    return (!sig->label.empty() && check_in_filters(sig->label)) || 
+           (sig->label.empty() && filters.empty());
 }
 
