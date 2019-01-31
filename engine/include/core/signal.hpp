@@ -65,11 +65,12 @@ namespace flat
     
         std::tuple<Args...> args;
 
-        signal(     Args&& ... args,
+        signal(     Args ... args,
                     const std::string& id = "", 
                     priority_t prior = priority_t::none)
 
-            : abstract_signal(id, prior), args(std::forward<Args>(args)...)
+            : abstract_signal(id, prior), 
+              args(std::forward<Args>(args)...)
         {
 
         }
@@ -96,7 +97,7 @@ namespace flat
         void add_filter(const std::string&);
         void remove_filter(const std::string&);
 
-        virtual void invoke(const abstract_signal *) = 0;
+        virtual bool invoke(const abstract_signal *) = 0;
     };
         
     /* Listener class */

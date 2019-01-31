@@ -25,30 +25,30 @@ public:
 
     void send()
     {
-        signal msg(this, "", (void*)message);
+        signal<const char*> msg(message);
         chan->emit(msg);
     }
 };
 
-void function_listener(const object*, core::signal::package msg)
+void function_listener(const char *msg)
 {
-    cout << "Funzione: " << msg.get<const char>() << endl;
+    cout << "Funzione: " << msg << endl;
 }
 
 class c_listener
 {
-    listener::ptr lis;
+    listener<const char*>::ptr lis;
 
 public:
 
     c_listener(channel::ptr chan)
     {
-        lis = chan->connect(&c_listener::method_listener, this);
+        lis = chan->connect(&c_listener::method_listener, *this);
     }
 
-    void method_listener(const object *o, signal::package msg)
+    void method_listener(const char *msg)
     {
-        cout << "Metodo" << msg.get<const char>() << endl;
+        cout << "Metodo: " << msg << endl;
     }
 };
 
