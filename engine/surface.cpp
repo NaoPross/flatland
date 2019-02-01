@@ -2,149 +2,145 @@
 
 #include <iostream>
 
-using namespace std;
 using namespace flat;
 
 surface::surface(const char *filename, uint32_t format, SDL_Surface *parent)
-    : core::labelled(filename, true), parent(parent), hide(false)
+    : core::labelled(filename, true), m_parent(parent), m_hide(false)
 {
-    cout << "surface: loading " << filename << endl;
-    sdl_surface = loadOptimizedSurface(filename, format);
+    std::cout << "surface: loading " << filename << std::endl;
+    m_sdl_surface = loadOptimizedSurface(filename, format);
 
-    if (!sdl_surface)
+    if (!m_sdl_surface)
     {
-        cout << "Warning: could not load surface " << filename << endl;
+        std::cout << "Warning: could not load surface " << filename << std::endl;
     }
 
-    offset = new SDL_Rect;
+    m_offset = new SDL_Rect;
 
-    offset->x = 0;
-    offset->y = 0;
-    offset->w = sdl_surface->w;
-    offset->h = sdl_surface->h;
+    m_offset->x = 0;
+    m_offset->y = 0;
+    m_offset->w = m_sdl_surface->w;
+    m_offset->h = m_sdl_surface->h;
 
-    viewport = new SDL_Rect;
+    m_viewport = new SDL_Rect;
 
-    viewport->x = 0;
-    viewport->y = 0;
-    viewport->w = sdl_surface->w;
-    viewport->h = sdl_surface->h;
+    m_viewport->x = 0;
+    m_viewport->y = 0;
+    m_viewport->w = m_sdl_surface->w;
+    m_viewport->h = m_sdl_surface->h;
 }
 
 surface::surface(SDL_Surface *sdl_surface, SDL_Surface *parent)
-    : flat::object(), parent(parent), hide(false)
+    : flat::object(), m_parent(parent), m_hide(false)
 {
-    this->sdl_surface = new SDL_Surface(*sdl_surface);
+    m_sdl_surface = new SDL_Surface(*sdl_surface);
 
-    offset = new SDL_Rect;
+    m_offset = new SDL_Rect;
 
-    offset->x = 0;
-    offset->y = 0;
-    offset->w = sdl_surface->w;
-    offset->h = sdl_surface->h;
+    m_offset->x = 0;
+    m_offset->y = 0;
+    m_offset->w = sdl_surface->w;
+    m_offset->h = sdl_surface->h;
 
-    viewport = new SDL_Rect;
+    m_viewport = new SDL_Rect;
 
-    viewport->x = 0;
-    viewport->y = 0;
-    viewport->w = sdl_surface->w;
-    viewport->h = sdl_surface->h;
+    m_viewport->x = 0;
+    m_viewport->y = 0;
+    m_viewport->w = sdl_surface->w;
+    m_viewport->h = sdl_surface->h;
 }
 
-surface::surface(const surface &sprite)
-    : flat::object(sprite), parent(sprite.parent), hide(sprite.hide)
+surface::surface(const surface& sprite)
+    : flat::object(sprite), m_parent(sprite.m_parent), m_hide(sprite.m_hide)
 {
-    offset = new SDL_Rect(*sprite.offset);
-
-    viewport = new SDL_Rect(*sprite.viewport);
-
-    sdl_surface = copySurface(sprite.sdl_surface);
+    m_offset = new SDL_Rect(*sprite.m_offset);
+    m_viewport = new SDL_Rect(*sprite.m_viewport);
+    m_sdl_surface = copySurface(sprite.m_sdl_surface);
 }
 
 surface::~surface()
 {
-    SDL_FreeSurface(sdl_surface);
+    SDL_FreeSurface(m_sdl_surface);
 
-    delete offset;
-    delete viewport;
+    delete m_offset;
+    delete m_viewport;
 }
 
 void surface::setOffset(int x, int y, int w, int h)
 {
-    offset->x = x;
-    offset->y = y;
+    m_offset->x = x;
+    m_offset->y = y;
 
     if (w > 0)
-        offset->w = w;
+        m_offset->w = w;
 
     if (h > 0)
-        offset->h = h;
+        m_offset->h = h;
 }
 
 void surface::setViewport(int x, int y, int w, int h)
 {
-    viewport->x = x;
-    viewport->y = y;
-    viewport->w = w;
-    viewport->h = h;
+    m_viewport->x = x;
+    m_viewport->y = y;
+    m_viewport->w = w;
+    m_viewport->h = h;
 }
 
 void surface::setViewport(const SDL_Rect &rect)
 {
-    *viewport = rect;
+    *m_viewport = rect;
 }
 
 
 void surface::setOffset(const SDL_Rect &offset)
 {
-    *this->offset = offset;
+    *m_offset = offset;
 }
 
 const SDL_Rect * surface::getOffset() const
 {
-    return offset;
+    return m_offset;
 }
 
 const SDL_Rect * surface::getViewport() const
 {
-    return viewport;
+    return m_viewport;
 }
 
 void surface::setParent(SDL_Surface *parent)
 {
-    this->parent = parent;
+    m_parent = parent;
 }
 
 SDL_Surface * surface::getParent()
 {
-    return parent;
+    return m_parent;
 }
 
 SDL_Surface * surface::getSurface()
 {
-    return sdl_surface;
+    return m_sdl_surface;
 }
 
 void surface::setHidden(bool flag)
 {
-    hide = flag;
+    m_hide = flag;
 }
 
 bool surface::isHidden() const
 {
-    return hide;
+    return m_hide;
 }
 
 void surface::blit()
 {
-    if (!hide)
-        SDL_BlitSurface(sdl_surface, viewport, parent, offset);
+    if (!m_hide)
+        SDL_BlitSurface(m_sdl_surface, m_viewport, m_parent, m_offset);
 }
 
 SDL_Surface * surface::loadOptimizedSurface(const char *filename, uint32_t format)
 {
-    SDL_Surface * optimized = 0;
-
+    SDL_Surface * optimized = nullptr;
     SDL_Surface * loaded = SDL_LoadBMP(filename);
 
     if (loaded)

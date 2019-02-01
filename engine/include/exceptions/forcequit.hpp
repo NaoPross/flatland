@@ -3,9 +3,9 @@
 
 namespace flat {
     struct ForceQuit {
-        const char * reason;
+        const char * m_reason;
 
-        ForceQuit(const char *reason) : reason(reason) {}
+        ForceQuit(const char *reason) : m_reason(reason) {}
     };
 }
 

@@ -13,7 +13,7 @@ class FlatActor : public FlatCollector
     // TODO, serial binding
     
     /* Bounds */
-    FlatBound * bounds;
+    FlatBound * m_bounds;
 
 public:
 

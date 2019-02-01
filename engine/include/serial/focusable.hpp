@@ -10,7 +10,8 @@ namespace flat {
 
 class Focusable : virtual public flat::object
 {
-    bool focused;
+private:
+    bool m_focused;
 
 protected:
 

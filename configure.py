@@ -112,5 +112,5 @@ with open("build.ninja", "w") as bf:
     print("default build/test/signal_test", file=bf)
 
 # run ctags for vim :)
-os.system("if type ctags; then ctags -R . ; fi")
+os.system("if type ctags; then ctags -R --extra=f . ; fi")
 

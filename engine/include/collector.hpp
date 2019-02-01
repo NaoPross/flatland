@@ -8,11 +8,11 @@ namespace flat {
 
 class FlatCollector : virtual public flat::object
 {
-    FlatCollector * parent;
+private:
+    FlatCollector * m_parent;
+    bool m_released;
 
-    bool released;
-
-    std::set<FlatCollector*> children;
+    std::set<FlatCollector*> m_children;
 
 public:
 

@@ -5,19 +5,19 @@ using namespace flat;
 
 FlatCollector::FlatCollector(FlatCollector *parent)
 
-    : parent(parent), released(!parent)
+    : m_parent(parent), m_released(!parent)
 {
 
 }
 
 FlatCollector::~FlatCollector()
 {
-    if (parent != 0)
-        parent->detach(this);
+    if (m_parent != 0)
+        m_parent->detach(this);
 
-    parent = 0;
+    m_parent = 0;
 
-    for (FlatCollector * child : children)
+    for (FlatCollector * child : m_children)
     {
         if (!child->isReleased())
             delete child;
@@ -26,12 +26,12 @@ FlatCollector::~FlatCollector()
 
 bool FlatCollector::isReleased() const
 {
-    return released;
+    return m_released;
 }
 
 void FlatCollector::release()
 {
-    released = true;
+    m_released = true;
 }
     
 void FlatCollector::attach(FlatCollector *obj)
@@ -39,55 +39,55 @@ void FlatCollector::attach(FlatCollector *obj)
     if (obj == 0)
         return;
 
-    children.insert(obj);
+    m_children.insert(obj);
     obj->setParent(this); 
 }
 
 void FlatCollector::detach(FlatCollector *obj)
 {
-    children.erase(obj);
+    m_children.erase(obj);
     obj->releaseParent();
 }
 
 void FlatCollector::setParent(FlatCollector *obj)
 {
-    parent = obj;
-    released = false;
+    m_parent = obj;
+    m_released = false;
 }
 
 void FlatCollector::releaseParent()
 {
-    parent = 0;
-    released = true;
+    m_parent = 0;
+    m_released = true;
 }
 
 FlatCollector * FlatCollector::getParent()
 {
-    return parent;
+    return m_parent;
 }
 
 bool FlatCollector::isParentOf(FlatCollector* obj) const
 {
-    return this == obj->parent;
+    return this == obj->m_parent;
 }
 
 set<FlatCollector*>::iterator FlatCollector::begin()
 {
-    return children.begin();
+    return m_children.begin();
 }
 
 set<FlatCollector*>::iterator FlatCollector::end()
 {
-    return children.end();
+    return m_children.end();
 }
 
 set<FlatCollector*>::const_iterator FlatCollector::begin() const
 {
-    return children.begin();
+    return m_children.begin();
 }
 
 set<FlatCollector*>::const_iterator FlatCollector::end() const
 {
-    return children.end();
+    return m_children.end();
 }
 

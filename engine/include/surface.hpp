@@ -9,13 +9,13 @@ namespace flat {
 
 class surface : virtual public object, virtual public core::labelled
 {
-    SDL_Surface * sdl_surface;
-    SDL_Surface * parent;
+    SDL_Surface * m_sdl_surface;
+    SDL_Surface * m_parent;
 
-    SDL_Rect * offset;
-    SDL_Rect * viewport;
+    SDL_Rect * m_offset;
+    SDL_Rect * m_viewport;
 
-    bool hide;
+    bool m_hide;
 
 public:
 
