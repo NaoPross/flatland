@@ -28,12 +28,24 @@ namespace flat {
                 return lhs.priority < rhs.priority;
             }
 
-            bool operator()(const std::weak_ptr<prioritized> lhs, const std::weak_ptr<prioritized> rhs) {
+            bool operator()(const prioritized * const lhs, const prioritized * const rhs) {
+                return lhs->priority < rhs->priority;
+            }
+
+            bool operator()(const std::unique_ptr<const prioritized> lhs,
+                            const std::unique_ptr<const prioritized> rhs)
+            {
+                return operator()(lhs.get(), rhs.get());
+            }
+
+            bool operator()(const std::weak_ptr<const prioritized> lhs,
+                            const std::weak_ptr<prioritized> rhs)
+            {
                 if (auto l = lhs.lock()) {
                     if (auto r = rhs.lock()) {
                         // if both valid, check their priority
                         // in case they are the same, left is prioritized
-                        return l->priority < r->priority;
+                        operator()(l.get(), r.get());
                     } else {
                         // if right is expired, left is prioritized
                         return true;
