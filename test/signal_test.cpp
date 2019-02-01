@@ -37,13 +37,13 @@ void function_listener(const char *msg)
 
 class c_listener
 {
-    listener<const char*>::ptr lis;
+    std::shared_ptr<listener<const char*>> lis;
 
 public:
 
     c_listener(channel::ptr chan)
     {
-        lis = chan->connect(&c_listener::method_listener, *this);
+        lis = chan->connect(&c_listener::method_listener, this);
     }
 
     void method_listener(const char *msg)
@@ -57,7 +57,7 @@ public:
 channel::ptr alpha;
 sender * m_sender;
 c_listener * m_listener;
-listener::ptr f_listener;
+std::shared_ptr<listener<const char*>> f_listener;
 
 int steps = 0;
 
@@ -71,7 +71,7 @@ void lifeloop()
 
     if (++steps > 200)
     {
-        signal quit(0, "quit");
+        signal<const char*> quit("quit");
 
         // quit request
         flat::core_channel().emit(quit);

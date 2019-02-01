@@ -14,6 +14,8 @@
 #include "priority.hpp"
 #include "labelled.hpp"
 
+#include "debug.hpp" // debug header
+
 /*
  * Some tools for variadic binding templates
  */
@@ -161,6 +163,23 @@ namespace flat
         bool map();
 
         bool connect(std::shared_ptr<abstract_listener> l);
+
+        /* 
+         * Connects any bound function to the channel and 
+         * returns the corresponding listener
+         */
+        template<class ...Args>
+        std::shared_ptr<listener<Args...>> _connect(std::function<void(Args...)> f,
+                                        const std::initializer_list<std::string>& filters = {})
+        {
+            std::shared_ptr<listener<Args...>> lis = 
+            std::make_shared<listener<Args...>>(f, filters);
+
+            if (connect(std::static_pointer_cast<abstract_listener>(lis)))
+                return lis;
+
+            return nullptr;
+        }
              
     public:
 
@@ -230,20 +249,45 @@ namespace flat
          */
         void finalize();
 
-        /* 
-         * Connects any bound function to the channel and 
-         * returns the corresponding listener
+        /*
+         * Connect a function and returns the
+         * corresponding listener, placeholder form
          */
-        template<class ...Args>
-        typename listener<Args...>::ptr connect( typename listener<Args...>::callback f,
-                                        const std::initializer_list<std::string>& filters = {})
+        template<typename R, class ...Args, int ...Is>
+        std::shared_ptr<listener<Args...>> p_connect(R (*mf)(Args...), helper::int_sequence<Is...>, const std::initializer_list<std::string>& filters = {})
         {
-            typename listener<Args...>::ptr lis = std::make_shared<listener<Args...>>(f, filters);
+            //using namespace std::placeholders;
+            //return connect<Args...>(std::bind(mf, obj, _1, _2), filters);
+            using namespace helper;
+            auto b =  std::bind(mf, placeholder_template<Is>{}...);
+            return _connect<Args...>(b, filters);
+        }
 
-            if (connect(std::static_pointer_cast<abstract_listener>(lis)))
-                return lis;
+        /*
+         * Connect a function and returns the
+         * corresponding listener
+         */
+        template<typename R, class ...Args>
+        std::shared_ptr<listener<Args...>> connect(R (*mf)(Args...), const std::initializer_list<std::string>& filters = {})
+        {
+            //using namespace std::placeholders;
+            //return connect<Args...>(std::bind(mf, obj, _1, _2), filters);
+            using namespace helper;
+            return p_connect<R, Args...>(mf, make_int_sequence<sizeof...(Args)>{}, filters);
+        }
 
-            return nullptr;
+        /*
+         * Connect a class member function and returns the
+         * corresponding listener, placeholder form
+         */
+        template<typename R, typename T, class ...Args, int ...Is>
+        std::shared_ptr<listener<Args...>> c_connect(R (T::*mf)(Args...), T* obj, helper::int_sequence<Is...>, const std::initializer_list<std::string>& filters = {})
+        {
+            //using namespace std::placeholders;
+            //return connect<Args...>(std::bind(mf, obj, _1, _2), filters);
+            using namespace helper;
+            auto b = std::bind(mf, obj, placeholder_template<Is>{}...);
+            return _connect<Args...>(b, filters);
         }
 
         /*
@@ -251,12 +295,12 @@ namespace flat
          * corresponding listener
          */
         template<typename R, typename T, class ...Args>
-        inline typename listener<Args...>::ptr connect(R T::*mf, T* obj, const std::initializer_list<std::string>& filters = {})
+        std::shared_ptr<listener<Args...>> connect(R (T::*mf)(Args...), T* obj, const std::initializer_list<std::string>& filters = {})
         {
             //using namespace std::placeholders;
             //return connect<Args...>(std::bind(mf, obj, _1, _2), filters);
             using namespace helper;
-            return connect<Args...>(std::bind(mf, obj, make_int_sequence<sizeof...(Args)>{}), filters);
+            return c_connect<R, T, Args...>(mf, obj, make_int_sequence<sizeof...(Args)>{}, filters);
         }
       
         /* 
