@@ -254,12 +254,12 @@ namespace flat
          * corresponding listener, placeholder form
          */
         template<typename R, class ...Args, std::size_t ...Is>
-        std::shared_ptr<listener<Args...>> p_connect(R (*mf)(Args...), std::index_sequence<Is...> seq, const std::initializer_list<std::string>& filters = {})
+        std::shared_ptr<listener<Args...>> p_connect(R (*mf)(Args...), std::index_sequence<Is...>, const std::initializer_list<std::string>& filters = {})
         {
             //using namespace std::placeholders;
             //return connect<Args...>(std::bind(mf, obj, _1, _2), filters);
             //using namespace helper;
-            auto b =  std::bind(mf, seq);
+            auto b =  std::bind(mf, helper::placeholder_template<Is>{}...);
             return _connect(b, filters);
         }
 
@@ -281,12 +281,12 @@ namespace flat
          * corresponding listener, placeholder form
          */
         template<typename R, typename T, class ...Args, size_t ...Is>
-        std::shared_ptr<listener<Args...>> c_connect(R (T::*mf)(Args...), T* obj, std::index_sequence<Is...> seq, const std::initializer_list<std::string>& filters = {})
+        std::shared_ptr<listener<Args...>> c_connect(R (T::*mf)(Args...), T* obj, std::index_sequence<Is...>, const std::initializer_list<std::string>& filters = {})
         {
             //using namespace std::placeholders;
             //return connect<Args...>(std::bind(mf, obj, _1, _2), filters);
             //using namespace helper;
-            auto b = std::bind(mf, obj, seq);
+            auto b = std::bind(mf, obj, helper::placeholder_template<Is>{}...);
             return _connect(b, filters);
         }
 
