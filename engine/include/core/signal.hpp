@@ -23,22 +23,22 @@
 namespace helper
 {
         
-    template<int...> struct int_sequence {};
+    /*template<int...> struct int_sequence {};
 
     template<int N, int... Is> struct make_int_sequence
         : make_int_sequence<N-1, N-1, Is...> {};
     template<int... Is> struct make_int_sequence<0, Is...>
-        : int_sequence<Is...> {};
+        : int_sequence<Is...> {};*/
 
-    template<int>
+    template<std::size_t>
     struct placeholder_template {};
 }
 
 namespace std
 {
-    template<int N>
+    template<size_t N>
     struct is_placeholder< helper::placeholder_template<N> >
-        : integral_constant<int, N+1> // the one is important
+        : integral_constant<size_t, N+1> // the one is important
     {};
 }
 
@@ -121,8 +121,8 @@ namespace flat
         //bool connect(const std::string&);
         //bool disconnect(const std::string&);
 
-        template<int ...Is>
-        void invoke(const abstract_signal * sig, helper::int_sequence<Is...>)
+        template<std::size_t ...Is>
+        void invoke(const abstract_signal * sig, std::index_sequence<Is...>)
         {
             const signal<Args...> * pt = dynamic_cast<const signal<Args...>*>(sig);
 
@@ -134,7 +134,7 @@ namespace flat
         // implement base class method
         virtual bool invoke(const abstract_signal * sig) override
         {
-            return invoke(sig, helper::make_int_sequence<sizeof...(Args)>{});
+            return invoke(sig, std::make_index_sequence<sizeof...(Args)>{});
         }
 
     private:
@@ -253,14 +253,14 @@ namespace flat
          * Connect a function and returns the
          * corresponding listener, placeholder form
          */
-        template<typename R, class ...Args, int ...Is>
-        std::shared_ptr<listener<Args...>> p_connect(R (*mf)(Args...), helper::int_sequence<Is...>, const std::initializer_list<std::string>& filters = {})
+        template<typename R, class ...Args, std::size_t ...Is>
+        std::shared_ptr<listener<Args...>> p_connect(R (*mf)(Args...), std::index_sequence<Is...> seq, const std::initializer_list<std::string>& filters = {})
         {
             //using namespace std::placeholders;
             //return connect<Args...>(std::bind(mf, obj, _1, _2), filters);
-            using namespace helper;
-            auto b =  std::bind(mf, placeholder_template<Is>{}...);
-            return _connect<Args...>(b, filters);
+            //using namespace helper;
+            auto b =  std::bind(mf, seq);
+            return _connect(b, filters);
         }
 
         /*
@@ -272,22 +272,22 @@ namespace flat
         {
             //using namespace std::placeholders;
             //return connect<Args...>(std::bind(mf, obj, _1, _2), filters);
-            using namespace helper;
-            return p_connect<R, Args...>(mf, make_int_sequence<sizeof...(Args)>{}, filters);
+            //using namespace helper;
+            return p_connect(mf, std::make_index_sequence<sizeof...(Args)>{}, filters);
         }
 
         /*
          * Connect a class member function and returns the
          * corresponding listener, placeholder form
          */
-        template<typename R, typename T, class ...Args, int ...Is>
-        std::shared_ptr<listener<Args...>> c_connect(R (T::*mf)(Args...), T* obj, helper::int_sequence<Is...>, const std::initializer_list<std::string>& filters = {})
+        template<typename R, typename T, class ...Args, size_t ...Is>
+        std::shared_ptr<listener<Args...>> c_connect(R (T::*mf)(Args...), T* obj, std::index_sequence<Is...> seq, const std::initializer_list<std::string>& filters = {})
         {
             //using namespace std::placeholders;
             //return connect<Args...>(std::bind(mf, obj, _1, _2), filters);
-            using namespace helper;
-            auto b = std::bind(mf, obj, placeholder_template<Is>{}...);
-            return _connect<Args...>(b, filters);
+            //using namespace helper;
+            auto b = std::bind(mf, obj, seq);
+            return _connect(b, filters);
         }
 
         /*
@@ -299,8 +299,8 @@ namespace flat
         {
             //using namespace std::placeholders;
             //return connect<Args...>(std::bind(mf, obj, _1, _2), filters);
-            using namespace helper;
-            return c_connect<R, T, Args...>(mf, obj, make_int_sequence<sizeof...(Args)>{}, filters);
+            //using namespace helper;
+            return c_connect(mf, obj, std::make_index_sequence<sizeof...(Args)>{}, filters);
         }
       
         /* 
