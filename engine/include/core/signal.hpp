@@ -14,9 +14,6 @@
 #include <cstddef>
 #include <type_traits>
 
-/*
- * Some tools for variadic binding templates
- */
 
 namespace flat::core
 {
@@ -35,35 +32,25 @@ namespace flat::core
         class signal : public prioritized
         {
         public:
-            // signal(const signal& other) = delete;
-            signal& operator=(const signal& other) = delete;
             virtual ~signal() {}
 
         protected:
-            signal(priority_t p) : prioritized(p) {}
+            explicit signal(priority_t p = priority_t::none) : prioritized(p) {}
         };
     }
 
     /* class signal<...Args>
      *
-     * is a specialized tuple that contains funnction arguments (...Args) 
-     * that are later used to calll a callback stored in a listener.
+     * is a specialized tuple that contains function arguments (...Args) 
+     * that are later used to call a callback stored in a listener.
      */
     template <typename ...Args> 
-    class signal : private std::tuple<Args...>, public helper::signal
+    struct signal : public helper::signal
     {
-    private:
-        /// listener with the same signature is allowed to peek
-        friend class listener<Args...>;
-        
-    public:
-        constexpr signal(Args& ...args)
-            : std::tuple<Args...>((args)...),
-              helper::signal(priority_t::none) {}
+        const std::tuple<Args...> args;
 
-        constexpr signal(Args&& ...args) 
-            : std::tuple<Args...>(std::move(args)...),
-              helper::signal(priority_t::none) {}
+        explicit constexpr signal(Args... _args)
+            : args(std::move(_args)...) {}
     };
 
 
@@ -77,12 +64,8 @@ namespace flat::core
          */
         class listener
         {
-        private:
-            listener(const signal& other) = delete;
-            listener& operator=(const listener& other) = delete;
-
         protected:
-            listener() {}
+            explicit listener() {}
             virtual ~listener() {}
 
         public:
@@ -102,8 +85,7 @@ namespace flat::core
         using callback = typename std::function<void(Args...)>;
         using ptr = typename std::shared_ptr<listener<Args...>>;
 
-        listener() = delete;
-        listener(callback f) : m_callback(f) {}
+        explicit listener(callback f) : m_callback(f) {}
 
         // attempt to call m_callback with s as argument
         // m_callback is called only if the signature matches
@@ -112,7 +94,7 @@ namespace flat::core
             const signal<Args...> *p = dynamic_cast<const signal<Args...> *>(s.get());
 
             if (p != nullptr)
-                std::apply(m_callback, *p);
+                std::apply(m_callback, p->args);
 
             // return true if p was called
             return (p != nullptr);
@@ -142,12 +124,7 @@ namespace flat::core
         using ptr = std::shared_ptr<channel>;
    
         // TODO: channel() that binds to main_job
-        channel(job& broadcaster);
-
-        // do not allow to copy a channel
-        // it does not make sense to create a channel with the same name
-        channel(const channel&) = delete;
-        channel& operator=(const channel&) = delete;
+        explicit channel(job& broadcaster);
 
         /// add a signal to the queue/stack of signals (m_signals)
         template<class ...Args> 
@@ -198,3 +175,12 @@ namespace flat::core
     };
 }
 
+
+namespace std
+{
+    template<typename... Args>
+    struct tuple_size<flat::core::signal<Args...>>
+    {
+        constexpr static std::size_t value = (0 + ... + sizeof(Args));
+    };
+}
