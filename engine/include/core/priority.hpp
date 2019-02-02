@@ -45,7 +45,7 @@ namespace flat {
                     if (auto r = rhs.lock()) {
                         // if both valid, check their priority
                         // in case they are the same, left is prioritized
-                        operator()(l.get(), r.get());
+                        return operator()(l.get(), r.get());
                     } else {
                         // if right is expired, left is prioritized
                         return true;

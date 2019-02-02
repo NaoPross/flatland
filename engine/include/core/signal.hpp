@@ -2,15 +2,13 @@
 
 #include "task.hpp"
 #include "types.hpp"
-#include "object.hpp"
 #include "priority.hpp"
 #include "labelled.hpp"
 #include "debug.hpp"
 
 #include <map>
 #include <list>
-#include <set>
-#include <initializer_list>
+#include <tuple>
 #include <functional>
 #include <memory>
 #include <cstddef>
@@ -23,7 +21,7 @@
 namespace flat::core
 {
     /* forward decls */
-    template<typename F, typename ...Args>
+    template<typename ...Args>
     class listener;
 
     namespace helper
@@ -37,8 +35,9 @@ namespace flat::core
         class signal : public prioritized
         {
         public:
-            signal(const signal& other) = delete;
+            // signal(const signal& other) = delete;
             signal& operator=(const signal& other) = delete;
+            virtual ~signal() {}
 
         protected:
             signal(priority_t p) : prioritized(p) {}
@@ -58,9 +57,13 @@ namespace flat::core
         friend class listener<Args...>;
         
     public:
-        signal(Args&&... args, priority_t p = priority_t::none) 
-            : std::tuple<Args...>(std::forward<Args>(args)...),
-              helper::signal(p) {}
+        constexpr signal(Args& ...args)
+            : std::tuple<Args...>((args)...),
+              helper::signal(priority_t::none) {}
+
+        constexpr signal(Args&& ...args) 
+            : std::tuple<Args...>(std::move(args)...),
+              helper::signal(priority_t::none) {}
     };
 
 
@@ -80,9 +83,10 @@ namespace flat::core
 
         protected:
             listener() {}
+            virtual ~listener() {}
 
         public:
-            virtual bool invoke(std::shared_ptr<const helper::signal> s) = 0;
+            virtual bool invoke(std::shared_ptr<const helper::signal> s) const = 0;
         };
     }
         
@@ -91,19 +95,28 @@ namespace flat::core
      * is an object holding a callback, that can be only called by passing
      * a signal<...Args> object, which contains the arguments for the callback.
      */
-    template <typename F, typename ...Args>
-    class listener : public helper::listener 
+    template <typename ...Args>
+    class listener : public helper::listener
     {
     public:
         using callback = typename std::function<void(Args...)>;
         using ptr = typename std::shared_ptr<listener<Args...>>;
 
         listener() = delete;
-        listener(F&& f) : m_callback(std::move(f)) {}
+        listener(callback f) : m_callback(f) {}
 
         // attempt to call m_callback with s as argument
         // m_callback is called only if the signature matches
-        bool invoke(std::shared_ptr<const helper::signal> s) override;
+        bool invoke(std::shared_ptr<const helper::signal> s) const override
+        {
+            const signal<Args...> *p = dynamic_cast<const signal<Args...> *>(s.get());
+
+            if (p != nullptr)
+                std::apply(m_callback, *p);
+
+            // return true if p was called
+            return (p != nullptr);
+        }
 
     private:
         callback m_callback;
@@ -119,7 +132,7 @@ namespace flat::core
     {
     private:
         // this is a set because sets do not allow identical elements
-        std::set<std::weak_ptr<helper::listener>> m_listeners;
+        std::list<std::weak_ptr<helper::listener>> m_listeners;
         queue<std::shared_ptr<helper::signal>> m_signals;
 
         /// task to call 
@@ -135,38 +148,52 @@ namespace flat::core
         // it does not make sense to create a channel with the same name
         channel(const channel&) = delete;
         channel& operator=(const channel&) = delete;
-   
+
         /// add a signal to the queue/stack of signals (m_signals)
         template<class ...Args> 
-        void emit(const signal<Args...>& sig)
+        void emit(const signal<Args...> sig)
         {   
             // insert signal and decay it to a non-template
             //   unique_ptr<helper::signal>
-            m_signals.insert(std::make_unique<helper::signal>(sig));
+            m_signals.insert(std::make_shared<helper::signal>(sig));
         }
 
         /// for each signal accumulated, call each listener
         void broadcast();
 
         /// connect a standalone function
-        template<typename F, typename ...Args>
-        std::shared_ptr<listener<F, Args...>> connect(listener<F, Args...>::callback f)
+        template<typename R, typename ...Args>
+        std::shared_ptr<listener<Args...>> _connect(std::function<R(Args...)> f)
         {
             auto lis_ptr = std::make_shared<listener<Args...>>(f);
             // insert listener and decay it to a non-template
             //   weak_ptr<helper::listener>
-            m_listeners.insert(lis_ptr);
+            m_listeners.push_back(
+                static_cast<std::weak_ptr<helper::listener>>(lis_ptr)
+            );
 
             return lis_ptr;
         }
 
-        /// connect a member function
-        template<typename R, typename T, typename F, typename ...Args>
-        std::shared_ptr<listener<F, Args...>> connect(R T::*mf, T& obj)
+        template<typename R, typename ...Args>
+        std::shared_ptr<listener<Args...>> connect(R (*f)(Args...))
         {
-            return connect([mf](Args&& ...args) -> R {
-                return (mf(args),...);
-            });
+            return _connect(static_cast<std::function<R(Args...)>>(
+                [=](Args ...args) -> R {
+                    return f((args)...);
+                })
+            );
+        }
+
+        /// connect a member function
+        template<typename R, typename T, typename ...Args>
+        std::shared_ptr<listener<Args...>> connect(R (T::*mf)(Args ...args), T* obj)
+        {
+            return _connect(static_cast<std::function<R(Args...)>>(
+                [=](Args ...args) -> R {
+                    return (obj->*mf)((args)...);
+                })
+            );
         }
     };
 }

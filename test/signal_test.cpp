@@ -1,126 +1,86 @@
 #include "core/signal.hpp"
 #include "core/task.hpp"
-#include "object.hpp"
-#include "window.hpp"
-#include "flatland.hpp"
-#include "exceptions/forcequit.hpp"
-
 #include "debug.hpp"
 
-using namespace std;
-using namespace flat;
+#include <iostream>
+
+
 using namespace flat::core;
 
 
-class sender : public object
+void got_signal(int x, double y) {
+    npdebug("got signal with x=", x, " and y=", y);
+}
+
+
+class test_emitter
 {
-    const char *m_message;
-    channel::ptr m_chan; 
+private:
+    channel& m_chan; 
 
 public:
+    test_emitter(channel& ch) : m_chan(ch) {}
 
-    sender(const char * message, channel::ptr chan) : m_message(message), m_chan(chan)
-    {
+    void send_str(const std::string& msg) {
+        m_chan.emit(signal(msg));
+        npdebug("emitted signal with msg=", msg);
     }
 
-    void send()
-    {
-        signal<const char*> msg(m_message);
-        m_chan->emit(m_msg);
+    void send_num(int n) {
+        m_chan.emit(signal(n));
+        npdebug("emitted signal with n=", n);
     }
 };
 
-void function_listener(const char *msg)
-{
-    cout << "Funzione: " << msg << endl;
-}
 
-class c_listener
+class test_listener
 {
-    std::shared_ptr<listener<const char*>> lis;
+private:
+    template<typename T>
+    using listener_of = typename std::shared_ptr<listener<T>>;
+
+    listener_of<const std::string&> str_lis;
+    listener_of<int> num_lis;
 
 public:
-
-    c_listener(channel::ptr chan)
-    {
-        m_lis = chan->connect(&c_listener::method_listener, this);
+    test_listener(channel& ch) {
+        str_lis = ch.connect(&test_listener::got_string, this);
+        num_lis = ch.connect(&test_listener::got_number, this);
     }
 
-    void method_listener(const char *msg)
-    {
-        cout << "Metodo: " << msg << endl;
+    void got_string(const std::string& msg) {
+        npdebug("got signal with msg=", msg);
+    }
+
+    void got_number(int n) {
+        npdebug("got signal with n=", n);
     }
 };
 
-/* Objects definition */
 
-channel::ptr alpha;
-sender * m_sender;
-c_listener * m_listener;
-std::shared_ptr<listener<const char*>> f_listener;
+int main() {
+    // create a job to propagate signals
+    job broadcaster;
+    
+    // create a channel
+    channel chan(broadcaster);
 
-int steps = 0;
+    // test with a function
+    chan.connect(got_signal);
+    chan.emit(signal(100, 293.0));
 
-void lifeloop()
-{
-    if (!(steps % 10))
-        cout << "Step: " << steps << endl;
+    // call job to propagate signals
+    broadcaster();
 
-    if (!(steps % 40))
-        m_sender->send();
+    // test with members
+    test_emitter e(chan);
+    test_listener l(chan);
 
-    if (++steps > 200)
-    {
-        signal<const char*> quit("quit");
+    e.send_str("hello world!");
+    e.send_num(42);
 
-        // quit request
-        flat::core_channel().emit(quit);
-    }
-
-    if (steps > 205)
-        throw flat::ForceQuit("Too many steps");
-}
-
-int main()
-{
-    FlatWindow win(600, 900, "Test 3");
-    flat_status status;
-
-    npdebug("Initializing channel alpha")
-
-    alpha = channel::create("alpha");
-
-    if (alpha == nullptr)
-    {
-        cout << "Could not create channel alpha" << endl;
-        return -1;
-    }
-
-    // create sender
-    m_sender = new sender("Ciao", alpha);
-    m_listener = new c_listener(alpha);
-
-    // Connect listener to alpha channel
-    f_listener = alpha->connect(&function_listener);
-
-    // bind counter task
-    task::ptr looptask = flat::main_job().delegate_task(lifeloop);
-
-    init_flatland(&win, status, 60);
-
-    npdebug("Deleting m_sender")
-    delete m_sender;
-
-    npdebug("Deleting m_listener")
-    delete m_listener;
-
-    alpha = nullptr; // out of scope
-    f_listener = nullptr;
-
-    npdebug("alpha use count: ", alpha.use_count())
-    npdebug("f_listener use count: ", f_listener.use_count())
-
-    npdebug("Exiting")
+    // call job to propagate signals
+    broadcaster();
 
     return 0;
 }

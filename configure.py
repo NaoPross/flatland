@@ -107,7 +107,11 @@ with open("build.ninja", "w") as bf:
 
     # add tests
     add_specific_test(bf, "task_test.cpp", ["engine/task.cpp"])
-    add_test(bf, "signal_test.cpp", "build/libflatland.so")
+    add_specific_test(bf, "signal_test.cpp", [
+        "engine/task.cpp",
+        "engine/labelled.cpp",
+        "engine/signal.cpp",
+    ])
 
     print("default build/test/signal_test", file=bf)
 

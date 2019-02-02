@@ -1,26 +1,11 @@
 #include "core/signal.hpp"
 #include "object.hpp"
-#include <functional>
 #include "flatland.hpp"
-
 #include "debug.hpp"
 
+#include <functional>
+
 using namespace flat::core;
-
-/* listener */
-
-template<typename F, typename ...Args>
-bool listener<F, Args ...>::invoke(std::shared_ptr<const helper::signal> s)
-{
-    const signal<Args...> *p = dynamic_cast<const signal<Args...> *>(s.get());
-
-    if (p != nullptr)
-        std::apply(m_callback, *p);
-
-    // return true if p was called
-    return (p != nullptr);
-}
-
 
 /* channel */
 
