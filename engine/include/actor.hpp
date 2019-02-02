@@ -1,23 +1,23 @@
 #ifndef __FLATACTOR_H__
 #define __FLATACTOR_H__
 
-#include "collector.hpp"
+#include "component.hpp"
 
 namespace flat {
 
-class FlatBound;
+class bounds;
 
-class FlatActor : public FlatCollector
+class actor : public 
 {
     // TODO, event binding
     // TODO, serial binding
     
     /* Bounds */
-    FlatBound * bounds;
+    bounds * bounds;
 
 public:
 
-    FlatActor(FlatCollector *parent = 0, FlatBound *bounds = 0);
+    FlatActor(F *parent = 0, FlatBound *bounds = 0);
 
     ~FlatActor();
 

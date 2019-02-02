@@ -1,13 +1,12 @@
 #ifndef __FLAT_COMPONENT_H__
 #define __FLAT_COMPONENT_H__
 
-#include "object.hpp"
 #include "core/labelled.hpp"
 #include <string>
 
 namespace flat {
 
-class component : virtual public object, virtual public core::labelled
+class component : virtual public core::labelled
 {
     
     component * m_parent;

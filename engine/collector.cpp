@@ -1,93 +1,85 @@
 #include "collector.hpp"
 
-using namespace std;
-using namespace flat;
-
-FlatCollector::FlatCollector(FlatCollector *parent)
-
-    : parent(parent), released(!parent)
+child::child(std::shared_ptr<collector> _parent)
+    : m_parent(_parent), m_released(_parent == nullptr)
 {
-
 }
 
-FlatCollector::~FlatCollector()
+child::~child()
 {
-    if (parent != 0)
-        parent->detach(this);
+}
 
-    parent = 0;
+std::shared_ptr<collector> child::parent()
+{
+    return m_parent.lock();
+}
 
-    for (FlatCollector * child : children)
+void child::set_parent(std::shared_ptr<collector> obj)
+{
+    m_parent = obj;
+    m_released = (obj == nullptr);
+}
+
+bool child::child_of(std::shared_ptr<collector> obj) const
+{
+    return this == (obj->m_parent).get();
+}
+
+bool child::released() const
+{
+    return m_released;
+} 
+
+void child::release()
+{
+    m_released = true;
+}
+
+collector::~collector()
+{
+    // Should auto-erase all children
+    for (auto c : *this)
     {
-        if (!child->isReleased())
-            delete child;
+        std::shared_ptr<child> pt;
+
+        if (pt = c.lock() && !pt.unique() && !pt->released() && pt->child_of(this))
+            delete pt.get(); // be careful
     }
 }
 
-bool FlatCollector::isReleased() const
+void collector::attach(std::shared_ptr<child> obj)
 {
-    return released;
-}
-
-void FlatCollector::release()
-{
-    released = true;
-}
-    
-void FlatCollector::attach(FlatCollector *obj)
-{
-    if (obj == 0)
+    if (obj == nullptr)
         return;
 
-    children.insert(obj);
-    obj->setParent(this); 
+    insert(obj);
+    obj->set_parent(this); 
 }
 
-void FlatCollector::detach(FlatCollector *obj)
+void collector::detach(std::shared_ptr<child> obj)
 {
-    children.erase(obj);
-    obj->releaseParent();
+    if (!reading)
+        remove(obj);
+
+    obj->set_parent(0);
 }
 
-void FlatCollector::setParent(FlatCollector *obj)
+collector::iterator collector::begin()
 {
-    parent = obj;
-    released = false;
+    return begin();
 }
 
-void FlatCollector::releaseParent()
+collector::iterator collector::end()
 {
-    parent = 0;
-    released = true;
+    return end();
 }
 
-FlatCollector * FlatCollector::getParent()
+collector::const_iterator collector::begin() const
 {
-    return parent;
+    return begin();
 }
 
-bool FlatCollector::isParentOf(FlatCollector* obj) const
+collector::const_iterator collector::end() const
 {
-    return this == obj->parent;
+    return end();
 }
-
-set<FlatCollector*>::iterator FlatCollector::begin()
-{
-    return children.begin();
-}
-
-set<FlatCollector*>::iterator FlatCollector::end()
-{
-    return children.end();
-}
-
-set<FlatCollector*>::const_iterator FlatCollector::begin() const
-{
-    return children.begin();
-}
-
-set<FlatCollector*>::const_iterator FlatCollector::end() const
-{
-    return children.end();
-}
-
