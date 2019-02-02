@@ -104,11 +104,10 @@ namespace flat::core
         // m_callback is called only if the signature matches
         bool invoke(std::shared_ptr<const helper::signal> s) const override
         {
-            // TODO: shared dynamic pointer cast
-            const signal<Args...> *p = dynamic_cast<const signal<Args...> *>(s.get());
+            auto p = std::dynamic_pointer_cast<const signal<Args...>>(s);
 
             // if dynamic cast fails
-            if (p == nullptr) {
+            if (!p) {
                 npdebug("invoked listener ", this, " with non-matching signal ", s);
                 return false;
             }
@@ -148,7 +147,7 @@ namespace flat::core
             // insert pointer
             m_listeners.push_front(
                 // decay shared_ptr to weak_ptr
-                // TODO: static weak 
+                //   btw, here a static_cast is correct
                 static_cast<std::weak_ptr<helper::listener>>(
                     // decay listener to helper::listener
                     std::static_pointer_cast<helper::listener>(lis_ptr)

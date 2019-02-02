@@ -21,7 +21,7 @@ private:
 public:
     test_emitter(channel& ch) : m_chan(ch) {}
 
-    void send_str(std::string msg) {
+    void send_str(const std::string& msg) {
         npdebug("emitting signal with msg=", msg);
         m_chan.emit(signal(msg));
     }
