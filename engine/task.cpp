@@ -21,7 +21,7 @@ namespace flat {
             auto shared = std::make_shared<task>(f, p);
             insert(shared);
 
-            npdebug("Task number: ", this->size());
+            npdebug("delgated job: ", shared);
 
             return shared;
         }
@@ -38,9 +38,12 @@ namespace flat {
             for (auto tp : *this) {
                 // check that the task has not expired
                 if (std::shared_ptr<task> t = tp.lock()) {
+                    npdebug("invoked job ", t);
                     std::invoke(*t);
-                } else
+                } else {
                     to_erase.push_back(tp);
+                    npdebug("found an expired job");
+                }
             }
 
             // delete expired tasks
