@@ -31,8 +31,8 @@ namespace flat::core
         class signal : public prioritized
         {
         public:
-            /// copyable
-            signal(const signal& other) = default;
+            /// non copyable
+            signal(const signal& other) = delete;
             /// movable
             signal(signal&& other) = default;
 
@@ -42,7 +42,7 @@ namespace flat::core
             /// not default constructible
             signal() = delete;
 
-            /// normal constructor
+            /// normal constructor, allowed only by core::signal
             signal(priority_t p = priority_t::none) : prioritized(p) {}
         };
     }
@@ -63,18 +63,18 @@ namespace flat::core
         //       is not the signature of the listener (so not yet)
         signal() = delete;
 
-        /// copyable
-        signal(const signal& other) = default;
+        /// non copyable, copying signal<...>::args is inefficient
+        signal(const signal& other) = delete;
 
         /// movable
         signal(signal&& other) = default;
 
-        /// normal constructor that copies arguments
+        /// normal (inefficient) constructor that copies arguments
         constexpr signal(const Args&... _args)
             : helper::signal(priority_t::none), args(_args...) {}
 
-        constexpr signal(priority_t p, const Args&... _args)
-            : helper::signal(p), args(_args...) {}
+        // constexpr signal(priority_t p, const Args&... _args)
+        //     : helper::signal(p), args(_args...) {}
 
         /// normal constructor that forwards arguments
         /// this optimizes rvalue initializations
@@ -83,10 +83,10 @@ namespace flat::core
               args(std::forward<Args>(_args)...)
         {}
 
-        constexpr signal(priority_t p, Args&&... _args)
-            : helper::signal(p),
-              args(std::forward<Args>(_args)...)
-        {}
+        // constexpr signal(priority_t p, Args&&... _args)
+        //     : helper::signal(p),
+        //       args(std::forward<Args>(_args)...)
+        // {}
     };
 
 
@@ -155,7 +155,7 @@ namespace flat::core
             }
 
             npdebug("invoked listener ", this, " with signal ", p);
-            std::apply(m_callback, p->args);
+            std::apply(m_callback, (p->args));
 
             return true;
         }
@@ -187,8 +187,9 @@ namespace flat::core
         template<typename R, typename ...Args>
         std::shared_ptr<listener<Args...>> _connect(std::function<R(Args...)>&& f)
         {
+            // construct a listener by forwarding f to listener's constructor
             auto lis_ptr = std::make_shared<listener<Args...>>(
-                listener<Args...>(f)
+                listener<Args...>(std::forward<decltype(f)>(f))
             );
 
             // insert pointer
@@ -219,10 +220,12 @@ namespace flat::core
 
         /// add a signal to the queue/stack of signals (m_signals)
         template<class ...Args> 
-        void emit(const signal<Args...>& sig)
+        void emit(signal<Args...>&& sig)
         {   
             // create a shared_ptr
-            auto p = std::make_shared<signal<Args...>>(sig)
+            auto p = std::make_shared<signal<Args...>>(
+                std::forward<signal<Args...>>(sig)
+            );
 
             npdebug("emitted signal ", p);
 
@@ -248,8 +251,9 @@ namespace flat::core
         std::shared_ptr<listener<Args...>> connect(R (*f)(Args...))
         {
             return _connect(static_cast<std::function<R(Args...)>>(
-                [f](Args ...args) constexpr -> R {
-                    return f((args)...);
+                // closure that forwards ...args to f
+                [f](Args&& ...args) constexpr -> R {
+                    return f(std::forward<Args>(args)...);
                 })
             );
         }
@@ -259,8 +263,9 @@ namespace flat::core
         std::shared_ptr<listener<Args...>> connect(R (T::*mf)(Args ...args), T* obj)
         {
             return _connect(static_cast<std::function<R(Args...)>>(
-                [mf, obj](Args ...args) constexpr -> R {
-                    return (obj->*mf)((args)...);
+                // closure that forwards ...args to mf called on obj
+                [mf, obj](Args&& ...args) constexpr -> R {
+                    return (obj->*mf)(std::forward<Args>(args)...);
                 })
             );
         }
