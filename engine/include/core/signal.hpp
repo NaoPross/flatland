@@ -20,21 +20,32 @@ namespace flat::core
     template<typename ...Args>
     class listener;
 
+    class channel;
+
     namespace helper
     {
         /* class helper::signal 
          *
-         * is a non constructible, non copyable object used only as abstract
+         * is a non constructible, but copyable object used only as abstract
          * pointer type. To make anything with it must be first downcasted to a
          * core::signal<Args...>
          */
         class signal : public prioritized
         {
         public:
+            /// copyable
+            signal(const signal& other) = default;
+            /// movable
+            signal(signal&& other) = default;
+
             virtual ~signal() {}
 
         protected:
-            explicit signal(priority_t p = priority_t::none) : prioritized(p) {}
+            /// not default constructible
+            signal() = delete;
+
+            /// normal constructor
+            signal(priority_t p = priority_t::none) : prioritized(p) {}
         };
     }
 
@@ -48,18 +59,36 @@ namespace flat::core
     {
         const std::tuple<Args...> args;
 
-        /// copy constructor
-        explicit constexpr signal(const Args&... _args)
-            : args(_args...) {}
+        /// disallow empty constructor
+        // TODO: think: should empty signals be allowed?
+        //       yes if there is a way to identify them by something that
+        //       is not the signature of the listener (so not yet)
+        signal() = delete;
 
-        /// move constructor
-        explicit constexpr signal(Args&&... _args)
-            : args(std::forward<Args>(_args)...) {}
+        /// copyable
+        signal(const signal& other) = default;
 
-        // TODO: if needed add copy constructor and move constructor
-        // not needed yet
-        // explicit constexpr signal(const signal<Args...>& other)
-        //     : helper::signal(), args(other.args) {}
+        /// movable
+        signal(signal&& other) = default;
+
+        /// normal constructor that copies arguments
+        constexpr signal(const Args&... _args)
+            : helper::signal(priority_t::none), args(_args...) {}
+
+        constexpr signal(priority_t p, const Args&... _args)
+            : helper::signal(p), args(_args...) {}
+
+        /// normal constructor that forwards arguments
+        /// this optimizes rvalue initializations
+        constexpr signal(Args&&... _args)
+            : helper::signal(priority_t::none),
+              args(std::forward<Args>(_args)...)
+        {}
+
+        constexpr signal(priority_t p, Args&&... _args)
+            : helper::signal(p),
+              args(std::forward<Args>(_args)...)
+        {}
     };
 
 
@@ -67,18 +96,27 @@ namespace flat::core
     {
         /* class helper::listener
          *
-         * is a non constructible, non copyable object used only as abstract
+         * is a non constructible, but copyable object used only as abstract
          * pointer type. To make anything with it must be first downcasted to a
          * core::listener<Args...>
          */
-        class listener : public std::enable_shared_from_this<listener>
+        class listener
         {
-        protected:
-            explicit listener() {}
+        public:
+            /// copyable
+            listener(const listener& other) = default;
+
+            /// movable
+            listener(listener&& other) = default;
+
             virtual ~listener() {}
 
-        public:
+            /// pure interface
             virtual bool invoke(std::shared_ptr<const helper::signal> s) const = 0;
+
+        protected:
+            /// constructuble only by listener
+            listener() = default;
         };
     }
         
@@ -86,6 +124,8 @@ namespace flat::core
      *
      * is an object holding a callback, that can be only called by passing
      * a signal<...Args> object, which contains the arguments for the callback.
+     *
+     * Note: listener objects can be created only by a channel.
      */
     template <typename ...Args>
     class listener : public helper::listener
@@ -93,15 +133,19 @@ namespace flat::core
     public:
         using callback = typename std::function<void(Args...)>;
 
-        explicit listener(callback f) : m_callback(f) {}
-        
-        // TODO: remove
-        ~listener() {
-            npdebug("deleted listener ", this);
-        }
+        friend class channel;
 
-        // attempt to call m_callback with s as argument
-        // m_callback is called only if the signature matches
+        /// not default constructible
+        listener() = delete;
+
+        /// copyable
+        listener(const listener&) = default;
+
+        /// movable
+        listener(listener&&) = default;
+
+        /// attempt to call m_callback with s as argument
+        /// m_callback is called only if the signature matches
         bool invoke(std::shared_ptr<const helper::signal> s) const override
         {
             auto p = std::dynamic_pointer_cast<const signal<Args...>>(s);
@@ -119,6 +163,9 @@ namespace flat::core
         }
 
     private:
+        /// normal constructor only allowed by channel
+        listener(callback f) : m_callback(f) {}
+
         callback m_callback;
     };
 
@@ -128,7 +175,7 @@ namespace flat::core
      * is an object type through which signals are emitted.
      * and is an object type through which listener get their signals.
      */
-    class channel : virtual public labelled, public std::enable_shared_from_this<channel>
+    class channel : virtual public labelled
     {
     private:
         // this is a set because sets do not allow identical elements
@@ -138,11 +185,13 @@ namespace flat::core
         /// task to call 
         std::shared_ptr<task> m_broadcast;
 
-        /// connect a closure / lambda (this is a helper), see others below
+        /// connect a std::function (this is a helper), see others below
         template<typename R, typename ...Args>
-        std::shared_ptr<listener<Args...>> _connect(std::function<R(Args...)> f)
+        std::shared_ptr<listener<Args...>> _connect(std::function<R(Args...)>&& f)
         {
-            auto lis_ptr = std::make_shared<listener<Args...>>(f);
+            auto lis_ptr = std::make_shared<listener<Args...>>(
+                listener<Args...>(f)
+            );
 
             // insert pointer
             m_listeners.push_front(
@@ -161,7 +210,14 @@ namespace flat::core
         using ptr = std::shared_ptr<channel>;
    
         // TODO: channel() that binds to main_job
-        explicit channel(job& broadcaster);
+        channel(job& broadcaster);
+
+        /// not copyable
+        // TODO: review: should be copyable?
+        channel(const channel&) = delete;
+
+        /// movable
+        channel(channel&&) = default;
 
         /// add a signal to the queue/stack of signals (m_signals)
         template<class ...Args> 
@@ -182,12 +238,19 @@ namespace flat::core
         /// for each signal accumulated, call each listener
         void broadcast();
 
+        /// connect a closure
+        template<typename ...Args, typename Closure>
+        std::shared_ptr<listener<Args...>> connect(Closure f)
+        {
+            // TODO: fix
+        }
+
         /// connect a function
         template<typename R, typename ...Args>
         std::shared_ptr<listener<Args...>> connect(R (*f)(Args...))
         {
             return _connect(static_cast<std::function<R(Args...)>>(
-                [=](Args ...args) -> R {
+                [f](Args ...args) constexpr -> R {
                     return f((args)...);
                 })
             );
@@ -198,7 +261,7 @@ namespace flat::core
         std::shared_ptr<listener<Args...>> connect(R (T::*mf)(Args ...args), T* obj)
         {
             return _connect(static_cast<std::function<R(Args...)>>(
-                [=](Args ...args) -> R {
+                [mf, obj](Args ...args) constexpr -> R {
                     return (obj->*mf)((args)...);
                 })
             );

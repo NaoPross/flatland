@@ -9,7 +9,7 @@ using namespace flat::core;
 
 
 void got_signal(int x, double y) {
-    npdebug("got signal with x=", x, " and y=", y);
+    std::cout << "got signal with x=" <<  x << " and y=" << y << std::endl;
 }
 
 
@@ -22,12 +22,12 @@ public:
     test_emitter(channel& ch) : m_chan(ch) {}
 
     void send_str(const std::string& msg) {
-        npdebug("emitting signal with msg=", msg);
+        std::cout << "emitting signal with msg=" << msg << std::endl;
         m_chan.emit(signal(msg));
     }
 
     void send_num(int n) {
-        npdebug("emitting signal with n=", n);
+        std::cout << "emitting signal with n=" << n << std::endl;
         m_chan.emit(signal(n));
     }
 };
@@ -49,11 +49,11 @@ public:
     {}
 
     void got_string(std::string msg) {
-        npdebug("got signal with msg=", msg);
+        std::cout << "got signal with msg=" << msg << std::endl;
     }
 
     void got_number(int n) {
-        npdebug("got signal with n=", n);
+        std::cout << "got signal with n=" << n << std::endl;
     }
 };
 
@@ -67,8 +67,16 @@ int main() {
 
     // test with a function
     auto fun_lis = chan.connect(got_signal);
-    npdebug("emitting signal with x=100, y=293.0");
+    std::cout << "emitting signal with x=100, y=293.0" << std::endl;
     chan.emit(signal(100, 293.0));
+
+    // test with a closure
+    // TODO: fix
+    // auto lambda_lis = chan.connect([](char a) {
+    //     npdebug("got signal with a=", a);
+    // });
+
+    chan.emit(signal('f'));
 
     // call job to propagate signals
     broadcaster();
