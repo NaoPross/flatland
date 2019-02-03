@@ -39,9 +39,12 @@ local test = {
 
             configuration("debug")
                 targetdir("build/debug")
-
                 defines({ "DEBUG" })
                 flags({ "Symbols" })
+
+            configuration("release")
+                targetdir("build/release")
+                flags({ "OptimizeSpeed" })
     end
 }
 
@@ -72,16 +75,20 @@ project "libflatland"
 
     configuration "debug"
         targetdir "build/debug"
-
         defines { "DEBUG" }
         flags { "Symbols" }
     
     configuration "release"
         targetdir "build/release"
-
-        flags { "Optimize" }
+        flags { "OptimizeSpeed" }
 
 -- add tests
 test.add_specific("task", "test/task_test.cpp", {
+    "engine/task.cpp"
+})
+
+test.add_specific("signal", "test/signal_test.cpp", {
+    "engine/signal.cpp",
+    "engine/labelled.cpp",
     "engine/task.cpp"
 })
