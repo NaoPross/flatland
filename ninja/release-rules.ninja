@@ -1,0 +1,42 @@
+includes = -I lib/include -I engine/include
+cflags = -pedantic -fPIC -std=c++17 -O3 $includes
+
+# brutal number of warning flags
+cflags = $cflags -Wall -Wextra -Wcast-qual -Wcast-align -Wstrict-aliasing 
+cflags = $cflags -Wpointer-arith -Winit-self -Wshadow -Wswitch-enum 
+cflags = $cflags -Wredundant-decls -Wfloat-equal -Wundef -Wvla 
+cflags = $cflags -Wconversion
+
+libs = -lSDL2 
+#lib/libmm/build/libmm.a lib/libwsdl2/build/libwsdl2.a
+lflags = $libs -fuse-ld=gold
+
+flags = -fdiagnostics-color
+
+rule mkdir
+    command = mkdir -p $out
+    description = creating directory $out
+
+rule clean
+    command = rm -r build/*
+    description = clean up builds
+
+rule cpp
+    command = g++ $flags $cflags -c $in -o $out
+    description = compiling $in
+
+rule link
+    command = g++ $flags $cflags -o $out $in $lflags
+    description = linking $out
+
+rule link-shared
+    command = g++ $flags $cflags -shared -o $out $in $lflags
+    description = linking shared object $out
+
+rule link-static
+    command = ar rvs $out $in
+    description = creating archive $out
+
+rule ninja
+    command = ninja -C $in
+    description = running ninja in subdirectory $in

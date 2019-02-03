@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 import os
 import re
+import sys
 
 # -- helper functions --
 
@@ -14,6 +15,7 @@ def build_library(path, commands):
         print(os.popen(cmd).read())
 
     os.chdir(old_path)
+
 
 def find_sources(path):
     print("searching sources under {}".format(path))
@@ -77,7 +79,12 @@ def add_specific_test(bf, test_source, tested_sources):
 with open("build.ninja", "w") as bf:
 
     # include rules
-    print("include ninja/rules.ninja", file=bf)
+    if "--release" in sys.argv:
+        print("creating release target!\n")
+        print("include ninja/release-rules.ninja", file=bf)
+    else:
+        print("include ninja/rules.ninja", file=bf)
+
     print("\n", file=bf)
 
     # build dependencies
