@@ -1,5 +1,5 @@
 #include "serial.hpp"
-#include "event.hpp"
+#include "wsdl2/event.hpp"
 #include "core/signal.hpp"
 #include "flatland.hpp"
 
@@ -11,7 +11,7 @@ void flat::serial::broadcast()
 
 #define EMIT(__type__) event_channel().emit(core::signal<__type__>(__type__(m_event.sdl()), core::priority_t::max);
 
-        switch (m_event().sdl().type())
+        switch (m_event.type())
         {
 
         // keyboard events

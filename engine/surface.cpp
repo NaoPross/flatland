@@ -2,10 +2,10 @@
 
 #include <iostream>
 
-using namespace flat;
+using namespace wsdl2;
 
 surface::surface(const char *filename, uint32_t format, SDL_Surface *parent)
-    : core::labelled(filename, true), m_parent(parent), m_hide(false)
+    : m_parent(parent), m_hide(false)
 {
     std::cout << "surface: loading " << filename << std::endl;
     m_sdl_surface = loadOptimizedSurface(filename, format);
@@ -31,7 +31,7 @@ surface::surface(const char *filename, uint32_t format, SDL_Surface *parent)
 }
 
 surface::surface(SDL_Surface *sdl_surface, SDL_Surface *parent)
-    : flat::object(), m_parent(parent), m_hide(false)
+    : m_parent(parent), m_hide(false)
 {
     m_sdl_surface = new SDL_Surface(*sdl_surface);
 
@@ -51,7 +51,7 @@ surface::surface(SDL_Surface *sdl_surface, SDL_Surface *parent)
 }
 
 surface::surface(const surface& sprite)
-    : flat::object(sprite), m_parent(sprite.m_parent), m_hide(sprite.m_hide)
+    : m_parent(sprite.m_parent), m_hide(sprite.m_hide)
 {
     m_offset = new SDL_Rect(*sprite.m_offset);
     m_viewport = new SDL_Rect(*sprite.m_viewport);

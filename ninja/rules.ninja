@@ -7,8 +7,7 @@ cflags = $cflags -Wpointer-arith -Winit-self -Wshadow -Wswitch-enum
 cflags = $cflags -Wredundant-decls -Wfloat-equal -Wundef -Wvla 
 cflags = $cflags -Wconversion
 
-libs = -lSDL2 
-#lib/libmm/build/libmm.a lib/libwsdl2/build/libwsdl2.a
+libs = -lSDL2 lib/libmm/build/libmm.a lib/libwsdl2/build/libwsdl2.a
 lflags = $libs -fuse-ld=gold
 
 flags = -fdiagnostics-color

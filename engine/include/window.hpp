@@ -2,13 +2,15 @@
 #define __FLATWINDOW_H__
 
 #include <string>
-#include "video.hpp"
-#include "collector.hpp"
+#include "wsdl2/video.hpp"
+#include "core/collector.hpp"
 
-/*class SDL_Window;
-class SDL_KeyEvent;
+//class SDL_Window;
+//class SDL_KeyEvent;
 
 namespace flat {
+
+/*
 
 struct window_status
 {

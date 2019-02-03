@@ -1,13 +1,11 @@
 #ifndef __FLATSURFACE_H__
 #define __FLATSURFACE_H__
 
-#include "object.hpp"
-#include "core/labelled.hpp"
 #include <SDL2/SDL.h>
 
-namespace flat {
+namespace wsdl2 {
 
-class surface : virtual public object, virtual public core::labelled
+class surface
 {
     SDL_Surface * m_sdl_surface;
     SDL_Surface * m_parent;
