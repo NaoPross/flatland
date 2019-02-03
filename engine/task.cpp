@@ -1,16 +1,8 @@
 #include "core/task.hpp"
-
-#include <functional>
-#include <memory>
-#include <algorithm>
-#include <cassert>
-
-#include <vector>
-
-#include <iostream>
 #include "debug.hpp"
 
-using namespace std;
+#include <list>
+
 
 namespace flat {
     namespace core {
@@ -21,7 +13,7 @@ namespace flat {
             auto shared = std::make_shared<task>(f, p);
             insert(shared);
 
-            npdebug("Task number: ", this->size());
+            npdebug("delgated job: ", shared);
 
             return shared;
         }
@@ -33,14 +25,17 @@ namespace flat {
         void job::invoke_tasks() {
             
             // expired tasks to remove
-            std::vector<job::value_type> to_erase;
+            std::list<job::value_type> to_erase;
 
             for (auto tp : *this) {
                 // check that the task has not expired
                 if (std::shared_ptr<task> t = tp.lock()) {
+                    npdebug("invoked job ", t);
                     std::invoke(*t);
-                } else
+                } else {
                     to_erase.push_back(tp);
+                    npdebug("found an expired job");
+                }
             }
 
             // delete expired tasks

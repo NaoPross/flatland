@@ -1,186 +1,274 @@
 #pragma once
 
-#include <map>
-#include <list>
-#include <set>
-#include <initializer_list>
 #include "task.hpp"
 #include "types.hpp"
-#include "object.hpp"
-#include <functional>
-#include <memory>
 #include "priority.hpp"
 #include "labelled.hpp"
+#include "debug.hpp"
 
-namespace flat
+#include <tuple>
+#include <list>
+#include <functional>
+#include <memory>
+
+
+namespace flat::core
 {
-    //class object;
+    /* forward decls */
+    template<typename ...Args>
+    class listener;
 
-    namespace core
+    class channel;
+
+    namespace helper
     {
-
-    class signal : virtual public labelled, virtual public prioritized
-    {
-    
-    public:
-
-        struct package
+        /* class helper::signal 
+         *
+         * is a non constructible, but copyable object used only as abstract
+         * pointer type. To make anything with it must be first downcasted to a
+         * core::signal<Args...>
+         */
+        class signal : public prioritized
         {
-            package(void *data) : data(data) {}
+        public:
+            /// non copyable
+            signal(const signal& other) = delete;
+            /// movable
+            signal(signal&& other) = default;
 
-            template<class T>
-            T * get() {
+            virtual ~signal() {}
 
-                return reinterpret_cast<T*>(data);
+        protected:
+            /// not default constructible
+            signal() = delete;
+
+            /// normal constructor, allowed only by core::signal
+            signal(priority_t p = priority_t::none) : prioritized(p) {}
+        };
+    }
+
+    /* class signal<...Args>
+     *
+     * is a tuple wrapper that contains function arguments (...Args) 
+     * that are later used to call a callback stored in a listener.
+     */
+    template <typename ...Args> 
+    struct signal : public helper::signal
+    {
+        const std::tuple<Args...> args;
+
+        /// disallow empty constructor
+        // TODO: think: should empty signals be allowed?
+        //       yes if there is a way to identify them by something that
+        //       is not the signature of the listener (so not yet)
+        signal() = delete;
+
+        /// non copyable, copying signal<...>::args is inefficient
+        signal(const signal& other) = delete;
+
+        /// movable
+        signal(signal&& other) = default;
+
+        /// normal (inefficient) constructor that copies arguments
+        constexpr signal(const Args&... _args)
+            : helper::signal(priority_t::none), args(_args...) {}
+
+        // constexpr signal(priority_t p, const Args&... _args)
+        //     : helper::signal(p), args(_args...) {}
+
+        /// normal constructor that forwards arguments
+        /// this optimizes rvalue initializations
+        constexpr signal(Args&&... _args)
+            : helper::signal(priority_t::none),
+              args(std::forward<Args>(_args)...)
+        {}
+
+        // constexpr signal(priority_t p, Args&&... _args)
+        //     : helper::signal(p),
+        //       args(std::forward<Args>(_args)...)
+        // {}
+    };
+
+
+    namespace helper
+    {
+        /* class helper::listener
+         *
+         * is a non constructible, but copyable object used only as abstract
+         * pointer type. To make anything with it must be first downcasted to a
+         * core::listener<Args...>
+         */
+        class listener
+        {
+        public:
+            /// copyable
+            listener(const listener& other) = default;
+
+            /// movable
+            listener(listener&& other) = default;
+
+            virtual ~listener() {}
+
+            /// pure interface
+            virtual bool invoke(std::shared_ptr<const helper::signal> s) const = 0;
+
+        protected:
+            /// constructuble only by listener
+            listener() = default;
+        };
+    }
+        
+    /* class listener<F, ...Args>
+     *
+     * is an object holding a callback, that can be only called by passing
+     * a signal<...Args> object, which contains the arguments for the callback.
+     *
+     * Note: listener objects can be created only by a channel.
+     */
+    template <typename ...Args>
+    class listener : public helper::listener
+    {
+    public:
+        using callback = typename std::function<void(Args...)>;
+
+        friend class channel;
+
+        /// not default constructible
+        listener() = delete;
+
+        /// copyable
+        listener(const listener&) = default;
+
+        /// movable
+        listener(listener&&) = default;
+
+        /// attempt to call m_callback with s as argument
+        /// m_callback is called only if the signature matches
+        bool invoke(std::shared_ptr<const helper::signal> s) const override
+        {
+            auto p = std::dynamic_pointer_cast<const signal<Args...>>(s);
+
+            // if dynamic cast fails
+            if (!p) {
+                npdebug("invoked listener ", this, " with non-matching signal ", s);
+                return false;
             }
 
-            void * data;
-        };
-    
-        object * sender;
-        package m_package;
-    
-        signal(     object * sender, 
-                    const std::string& id = "", 
-                    void * data = 0,
-                    priority_t prior = priority_t::none);
+            npdebug("invoked listener ", this, " with signal ", p);
+            std::apply(m_callback, (p->args));
 
-        /* Alias to flat::core::channel::emit() */
-        bool emit(const std::string& channel) const;
-    };
-        
-    /* Listener class */
-    class listener
-    {
-    public:
-
-        using callback = std::function<void(const object*, signal::package)>;
-        using ptr = std::shared_ptr<listener>;
-
-        listener(callback m_callback, const std::initializer_list<std::string>& filters = {});
-        ~listener();
-
-        void add_filter(const std::string&);
-        void remove_filter(const std::string&);
-
-        bool connect(const std::string&);
-        bool disconnect(const std::string&);
-
-        void invoke(const signal&);
-
-        /* Allow to safely bind a functor */
-        template<typename R, typename T>
-        static ptr create(  R T::*mf,
-                            T& obj,
-                            const std::initializer_list<std::string>& filters = {}) {
-            return std::make_shared<listener>(std::bind(mf, obj), filters);
+            return true;
         }
 
     private:
+        /// normal constructor only allowed by channel
+        listener(callback f) : m_callback(f) {}
 
         callback m_callback;
-
-        std::list<std::string> filters;
-    
-        bool check_in_filters(const std::string&) const;
     };
 
-    /* Channel class */
-    class channel : virtual public labelled, public std::enable_shared_from_this<channel>
+    
+    /* class channel
+     *
+     * is an object type through which signals are emitted.
+     * and is an object type through which listener get their signals.
+     */
+    class channel : virtual public labelled
     {
-        /* Post processing signal stacking */
-        queue<signal> stack;
-    
-        /* Listeners list */
-        std::list<std::weak_ptr<listener>> listeners;
-    
-        /* Synchronous task checking for signals */
-        task::ptr checker;
-        
-        /* Channel mapping */
-        static std::map<std::string, std::weak_ptr<channel>> channels;    
+    private:
+        // this is a set because sets do not allow identical elements
+        std::list<std::weak_ptr<helper::listener>> m_listeners;
+        queue<std::shared_ptr<helper::signal>> m_signals;
 
-        bool mapped;
+        /// task to call 
+        std::shared_ptr<task> m_broadcast;
 
-        bool map();
-     
+        /// connect a std::function (this is a helper), see others below
+        template<typename R, typename ...Args>
+        std::shared_ptr<listener<Args...>> _connect(std::function<R(Args...)>&& f)
+        {
+            // construct a listener by forwarding f to listener's constructor
+            auto lis_ptr = std::make_shared<listener<Args...>>(
+                listener<Args...>(std::forward<decltype(f)>(f))
+            );
+
+            // insert pointer
+            m_listeners.push_front(
+                // decay shared_ptr to weak_ptr
+                //   btw, here a static_cast is correct
+                static_cast<std::weak_ptr<helper::listener>>(
+                    // decay listener to helper::listener
+                    std::static_pointer_cast<helper::listener>(lis_ptr)
+                )
+            );
+
+            return lis_ptr;
+        }
+             
     public:
-
         using ptr = std::shared_ptr<channel>;
    
-        /* 
-         * Constructs a new channel and try to bind it the specified job
-         * If no job is specified, then flat::main_job will be taken
-         *
-         * Note: Remember to check for channel legacy with legit() member function
-         *       A channel is legit if and only if there's no other channel
-         *       corresponding to the same label name
-         *       In general, a channel must be UNIQUE with its label
-         */ 
-        channel(const std::string& id = "");
-        ~channel();
+        // TODO: channel() that binds to main_job
+        channel(job& broadcaster);
 
-        // do not allow to copy a channel
-        // it does not have any sense to create a channel with the same name
+        /// not copyable
+        // TODO: review: should be copyable?
         channel(const channel&) = delete;
-        channel& operator=(const channel&) = delete;
-    
-        void emit(const signal&);
 
-        bool connect(listener::ptr l);
-        void disconnect(listener::ptr l);
+        /// movable
+        channel(channel&&) = default;
 
-        bool connect(listener* l);
-        void disconnect(listener* l);
+        /// add a signal to the queue/stack of signals (m_signals)
+        template<class ...Args> 
+        void emit(signal<Args...>&& sig)
+        {   
+            // create a shared_ptr
+            auto p = std::make_shared<signal<Args...>>(
+                std::forward<signal<Args...>>(sig)
+            );
 
-        /* 
-         * Check for legacy
-         *
-         * Note: Channels are mapped by their label.
-         *       A channel is legit if and only if there's no other channel
-         *       corresponding to the same label name.
-         */
-        bool legit() const;
+            npdebug("emitted signal ", p);
 
-        /*
-         * It tries binding the channel task and make the channel legit
-         * In case of success, true is returned, otherwise false
-         */
-        bool start(priority_t task_priority = priority_t::none, job * _job = NULL);
-
-        void finalize();
-
-        listener::ptr connect(listener::callback f,
-            const std::initializer_list<std::string>& filters = {});
-
-        template<typename R, typename T>
-        inline listener::ptr connect(R T::*mf, T* obj,
-            const std::initializer_list<std::string>& filters = {})
-        {
-            using namespace std::placeholders;
-            return connect(std::bind(mf, obj, _1, _2), filters);
+            // insert pointer
+            m_signals.insert(
+                // decay signal to helper::signal
+                std::static_pointer_cast<helper::signal>(p)
+            );
         }
-      
-        /* 
-         * Find channel by its name
-         */ 
-        static ptr find(const std::string&); 
 
-        /*
-         * Safer than constructor
-         * It constructs a new channel checking whether it is legit or not.
-         * It returns a nullptr if the legacy is not verified.
-         *
-         * Note: Channels are mapped by their label.
-         *       A channel is legit if and only if there's no other channel
-         *       corresponding to the same label name.
-         */
-        static ptr create(const std::string& id, priority_t prior = priority_t::none, job * _job = NULL);
-    
-        void check_and_call();
+        /// for each signal accumulated, call each listener
+        void broadcast();
+
+        /// connect a closure
+        // template<typename ...Args, typename Closure>
+        // std::shared_ptr<listener<Args...>> connect(Closure f)
+        // {
+            // TODO: fix
+        // }
+
+        /// connect a function
+        template<typename R, typename ...Args>
+        std::shared_ptr<listener<Args...>> connect(R (*f)(Args...))
+        {
+            return _connect(static_cast<std::function<R(Args...)>>(
+                // closure that forwards ...args to f
+                [f](Args&& ...args) constexpr -> R {
+                    return f(std::forward<Args>(args)...);
+                })
+            );
+        }
+
+        /// connect a member function
+        template<typename R, typename T, typename ...Args>
+        std::shared_ptr<listener<Args...>> connect(R (T::*mf)(Args ...args), T* obj)
+        {
+            return _connect(static_cast<std::function<R(Args...)>>(
+                // closure that forwards ...args to mf called on obj
+                [mf, obj](Args&& ...args) constexpr -> R {
+                    return (obj->*mf)(std::forward<Args>(args)...);
+                })
+            );
+        }
     };
-
-
-    }
 }
 

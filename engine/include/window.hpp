@@ -5,44 +5,47 @@
 #include "video.hpp"
 #include "collector.hpp"
 
-class SDL_Window;
+/*class SDL_Window;
 class SDL_KeyEvent;
 
 namespace flat {
 
 struct window_status
 {
-    window_status(  unsigned char fullscreen = 0,
-                    unsigned char hidden = 0,
-                    unsigned char borderless = 0,
-                    unsigned char resizable = 1,
-                    unsigned char minimized = 0,
-                    unsigned char maximized = 0,
-                    unsigned char focus = 1)
+    window_status(  unsigned char _fullscreen = 0,
+                    unsigned char _hidden = 0,
+                    unsigned char _borderless = 0,
+                    unsigned char _resizable = 1,
+                    unsigned char _minimized = 0,
+                    unsigned char _maximized = 0,
+                    unsigned char _focus = 1)
 
-        : fullscreen(fullscreen), hidden(hidden), borderless(borderless),
-          resizable(resizable), minimized(minimized), maximized(maximized),
-          focus(focus) {}
+        : fullscreen(_fullscreen), hidden(_hidden), borderless(_borderless),
+          resizable(_resizable), minimized(_minimized), maximized(_maximized),
+          focus(_focus) {}
 
-    unsigned char fullscreen:1;
-    unsigned char hidden:1;
-    unsigned char borderless:1;
-    unsigned char resizable:1;
-    unsigned char minimized:1;
-    unsigned char maximized:1;
-    unsigned char focus:1;
-};
+    unsigned char fullscreen;
+    unsigned char hidden;
+    unsigned char borderless;
+    unsigned char resizable;
+    unsigned char minimized;
+    unsigned char maximized;
+    unsigned char focus;
+};*/
 
 class window : public core::collector<renderbase>, public wsdl2::video
 {
     /*std::string title;
     window_status status;
+private:
+    std::string m_title;
+    window_status m_status;
 
-    SDL_Rect * bounds;
-    SDL_Window * sdl_window;
-    SDL_Surface * screen;
+    SDL_Rect * m_bounds;
+    SDL_Window * m_sdl_window;
+    SDL_Surface * m_screen;
 
-    FlatLayer * main_layer;
+    FlatLayer * m_main_layer;
 
     void key_cb(const SDL_KeyboardEvent*) override;*/
 

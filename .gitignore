@@ -8,6 +8,9 @@ build
 .ninja_log
 build.ninja
 
+# makefiles
+Makefile
+
 # ctag files
 tags
 

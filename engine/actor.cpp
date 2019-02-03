@@ -4,7 +4,7 @@ using namespace flat;
 
 /*FlatActor::FlatActor(actor *parent, FlatBound *bounds)
 
-    : FlatCollector(parent), bounds(bounds)
+    : FlatCollector(parent), m_bounds(bounds)
 {
 }
 
@@ -15,11 +15,11 @@ FlatActor::~FlatActor()
 
 void FlatActor::setBounds(FlatBound * bounds)
 {
-    this->bounds = bounds;
+    m_bounds = m_bounds;
 }
 
 FlatBound * FlatActor::getBounds() const
 {
-    return bounds;
+    return m_bounds;
 }
 */

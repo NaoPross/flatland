@@ -13,6 +13,8 @@ struct actor : public renderbase, public core::child<renderbase>
     /* Bounds */
     //bounds * bounds;
 
+public:
+
     //actor(actor *parent = 0, FlatBound *bounds = 0);
     
     using core::child<renderbase>::child;

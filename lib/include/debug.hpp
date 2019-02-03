@@ -37,7 +37,7 @@ namespace _np {
 #define npinspect(...); {}
 
 namespace _np {
-    template<typename.. Args>
+    template<typename... Args>
     void debug(Args&... args) {}
 
     template<typename Msg, typename Expr, typename... Args>

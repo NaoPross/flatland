@@ -226,7 +226,7 @@ int flat::init_flatland(FlatWindow* w, const flat_status& s, float _fps)
             } catch (const ForceQuit& f) {
                 
                 cerr << "Flatland: a force quit call was thrown" << endl;
-                cerr << "Possible reason: " << f.reason << endl;
+                cerr << "Possible reason: " << f.m_reason << endl;
 
                 quit();
             }

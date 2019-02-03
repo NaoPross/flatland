@@ -1,126 +1,127 @@
 #include "core/signal.hpp"
 #include "core/task.hpp"
-#include "object.hpp"
-#include "window.hpp"
-#include "flatland.hpp"
-#include "exceptions/forcequit.hpp"
-
 #include "debug.hpp"
 
-using namespace std;
-using namespace flat;
+#include <iostream>
+
+
 using namespace flat::core;
 
-
-class sender : public object
+struct custom_type
 {
-    const char * message;
-    channel::ptr chan; 
+    const char f;
 
-public:
-
-    sender(const char * message, channel::ptr chan) : message(message), chan(chan)
-    {
+    custom_type(char _f) : f(_f) {
+        npdebug("instanciated custom_type");
     }
 
-    void send()
-    {
-        signal msg(this, "", (void*)message);
-        chan->emit(msg);
+    custom_type(const custom_type& other) : f(other.f) {
+        npdebug("copy constructed custom_type (bad)");
+    }
+
+    custom_type(custom_type&& other) : f(other.f) {
+        npdebug("move constructed custom_type (efficient)");
+    }
+
+    ~custom_type() {
+        npdebug("deleted custom_type instance");
     }
 };
 
-void function_listener(const object*, core::signal::package msg)
-{
-    cout << "Funzione: " << msg.get<const char>() << endl;
+
+void got_signal(int x, double y) {
+    std::cout << "got signal with x=" <<  x << " and y=" << y << std::endl;
 }
 
-class c_listener
+
+class test_emitter
 {
-    listener::ptr lis;
+private:
+    channel& m_chan; 
 
 public:
+    test_emitter(channel& ch) : m_chan(ch) {}
 
-    c_listener(channel::ptr chan)
-    {
-        lis = chan->connect(&c_listener::method_listener, this);
+    void send_str(std::string&& msg) {
+        std::cout << "emitting signal with msg=" << msg << std::endl;
+        m_chan.emit(signal(std::move(msg)));
     }
 
-    void method_listener(const object *o, signal::package msg)
-    {
-        cout << "Metodo" << msg.get<const char>() << endl;
+    void send_num(int&& n) {
+        std::cout << "emitting signal with n=" << n << std::endl;
+        m_chan.emit(signal(std::move(n)));
+    }
+
+    void send_custom(custom_type&& c) {
+        std::cout << "emitting custom_type" << std::endl;
+        m_chan.emit(signal(std::move(c)));
     }
 };
 
-/* Objects definition */
 
-channel::ptr alpha;
-sender * m_sender;
-c_listener * m_listener;
-listener::ptr f_listener;
-
-int steps = 0;
-
-void lifeloop()
+class test_listener
 {
-    if (!(steps % 10))
-        cout << "Step: " << steps << endl;
+private:
+    template<typename ...Ts>
+    using listener_of = typename std::shared_ptr<listener<Ts...>>;
 
-    if (!(steps % 40))
-        m_sender->send();
+    listener_of<std::string> str_lis;
+    listener_of<int> num_lis;
+    listener_of<custom_type> cus_lis;
 
-    if (++steps > 200)
-    {
-        signal quit(0, "quit");
+public:
+    test_listener(channel& ch)
+        : str_lis(ch.connect(&test_listener::got_string, this)),
+          num_lis(ch.connect(&test_listener::got_number, this)),
+          cus_lis(ch.connect(&test_listener::got_custom, this))
+    {}
 
-        // quit request
-        flat::core_channel().emit(quit);
+    void got_string(std::string msg) {
+        std::cout << "got signal with msg=" << msg << std::endl;
     }
 
-    if (steps > 205)
-        throw flat::ForceQuit("Too many steps");
-}
-
-int main()
-{
-    FlatWindow win(600, 900, "Test 3");
-    flat_status status;
-
-    npdebug("Initializing channel alpha")
-
-    alpha = channel::create("alpha");
-
-    if (alpha == nullptr)
-    {
-        cout << "Could not create channel alpha" << endl;
-        return -1;
+    void got_number(int n) {
+        std::cout << "got signal with n=" << n << std::endl;
     }
 
-    // create sender
-    m_sender = new sender("Ciao", alpha);
-    m_listener = new c_listener(alpha);
+    void got_custom(custom_type c) {
+        std::cout << "got signal with custom_type" << std::endl;
+    }
+};
 
-    // Connect listener to alpha channel
-    f_listener = alpha->connect(&function_listener);
 
-    // bind counter task
-    task::ptr looptask = flat::main_job().delegate_task(lifeloop);
+int main() {
+    // create a job to propagate signals
+    job broadcaster;
+    
+    // create a channel
+    channel chan(broadcaster);
 
-    init_flatland(&win, status, 60);
+    // test with a function
+    auto fun_lis = chan.connect(got_signal);
+    std::cout << "emitting signal with x=100, y=293.0" << std::endl;
+    chan.emit(std::move(signal(100, 293.0)));
 
-    npdebug("Deleting m_sender")
-    delete m_sender;
+    // test with a closure
+    // TODO: fix
+    // auto lambda_lis = chan.connect([](char a) {
+    //     npdebug("got signal with a=", a);
+    // });
+    // chan.emit(signal('f'));
 
-    npdebug("Deleting m_listener")
-    delete m_listener;
+    // call job to propagate signals
+    broadcaster();
 
-    alpha = nullptr; // out of scope
-    f_listener = nullptr;
+    // test with members
+    test_emitter e(chan);
+    test_listener l(chan);
 
-    npdebug("alpha use count: ", alpha.use_count())
-    npdebug("f_listener use count: ", f_listener.use_count())
+    e.send_str("hello world!");
+    e.send_num(42);
+    e.send_custom(custom_type('e'));
 
-    npdebug("Exiting")
+    // call job to propagate signals
+    broadcaster();
 
     return 0;
 }
