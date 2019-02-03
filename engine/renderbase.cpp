@@ -1,34 +1,15 @@
-#include "component.hpp"
+#include "renderbase.hpp"
 #include "signal.h"
 
 using namespace flat;
 
-component::component(component *parent, const std::string& id)
-    : m_parent(parent)
+renderbase::renderbase(const std::string& id)
 {
-    // TODO, check flatland initialization
-
-    if (parent == nullptr) {
-        // TODO set screen as parent layer
-    }
+    // TODO, signal creation
 }
 
-component::~component()
+renderbase::~renderbase()
 {
-
+    // TODO, signal destruction
 }
 
-void component::set_parent(component *parent)
-{
-    if (parent == nullptr) {
-        // TODO set screen as parent layer
-    }
-
-    m_parent = parent;
-}
-
-component * component::parent()
-{
-    return m_parent;
-}
-    

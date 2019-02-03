@@ -9,7 +9,7 @@ namespace flat {
 struct renderbase : virtual core::labelled
 {
     /* Send a 'created' signal in component reserved channel */
-    renderbase();
+    renderbase(const std::string& id = "");
 
     /* Send a 'deleted' signal in component reserved channel */ 
     virtual ~renderbase();

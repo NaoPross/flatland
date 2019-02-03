@@ -36,7 +36,7 @@ public:
     {
         return this == obj->parent().lock().get();
     }
-}
+};
 
 template <class T>
 struct collector : private std::list<std::shared_ptr<child<T>>>
@@ -54,9 +54,7 @@ struct collector : private std::list<std::shared_ptr<child<T>>>
 
     void detach(std::shared_ptr<child<T>> obj)
     {
-        if (!reading)
-            remove(obj);
-
+        remove(obj);
         obj->set_parent(nullptr);
     }
 

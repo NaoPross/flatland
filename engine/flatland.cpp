@@ -11,7 +11,6 @@ using namespace flat;
 
 #include "core/task.hpp"
 #include "core/signal.hpp"
-#include "object.hpp"
 #include "window.hpp"
 #include "exception.hpp"
 #include "exceptions/forcequit.hpp"

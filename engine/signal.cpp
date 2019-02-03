@@ -1,5 +1,4 @@
 #include "core/signal.hpp"
-#include "object.hpp"
 #include "flatland.hpp"
 #include "debug.hpp"
 
