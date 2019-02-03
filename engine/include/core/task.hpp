@@ -2,7 +2,6 @@
 
 #include "priority.hpp"
 
-#include <unordered_set>
 #include <functional>
 #include <variant>
 #include <memory>

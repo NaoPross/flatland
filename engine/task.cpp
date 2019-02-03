@@ -1,16 +1,8 @@
 #include "core/task.hpp"
-
-#include <functional>
-#include <memory>
-#include <algorithm>
-#include <cassert>
-
-#include <vector>
-
-#include <iostream>
 #include "debug.hpp"
 
-using namespace std;
+#include <list>
+
 
 namespace flat {
     namespace core {
@@ -33,7 +25,7 @@ namespace flat {
         void job::invoke_tasks() {
             
             // expired tasks to remove
-            std::vector<job::value_type> to_erase;
+            std::list<job::value_type> to_erase;
 
             for (auto tp : *this) {
                 // check that the task has not expired

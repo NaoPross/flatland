@@ -6,12 +6,10 @@
 #include "labelled.hpp"
 #include "debug.hpp"
 
-#include <map>
 #include <tuple>
 #include <list>
 #include <functional>
 #include <memory>
-#include <cstddef>
 
 
 namespace flat::core
@@ -239,11 +237,11 @@ namespace flat::core
         void broadcast();
 
         /// connect a closure
-        template<typename ...Args, typename Closure>
-        std::shared_ptr<listener<Args...>> connect(Closure f)
-        {
+        // template<typename ...Args, typename Closure>
+        // std::shared_ptr<listener<Args...>> connect(Closure f)
+        // {
             // TODO: fix
-        }
+        // }
 
         /// connect a function
         template<typename R, typename ...Args>

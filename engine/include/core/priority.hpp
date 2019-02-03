@@ -35,6 +35,7 @@ namespace flat {
             bool operator()(const std::unique_ptr<const prioritized> lhs,
                             const std::unique_ptr<const prioritized> rhs)
             {
+                // TODO: replace with a thread safe method (std::owner_less)
                 return operator()(lhs.get(), rhs.get());
             }
 
@@ -45,6 +46,8 @@ namespace flat {
                     if (auto r = rhs.lock()) {
                         // if both valid, check their priority
                         // in case they are the same, left is prioritized
+                        
+                        // TODO: replace with a thread safe method (std::owner_less)
                         return operator()(l.get(), r.get());
                     } else {
                         // if right is expired, left is prioritized
