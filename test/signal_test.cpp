@@ -7,6 +7,27 @@
 
 using namespace flat::core;
 
+struct custom_type
+{
+    const char f;
+
+    custom_type(char _f) : f(_f) {
+        npdebug("instanciated custom_type");
+    }
+
+    custom_type(const custom_type& other) : f(other.f) {
+        npdebug("copy constructed custom_type (bad)");
+    }
+
+    custom_type(custom_type&& other) : f(other.f) {
+        npdebug("move constructed custom_type (efficient)");
+    }
+
+    ~custom_type() {
+        npdebug("deleted custom_type instance");
+    }
+};
+
 
 void got_signal(int x, double y) {
     std::cout << "got signal with x=" <<  x << " and y=" << y << std::endl;
@@ -30,22 +51,29 @@ public:
         std::cout << "emitting signal with n=" << n << std::endl;
         m_chan.emit(signal(n));
     }
+
+    void send_custom(const custom_type& c) {
+        std::cout << "emitting custom_type" << std::endl;
+        m_chan.emit(signal(c));
+    }
 };
 
 
 class test_listener
 {
 private:
-    template<typename T>
-    using listener_of = typename std::shared_ptr<listener<T>>;
+    template<typename ...Ts>
+    using listener_of = typename std::shared_ptr<listener<Ts...>>;
 
     listener_of<std::string> str_lis;
     listener_of<int> num_lis;
+    listener_of<custom_type> cus_lis;
 
 public:
     test_listener(channel& ch)
         : str_lis(ch.connect(&test_listener::got_string, this)),
-          num_lis(ch.connect(&test_listener::got_number, this))
+          num_lis(ch.connect(&test_listener::got_number, this)),
+          cus_lis(ch.connect(&test_listener::got_custom, this))
     {}
 
     void got_string(std::string msg) {
@@ -54,6 +82,10 @@ public:
 
     void got_number(int n) {
         std::cout << "got signal with n=" << n << std::endl;
+    }
+
+    void got_custom(custom_type c) {
+        std::cout << "got signal with custom_type" << std::endl;
     }
 };
 
@@ -75,8 +107,7 @@ int main() {
     // auto lambda_lis = chan.connect([](char a) {
     //     npdebug("got signal with a=", a);
     // });
-
-    chan.emit(signal('f'));
+    // chan.emit(signal('f'));
 
     // call job to propagate signals
     broadcaster();
@@ -87,6 +118,7 @@ int main() {
 
     e.send_str("hello world!");
     e.send_num(42);
+    e.send_custom(custom_type('e'));
 
     // call job to propagate signals
     broadcaster();
