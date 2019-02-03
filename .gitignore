@@ -12,7 +12,7 @@ build.ninja
 Makefile
 
 # ctag files
-tags
+.tags
 
 # vim editor
 **/*.swp

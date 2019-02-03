@@ -95,4 +95,4 @@ test.add_specific("signal", "test/signal_test.cpp", {
 
 --[[ other tools ]]--
 -- generate tags file for vim
-os.execute("if type ctags; then ctags -R --extra=f . ; fi")
+os.execute("if type ctags; then ctags -R --extra=f -f .tags . ; fi")
