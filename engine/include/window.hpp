@@ -1,10 +1,9 @@
 #ifndef __FLATWINDOW_H__
 #define __FLATWINDOW_H__
 
-#include "object.hpp"
-#include "serial/keyfocusable.hpp"
-
 #include <string>
+#include "video.hpp"
+#include "collector.hpp"
 
 class SDL_Window;
 class SDL_KeyEvent;
@@ -34,12 +33,9 @@ struct window_status
     unsigned char focus:1;
 };
 
-
-class FlatLayer;
-
-class FlatWindow : virtual public object, public KeyFocusable
+class window : public core::collector<renderbase>, public wsdl2::video
 {
-    std::string title;
+    /*std::string title;
     window_status status;
 
     SDL_Rect * bounds;
@@ -48,7 +44,7 @@ class FlatWindow : virtual public object, public KeyFocusable
 
     FlatLayer * main_layer;
 
-    void key_cb(const SDL_KeyboardEvent*) override;
+    void key_cb(const SDL_KeyboardEvent*) override;*/
 
 // TODO window calls
 //protected:
@@ -57,7 +53,7 @@ class FlatWindow : virtual public object, public KeyFocusable
 
     //virtual void quitEvent();
 
-public:
+/*public:
 
     FlatWindow(int x, int y,
                int width, int height, 
@@ -94,7 +90,9 @@ public:
 
     void setWindowStatus(window_status);
 
-    static uint32_t winstatus_to_flags(window_status);
+    static uint32_t winstatus_to_flags(window_status);*/
+
+    void render();
 };
 
 }

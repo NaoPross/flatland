@@ -6,53 +6,72 @@
 
 namespace flat::core {
 
-class collector;
+template <class T> class collector;
 
+template <class T>
 class child
 {
-    std::weak_ptr<collector> m_parent;
-
-    bool m_released;
+    std::weak_ptr<collector<T>> m_parent;
 
 public:
 
-    child(std::shared_ptr<collector> _parent = 0);
+    child(std::shared_ptr<collector<T>> _parent = nullptr)
+        : m_parent(_parent)
+    {
+    }
 
-    virtual ~child();
+    virtual ~child() {}
 
-    std::shared_ptr<collector> parent();
+    std::shared_ptr<collector<T>> parent()
+    {
+        return m_parent.lock();
+    }
 
-    void set_parent(std::shared_ptr<collector> obj);
+    void set_parent(std::shared_ptr<collector<T>> obj)
+    {
+        m_parent = obj;
+    }
 
-    bool child_of(std::shared_ptr<collector> obj) const;
-
-    bool released() const;
-    
-    /*
-     * Take ownership of the object
-     */
-    void release();
+    bool child_of(std::shared_ptr<collector<T>> obj) const
+    {
+        return this == obj->parent().lock().get();
+    }
 }
 
-class collector : virtual public child, private std::list<std::weak_ptr<child>>
+template <class T>
+struct collector : private std::list<std::shared_ptr<child<T>>>
 {
-public: 
-
-    using child::child(std::shared_ptr<collector>);
-
-    ~collector();
+    ~collector() {}
         
-    void attach(std::shared_ptr<child> obj);
+    void attach(std::shared_ptr<child<T>> obj)
+    {
+        if (obj != nullptr)
+        {
+            insert(obj);
+            obj->set_parent(this); 
+        }
+    }
 
-    void detach(std::shared_ptr<child> obj);
+    void detach(std::shared_ptr<child<T>> obj)
+    {
+        if (!reading)
+            remove(obj);
 
-    iterator begin();
+        obj->set_parent(nullptr);
+    }
+
+    using std::list<std::shared_ptr<child<T>>>::clear;
+
+    using std::list<std::shared_ptr<child<T>>>::begin;
+    using std::list<std::shared_ptr<child<T>>>::end;
+
+    /*iterator begin();
 
     iterator end();
     
     const_iterator begin() const;
     
-    const_iterator end() const;
+    const_iterator end() const;*/
 };
 
 }

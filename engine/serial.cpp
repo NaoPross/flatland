@@ -1,101 +1,72 @@
 #include "serial.hpp"
-#include "core/task.hpp"
+#include "event.hpp"
+#include "core/signal.hpp"
+#include "flatland.hpp"
 
-using namespace flat;
-
-SDL_EventCollector::SDL_EventCollector()
+void flat::serial::broadcast()
 {
-    /* Checker task, pre-process, maximum priority */
-    // checker = new flat::core::task<SDL_EventCollector>(this, &SDL_EventCollector::collect, 0, true, 0);
-
-    /* Eraser task, post-process, minimum priority */
-    // eraser = new flat::core::task<SDL_EventCollector>(this, &SDL_EventCollector::erase, 0, false, 0xff);
-}
-
-SDL_EventCollector::~SDL_EventCollector()
-{
-    // delete checker;
-    // delete eraser;
-}
-
-void SDL_EventCollector::collect(void*)
-{
-    SDL_Event event;
-
-    while ( SDL_PollEvent(&event) )
+    while(auto m_event = wsdl2::poll_event())
     {
-        switch(event.type)
+        using namespace flat::event;
+
+#define EMIT(__type__) event_channel().emit(core::signal<__type__>(__type__(m_event.sdl()), core::priority_t::max);
+
+        switch (m_event().sdl().type())
         {
 
-        /* Keyboard */
-        case SDL_KEYDOWN:
-            keyboard.push_back(event);
-            break;
-
+        // keyboard events
         case SDL_KEYUP:
-            keyboard.push_back(event);
+            EMIT(key)
+            break;
+        case SDL_KEYDOWN:
+            EMIT(key)
             break;
 
-        /* Window */
-        case SDL_WINDOWEVENT:
-            window.push_back(event);
+        // mouse events
+        case SDL_MOUSEMOTION:
+            EMIT(mouse)
+            break;
+        case SDL_MOUSEBUTTONDOWN:
+            EMIT(mouse)
+            break;
+        case SDL_MOUSEBUTTONUP:
+            EMIT(mouse)
+            break;
+        case SDL_MOUSEWHEEL:
+            EMIT(mouse)
             break;
 
-        /* Quit */
+        // sdl quit event
         case SDL_QUIT:
-            quit.push_back(event);
+            EMIT(quit)
             break;
 
-        /* User */
-        case SDL_USEREVENT:
-            user.push_back(event);
+        // window events
+        case SDL_WINDOWEVENT:
+
+            switch (m_event.sdl().window.event)
+            {
+            case (SDL_WINDOWEVENT_MOVED)
+                EMIT(win_move);
+                break;
+            case (SDL_WINDOWEVENT_RESIZED)
+                EMIT(win_resize);
+                break;
+            case (SDL_WINDOWEVENT_SIZE_CHANGED)
+                EMIT(win_resize);
+                break;
+            default:
+                EMIT(window);
+                break;
+            }
+
+            break;
+
+        // TODO, other events
+        //
+        default:
             break;
         }
-
-        // TODO other events
     }
 }
-
-void SDL_EventCollector::erase(void*)
-{
-    keyboard.clear();
-    window.clear();
-    quit.clear();
-    user.clear();
-}
-
-const std::vector<SDL_Event>& SDL_EventCollector::getStack(uint32_t id) const
-{
-    switch(id)
-    {
-        {
-
-        /* Keyboard */
-        case SDL_KEYDOWN:
-            return keyboard;
-
-        case SDL_KEYUP:
-            return keyboard;
-
-        /* Window */
-        case SDL_WINDOWEVENT:
-            return window;
-
-        /* Quit */
-        case SDL_QUIT:
-            return quit;
-
-        /* User */
-        case SDL_USEREVENT:
-            return user;
-
-        }
-
-        // TODO other events
-    }
-
-    return user;
-}
-
-SDL_EventCollector * FlatSerial::collector = new SDL_EventCollector();
 

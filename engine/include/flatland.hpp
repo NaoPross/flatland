@@ -45,13 +45,18 @@ namespace core {
     class channel;
 }
 
+class renderbase;
+
 /* Engine channels */
 
 core::channel& core_channel();
+core::channel& event_channel();
 
 /* Main job access */
 
 core::job& main_job();
+
+// TODO, accessors to renderbases
 
 /* Window and status accessors */
 

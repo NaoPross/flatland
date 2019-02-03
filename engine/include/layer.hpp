@@ -4,13 +4,16 @@
 #include "collector.hpp"
 
 namespace flat {
-    class FlatLayer : public FlatCollector
-    {
-        
-    public:
 
-        FlatLayer(FlatLayer *parent); 
-        ~FlatLayer();
-    };
+struct layer : public renderbase, public core::child<renderbase>, public core::collector<renderbase>
+{
+    using core::child<renderbase>::child;    
+
+    virtual void render() override;
+
+    // TODO add features
+};
+
 }
+
 #endif

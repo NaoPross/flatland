@@ -1,10 +1,8 @@
 #include "actor.hpp"
 
-#include "flatland.hpp"
-
 using namespace flat;
 
-FlatActor::FlatActor(FlatCollector *parent, FlatBound *bounds)
+/*FlatActor::FlatActor(actor *parent, FlatBound *bounds)
 
     : FlatCollector(parent), bounds(bounds)
 {
@@ -24,4 +22,4 @@ FlatBound * FlatActor::getBounds() const
 {
     return bounds;
 }
-
+*/

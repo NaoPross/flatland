@@ -1,29 +1,28 @@
 #ifndef __FLATACTOR_H__
 #define __FLATACTOR_H__
 
-#include "component.hpp"
+#include "renderbase.hpp"
+#include "core/collector.hpp"
 
 namespace flat {
 
-class bounds;
-
-class actor : public 
+struct actor : public renderbase, public core::child<renderbase>
 {
-    // TODO, event binding
     // TODO, serial binding
     
     /* Bounds */
-    bounds * bounds;
+    //bounds * bounds;
 
-public:
+    //actor(actor *parent = 0, FlatBound *bounds = 0);
+    
+    using core::child<renderbase>::child;
 
-    FlatActor(F *parent = 0, FlatBound *bounds = 0);
+    // TODO add features
 
-    ~FlatActor();
+    //~actor();
 
-
-    void setBounds(FlatBound * bounds);
-    FlatBound * getBounds() const;
+    //void setBounds(FlatBound * bounds);
+    //FlatBound * getBounds() const;
 };
 
 }

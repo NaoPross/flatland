@@ -7,7 +7,6 @@
 
 #include <ctime>
 
-using namespace std;
 using namespace flat;
 
 #include "core/task.hpp"
@@ -31,30 +30,52 @@ float fps_pause = 5;
 core::job mainsync_job;
 
 core::channel core_chan("core");
+core::channel event_chan("event");
 
-core::listener::ptr quit_listener;
-core::listener::ptr print_listener;
+std::list<std::weak_ptr<renderbase>> render_objects;
+
+shared_ptr<core::listener<const std::string&>> cmd_listener;
+shared_ptr<core::listener<std::shared_ptr<renderbase>, bool> rndr_listener;
 
 /* channels listeners callback */
 
-void quit_callback(const object *sender, core::signal::package)
+void cmd_callback(const string& out)
 {
-    cout << "Flatland: quit request attempted" << endl;
-    flat::quit();
+    std::stringstream ss(out);
+    std::string buf;
+    
+    while(ss >> buf) 
+    {
+        if (buf == "quit")
+        {
+            cout << "Flatland: quit request attempted" << endl;
+            flat::quit();
+
+        } else if (buf == "echo") {
+            
+            ss >> buf;
+            cout << "Flatland: " << buf << endl;
+        }
+    }
 }
 
-void print_callback(const object *sender, core::signal::package p)
+void rndrbase_callback(std::shared_ptr<renderbase> obj, bool insert)
 {
-    const char * out = p.get<const char>();
-    string * sout = p.get<string>();
+    if (insert)
+    {
+        // avoid doubling objects
+        for (auto w : render_objects)
+        {
+            if (w.lock().get() == obj.get())
+                return;
+        }
 
-    if (!out)
-        cout << "Flatland: " << out << endl;
-    else if (!sout)
-        cout << "Flatland: " << sout << endl;
+        render_objects.push_back(obj);
 
-    // else fail silently
+    } else
+        render_objects.remove(obj);
 }
+
 
 /* Functions implementation */
 
@@ -93,6 +114,11 @@ core::channel& flat::core_channel()
     return core_chan;
 }
 
+core::channel& flat::event_channel()
+{
+    return event_chan;
+}
+
 core::job& flat::main_job()
 {
     return mainsync_job;
@@ -112,31 +138,39 @@ int flat::init_flatland(FlatWindow* w, const flat_status& s, float _fps)
     // assure that NO OTHER core channel was present before initialization
     if (!core_chan.start(core::priority_t::max, &mainsync_job)) {
 
-        cout << "Flatland: Could not map 'core' channel" << endl;
-        cout << "Flatland: Do not call another channel 'core' before flatland initialization" << endl;
-        cout << "Flatland: Aborting" << endl;
+        cerr << "Flatland: Could not map 'core' channel" << endl;
+        cerr << "Flatland: Do not call another channel 'core' before flatland initialization" << endl;
+        cerr << "Flatland: Aborting" << endl;
+        return -1;
+    }
+
+    if (!event_chan.start(core::priority_t::max, &mainsync_job)) {
+
+        cerr << "Flatland: Could not map 'event' channel" << endl;
+        cerr << "Flatland: Do not call another channel 'event' before flatland initialization" << endl;
+        cerr << "Flatland: Aborting" << endl;
         return -1;
     }
 
     // bind listeners
-    
-    quit_listener = core_chan.connect(quit_callback, initializer_list<string>({string("quit")}));
 
-    // control if quit was not already connected
-    if (!quit_listener) {
+    cmd_listener = core_chan.connect(cmd_callback);
+
+    // control if print was not already connected
+    if (cmd_listener == nullptr) {
         
-        cout << "Flatland: Could not connect 'quit' listener" << endl;
-        cout << "Flatland: Do not connect to core channel another listener with filter name 'quit' before flatland initialization" << endl;
+        cout << "Flatland: Could not connect 'cmd' listener" << endl;
+        cout << "Flatland: Do not connect to core channel another listener with filter name 'print' before flatland initialization" << endl;
         cout << "Flatland: Aborting" << endl;
         return -1;
     }
 
-    print_listener = core_chan.connect(print_callback, initializer_list<string>({string("print")}));
+    rndr_listener = core_chan.connect(rndr_callback);
 
     // control if print was not already connected
-    if (!print_listener) {
+    if (!rndr_listener) {
         
-        cout << "Flatland: Could not connect 'print' listener" << endl;
+        cout << "Flatland: Could not connect 'render' listener" << endl;
         cout << "Flatland: Do not connect to core channel another listener with filter name 'print' before flatland initialization" << endl;
         cout << "Flatland: Aborting" << endl;
         return -1;
@@ -215,6 +249,7 @@ int flat::init_flatland(FlatWindow* w, const flat_status& s, float _fps)
 
     // finalize core channel
     core_chan.finalize();
+    event_chan.finalize();
 
     SDL_Quit();
 
