@@ -3,6 +3,7 @@
 
 #include <string>
 #include "wsdl2/video.hpp"
+#include "renderbase.hpp"
 #include "core/collector.hpp"
 
 //class SDL_Window;
@@ -35,7 +36,7 @@ struct window_status
     unsigned char focus;
 };*/
 
-class window : public core::collector<renderbase>, public wsdl2::video
+class window : public core::collector<renderbase>, public wsdl2::window
 {
     /*std::string title;
     window_status status;
@@ -96,6 +97,10 @@ private:
     void setWindowStatus(window_status);
 
     static uint32_t winstatus_to_flags(window_status);*/
+
+public:
+
+    using wsdl2::window::window;
 
     void render();
 };

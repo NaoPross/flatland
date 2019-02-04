@@ -3,7 +3,7 @@
 #include <set>
 #include <iostream>
 
-#include <SDL2/SDL.h>
+//#include <SDL2/SDL.h>
 
 #include <ctime>
 
@@ -15,30 +15,39 @@ using namespace flat;
 #include "exception.hpp"
 #include "exceptions/forcequit.hpp"
 
+#include "wsdl2/wsdl2.hpp"
+
 /* Global fields definitions */
 
 float flatland_dt;
 
-FlatWindow * window = 0;
+window * g_window = 0;
 
-flat_status status;
+//flat_status status;
 
 float fps;
 float fps_pause = 5;
 
+// loopers booleans
+
+bool running = false;
+bool loop = false;
+
+// jobs and channels
+
 core::job mainsync_job;
 
-core::channel core_chan("core");
-core::channel event_chan("event");
+core::channel * core_chan = 0;
+core::channel * event_chan = 0;
 
 std::list<std::weak_ptr<renderbase>> render_objects;
 
-shared_ptr<core::listener<const std::string&>> cmd_listener;
-shared_ptr<core::listener<std::shared_ptr<renderbase>, bool> rndr_listener;
+std::shared_ptr<core::listener<const std::string&>> cmd_listener;
+std::shared_ptr<core::listener<std::shared_ptr<renderbase>, bool>> rndr_listener;
 
 /* channels listeners callback */
 
-void cmd_callback(const string& out)
+void cmd_callback(const std::string& out)
 {
     std::stringstream ss(out);
     std::string buf;
@@ -47,13 +56,13 @@ void cmd_callback(const string& out)
     {
         if (buf == "quit")
         {
-            cout << "Flatland: quit request attempted" << endl;
+            npdebug("Flatland: quit request attempted")
             flat::quit();
 
         } else if (buf == "echo") {
             
             ss >> buf;
-            cout << "Flatland: " << buf << endl;
+            npdebug("Flatland: ", buf)
         }
     }
 }
@@ -72,13 +81,15 @@ void rndrbase_callback(std::shared_ptr<renderbase> obj, bool insert)
         render_objects.push_back(obj);
 
     } else
-        render_objects.remove(obj);
+        render_objects.remove_if([&](const auto& v) {
+            return std::owner_less<std::weak_ptr<renderbase>>()(obj, v);
+        });
 }
 
 
 /* Functions implementation */
 
-uint32_t status_to_flags(const flat_status& s)
+/*uint32_t status_to_flags(const flat_status& s)
 {
     uint32_t flags = 0;
 
@@ -104,16 +115,16 @@ uint32_t status_to_flags(const flat_status& s)
         flags |= SDL_INIT_EVENTS;
     
     return flags; 
-}
+}*/
 
 /* Accessors */
 
-core::channel& flat::core_channel()
+core::channel * flat::core_channel()
 {
     return core_chan;
 }
 
-core::channel& flat::event_channel()
+core::channel * flat::event_channel()
 {
     return event_chan;
 }
@@ -125,89 +136,78 @@ core::job& flat::main_job()
 
 /* Main loop */
 
-int flat::init_flatland(FlatWindow* w, const flat_status& s, float _fps)
+int flat::init_flatland(window* w, float _fps)
 {
-    cout << "Flatland: Initializing flatland" << endl;
+    npdebug("Flatland: Initializing flatland")
 
     // init core channel
     
-    cout << "Flatland: Initializing core channel" << endl;
-   
-    // start core channel
-    // assure that NO OTHER core channel was present before initialization
-    if (!core_chan.start(core::priority_t::max, &mainsync_job)) {
+    npdebug("Flatland: Initializing core channel")
+    core_chan = new core::channel(core::priority_t::max); 
 
-        cerr << "Flatland: Could not map 'core' channel" << endl;
-        cerr << "Flatland: Do not call another channel 'core' before flatland initialization" << endl;
-        cerr << "Flatland: Aborting" << endl;
-        return -1;
-    }
-
-    if (!event_chan.start(core::priority_t::max, &mainsync_job)) {
-
-        cerr << "Flatland: Could not map 'event' channel" << endl;
-        cerr << "Flatland: Do not call another channel 'event' before flatland initialization" << endl;
-        cerr << "Flatland: Aborting" << endl;
-        return -1;
-    }
+    npdebug("Flatland: Initializing event channel")
+    event_chan = new core::channel(core::priority_t::max);
 
     // bind listeners
 
-    cmd_listener = core_chan.connect(cmd_callback);
+    cmd_listener = core_chan->connect(cmd_callback);
 
     // control if print was not already connected
     if (cmd_listener == nullptr) {
         
-        cout << "Flatland: Could not connect 'cmd' listener" << endl;
-        cout << "Flatland: Do not connect to core channel another listener with filter name 'print' before flatland initialization" << endl;
-        cout << "Flatland: Aborting" << endl;
+        npdebug("Flatland: Could not connect 'cmd' listener")
+        npdebug("Flatland: Do not connect to core channel another listener with filter name 'print' before flatland initialization")
+        npdebug("Flatland: Aborting")
         return -1;
     }
 
-    rndr_listener = core_chan.connect(rndr_callback);
+    rndr_listener = core_chan->connect(rndrbase_callback);
 
     // control if print was not already connected
-    if (!rndr_listener) {
+    if (rndr_listener == nullptr) {
         
-        cout << "Flatland: Could not connect 'render' listener" << endl;
-        cout << "Flatland: Do not connect to core channel another listener with filter name 'print' before flatland initialization" << endl;
-        cout << "Flatland: Aborting" << endl;
+        npdebug("Flatland: Could not connect 'render' listener")
+        npdebug("Flatland: Do not connect to core channel another listener with filter name 'print' before flatland initialization")
+        npdebug("Flatland: Aborting")
         return -1;
     }
 
     // init variables
     
-    cout << "Flatland: Initializing window" << endl;
+    npdebug("Flatland: Initializing window")
 
-    window = w;
-    status = s;
+    g_window = w;
+    //status = s;
     fps = _fps;
 
     // init SDL
     
-    cout << "Flatland: Initializing SDL" << endl;
+    npdebug("Flatland: Initializing SDL")
     
-    uint32_t flags = status_to_flags(s);
+    /*uint32_t flags = status_to_flags(s);
     
     if ( SDL_Init(flags | SDL_INIT_NOPARACHUTE) < 0)
     {
-        cout << "Error: SDL_Init failed" << endl;
+        npdebug("Error: SDL_Init failed")
         return -1;
-    }
+    }*/
+    
+    // initialize SDL
+    wsdl2::initialize();
 
     // init window
 
-    cout << "Flatland: Opening window" << endl;
-    window->open();
+    npdebug("Flatland: Opening window")
+    g_window->open();
     
     /* Game loop */
 
-    status.running = 1;
-    status.loop = 1;
+    running = true;
+    loop = true;
 
     clock_t delay = 0;
 
-    cout << "Flatland: Entering game-loop" << endl;
+    npdebug("Flatland: Entering game-loop")
 
     do
     {
@@ -224,45 +224,48 @@ int flat::init_flatland(FlatWindow* w, const flat_status& s, float _fps)
 
             } catch (const ForceQuit& f) {
                 
-                cerr << "Flatland: a force quit call was thrown" << endl;
-                cerr << "Possible reason: " << f.m_reason << endl;
+                npdebug("Flatland: a force quit call was thrown")
+                npdebug("Possible reason: ", f.m_reason);
 
                 quit();
             }
 
-            SDL_Delay((uint32_t) (1000.0f / fps));
+            //SDL_Delay((uint32_t) (1000.0f / fps));
+            wsdl2::delay((uint32_t) (1000.0f / fps));
 
             delay -= clock();
 
-        } while (status.loop);
+        } while (loop);
         
-        SDL_Delay((uint32_t)(1000 / fps_pause));
+        //SDL_Delay((uint32_t)(1000 / fps_pause));
+        wsdl2::delay((uint32_t) (1000.0f / fps_pause));
     }
-    while(status.running);
+    while(running);
 
-    cout << "Flatland: closing window" << endl;
+    npdebug("Flatland: closing window")
 
-    window->close();
+    g_window->close();
 
-    cout << "Flatland: quitting SDL" << endl;
+    npdebug("Flatland: quitting SDL")
 
     // finalize core channel
-    core_chan.finalize();
-    event_chan.finalize();
+    delete core_chan;
+    delete event_chan;
 
-    SDL_Quit();
+    wsdl2::quit();
+    //SDL_Quit();
 
-    return status.error;
+    return 0;
 }
 
 void flat::quit()
 {
-    status.running = 0;
-    status.loop = 0;
+    running = false;
+    loop = false;
 }
 
-flat_status flat::flatland_status()
+/*flat_status flat::flatland_status()
 {
     return status;
-}
+}*/
 

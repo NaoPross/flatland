@@ -208,8 +208,10 @@ namespace flat::core
     public:
         using ptr = std::shared_ptr<channel>;
    
-        // TODO: channel() that binds to main_job
-        channel(job& broadcaster);
+        // channel(priority_t) that binds to main_job
+        channel(priority_t p = priority_t::none);
+
+        channel(job& broadcaster, priority_t p = priority_t::none);
 
         /// not copyable
         // TODO: review: should be copyable?

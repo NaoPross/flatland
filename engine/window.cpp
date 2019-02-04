@@ -7,7 +7,7 @@
 
 using namespace flat;
 
-FlatWindow::FlatWindow( int x, int y,
+/*FlatWindow::FlatWindow( int x, int y,
                         int width, int height, 
                         const std::string& title, 
                         window_status status)
@@ -156,10 +156,8 @@ void FlatWindow::key_cb(const SDL_KeyboardEvent *event)
 
     if (event->type == SDL_KEYDOWN && event->keysym.sym == SDLK_ESCAPE) 
     {
-        /* Close window */
         close();
 
-        /* Say flatland to quit */
         // flat::core::signal quit(this, "quit", 0, 0xff);
         // quit.emit("core");
     }
@@ -185,5 +183,5 @@ uint32_t FlatWindow::winstatus_to_flags(window_status s)
         flags |= SDL_WINDOW_INPUT_GRABBED;
 
     return flags;
-}
+} */
 

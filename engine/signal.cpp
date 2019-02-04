@@ -8,9 +8,11 @@ using namespace flat::core;
 
 /* channel */
 
-channel::channel(job& broadcaster) 
+channel::channel(priority_t p) : channel(flat::main_job(), p) {}
+
+channel::channel(job& broadcaster, priority_t p) 
 {
-    m_broadcast = broadcaster.delegate_task(&channel::broadcast, this);
+    m_broadcast = broadcaster->delegate_task(&channel::broadcast, this, p);
 }
 
 void channel::broadcast()

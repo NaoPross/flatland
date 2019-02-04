@@ -3,9 +3,9 @@
 
 namespace flat {
 
-class FlatWindow;
+class window;
 
-struct flat_status
+/*struct flat_status
 {
 
     flat_status(unsigned char _video = 1,
@@ -33,9 +33,9 @@ struct flat_status
     unsigned char error;
     unsigned char running;
     unsigned char loop;
-};
+};*/
 
-int init_flatland(FlatWindow*, const flat_status&, float fps = 60);
+int init_flatland(window*, float fps = 60);
 void quit();
 
 namespace core {
@@ -49,8 +49,8 @@ class renderbase;
 
 /* Engine channels */
 
-core::channel& core_channel();
-core::channel& event_channel();
+core::channel * core_channel();
+core::channel * event_channel();
 
 /* Main job access */
 
@@ -60,9 +60,9 @@ core::job& main_job();
 
 /* Window and status accessors */
 
-FlatWindow * getFlatWindow();
+window * current_window();
 
-flat_status flatland_status();
+//flat_status flatland_status();
 
 /* Window and status modifiers */
 
