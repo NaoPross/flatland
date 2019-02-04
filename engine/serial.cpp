@@ -3,60 +3,67 @@
 #include "core/signal.hpp"
 #include "flatland.hpp"
 
+using namespace wsdl2::event;
+
+template <class T>
+inline void emit(event_t * e)
+{
+    flat::event_channel()->emit(flat::core::signal<T>(flat::core::priority_t::max, T(*e)));
+}
+
 void flat::serial::broadcast()
 {
-    while(auto m_event = wsdl2::poll_event())
+    while(auto m_event = poll_event())
     {
-        using namespace flat::event;
+        event_t * ev = m_event.get();
 
-#define EMIT(__type__) event_channel().emit(core::signal<__type__>(__type__(m_event.sdl()), core::priority_t::max);
-
-        switch (m_event.type())
+        switch (m_event->type())
         {
 
         // keyboard events
         case SDL_KEYUP:
-            EMIT(key)
+            emit<e_key>(ev);
             break;
         case SDL_KEYDOWN:
-            EMIT(key)
+            emit<e_key>(ev);
             break;
 
         // mouse events
         case SDL_MOUSEMOTION:
-            EMIT(mouse)
+            emit<mouse::e_motion>(ev);
             break;
         case SDL_MOUSEBUTTONDOWN:
-            EMIT(mouse)
+            emit<mouse::e_button>(ev);
             break;
         case SDL_MOUSEBUTTONUP:
-            EMIT(mouse)
+            emit<mouse::e_button>(ev);
             break;
         case SDL_MOUSEWHEEL:
-            EMIT(mouse)
+            emit<mouse::e_wheel>(ev);
             break;
 
         // sdl quit event
         case SDL_QUIT:
-            EMIT(quit)
+            emit<e_quit>(ev);
             break;
 
         // window events
         case SDL_WINDOWEVENT:
 
-            switch (m_event.sdl().window.event)
+            // from poll_event it's safe to cast without checking
+            switch (dynamic_cast<wsdl2::event::window::e_window*>(ev)->action())
             {
-            case (SDL_WINDOWEVENT_MOVED)
-                EMIT(win_move);
+            case (wsdl2::event::window::action_t::moved):
+                emit<wsdl2::event::window::e_move>(ev);
                 break;
-            case (SDL_WINDOWEVENT_RESIZED)
-                EMIT(win_resize);
+            case (wsdl2::event::window::action_t::resized):
+                emit<wsdl2::event::window::e_resize>(ev);
                 break;
-            case (SDL_WINDOWEVENT_SIZE_CHANGED)
-                EMIT(win_resize);
+            case (wsdl2::event::window::action_t::size_changed):
+                emit<wsdl2::event::window::e_resize>(ev);
                 break;
             default:
-                EMIT(window);
+                emit<wsdl2::event::window::e_window>(ev);
                 break;
             }
 

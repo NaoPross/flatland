@@ -69,9 +69,12 @@ namespace flat::core
         /// movable
         signal(signal&& other) = default;
 
-        /// normal (inefficient) constructor that copies arguments
         constexpr signal(const Args&... _args)
             : helper::signal(priority_t::none), args(_args...) {}
+
+        /// normal (inefficient) constructor that copies arguments
+        constexpr signal(priority_t p, const Args&... _args)
+            : helper::signal(p), args(_args...) {}
 
         // constexpr signal(priority_t p, const Args&... _args)
         //     : helper::signal(p), args(_args...) {}

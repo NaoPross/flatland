@@ -43,7 +43,7 @@ core::channel * event_chan = 0;
 std::list<std::weak_ptr<renderbase>> render_objects;
 
 std::shared_ptr<core::listener<const std::string&>> cmd_listener;
-std::shared_ptr<core::listener<std::shared_ptr<renderbase>, bool>> rndr_listener;
+std::shared_ptr<core::listener<const renderbase&, bool>> rndr_listener;
 
 /* channels listeners callback */
 
@@ -67,14 +67,16 @@ void cmd_callback(const std::string& out)
     }
 }
 
-void rndrbase_callback(std::shared_ptr<renderbase> obj, bool insert)
+void rndrbase_callback(const renderbase* _obj, bool insert)
 {
+    std::shared_ptr<renderbase> obj(const_cast<renderbase*>(_obj));
+
     if (insert)
     {
         // avoid doubling objects
         for (auto w : render_objects)
         {
-            if (w.lock().get() == obj.get())
+            if (w.lock().get() == _obj)
                 return;
         }
 
@@ -150,7 +152,7 @@ int flat::init_flatland(window* w, float _fps)
 
     // bind listeners
 
-    cmd_listener = core_chan->connect(cmd_callback);
+    /*cmd_listener = core_chan->connect(cmd_callback);
 
     // control if print was not already connected
     if (cmd_listener == nullptr) {
@@ -170,7 +172,7 @@ int flat::init_flatland(window* w, float _fps)
         npdebug("Flatland: Do not connect to core channel another listener with filter name 'print' before flatland initialization")
         npdebug("Flatland: Aborting")
         return -1;
-    }
+    }*/
 
     // init variables
     
