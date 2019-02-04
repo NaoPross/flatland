@@ -3,6 +3,7 @@
 #include "debug.hpp"
 
 #include <iostream>
+#include <memory>
 
 
 using namespace flat::core;
@@ -53,8 +54,13 @@ public:
     }
 
     void send_custom(custom_type&& c) {
-        std::cout << "emitting custom_type" << std::endl;
+        std::cout << "emitting signal with custom_type" << std::endl;
         m_chan.emit(signal(std::move(c)));
+    }
+
+    void send_custom_ptr(custom_type&& c) {
+        std::cout << "emitting signal with ptr to custom_type" << std::endl;
+        m_chan.emit(signal(std::make_shared<custom_type>(std::move(c))));
     }
 };
 
@@ -68,12 +74,14 @@ private:
     listener_of<std::string> str_lis;
     listener_of<int> num_lis;
     listener_of<custom_type> cus_lis;
+    listener_of<std::shared_ptr<custom_type>> ptr_lis;
 
 public:
     test_listener(channel& ch)
         : str_lis(ch.connect(&test_listener::got_string, this)),
           num_lis(ch.connect(&test_listener::got_number, this)),
-          cus_lis(ch.connect(&test_listener::got_custom, this))
+          cus_lis(ch.connect(&test_listener::got_custom, this)),
+          ptr_lis(ch.connect(&test_listener::got_custom_ptr, this))
     {}
 
     void got_string(std::string msg) {
@@ -85,7 +93,11 @@ public:
     }
 
     void got_custom(custom_type c) {
-        std::cout << "got signal with custom_type" << std::endl;
+        std::cout << "got signal with custom_type with f=" << c.f << std::endl;
+    }
+
+    void got_custom_ptr(std::shared_ptr<custom_type> p) {
+        std::cout << "got signal with ptr to custom_type with f=" << p->f << std::endl;
     }
 };
 
@@ -119,6 +131,7 @@ int main() {
     e.send_str("hello world!");
     e.send_num(42);
     e.send_custom(custom_type('e'));
+    e.send_custom_ptr(custom_type('x'));
 
     // call job to propagate signals
     broadcaster();
