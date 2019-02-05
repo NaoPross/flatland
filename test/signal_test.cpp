@@ -45,22 +45,22 @@ public:
 
     void send_str(std::string&& msg) {
         std::cout << "emitting signal with msg=" << msg << std::endl;
-        m_chan.emit(signal(std::move(msg)));
+        m_chan.emit(std::move(msg));
     }
 
     void send_num(int&& n) {
         std::cout << "emitting signal with n=" << n << std::endl;
-        m_chan.emit(signal(std::move(n)));
+        m_chan.emit(std::move(n));
     }
 
     void send_custom(custom_type&& c) {
-        std::cout << "emitting signal with custom_type" << std::endl;
-        m_chan.emit(signal(std::move(c)));
+        std::cout << "emitting signal with custom_type with f=" << c.f << std::endl;
+        m_chan.emit(std::move(c));
     }
 
     void send_custom_ptr(custom_type&& c) {
-        std::cout << "emitting signal with ptr to custom_type" << std::endl;
-        m_chan.emit(signal(std::make_shared<custom_type>(std::move(c))));
+        std::cout << "emitting signal with ptr to custom_type with f=" << c.f << std::endl;
+        m_chan.emit(std::make_shared<custom_type>(std::move(c)));
     }
 };
 
@@ -112,7 +112,7 @@ int main() {
     // test with a function
     auto fun_lis = chan.connect(got_signal);
     std::cout << "emitting signal with x=100, y=293.0" << std::endl;
-    chan.emit(std::move(signal(100, 293.0)));
+    chan.emit(100, 293.0);
 
     // test with a closure
     // TODO: fix

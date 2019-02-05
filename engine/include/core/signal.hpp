@@ -64,10 +64,14 @@ namespace flat::core
         signal() = delete;
 
         /// non copyable, copying signal<...>::args is inefficient
+        /// signals are meant to be created only once by the emitter
+        // TODO: think: is this correct?
         signal(const signal& other) = delete;
 
         /// movable
-        signal(signal&& other) = default;
+        constexpr signal(signal&& other) = default;
+        //     : helper::signal(other.priority),
+        //       args(std::move(other.args)) {}
 
         constexpr signal(const Args&... _args)
             : helper::signal(priority_t::none), args(_args...) {}
@@ -158,6 +162,14 @@ namespace flat::core
             }
 
             npdebug("invoked listener ", this, " with signal ", p);
+            // here happens a copy construction of args, there is
+            // a fundamental problem that needs to be adressed
+            //
+            // signals are shared resources, but for a perfect forward
+            // with move semantics the resource end up owned by the callback
+            //
+            // therefore a system to give ownership of the signal OR the 
+            // shared pointer to the callback, must be set in place
             std::apply(m_callback, (p->args));
 
             return true;
@@ -207,6 +219,7 @@ namespace flat::core
 
             return lis_ptr;
         }
+
              
     public:
         using ptr = std::shared_ptr<channel>;
@@ -225,11 +238,11 @@ namespace flat::core
 
         /// add a signal to the queue/stack of signals (m_signals)
         template<class ...Args> 
-        void emit(signal<Args...>&& sig)
-        {   
+        void emit(Args&&... args)
+        {
             // create a shared_ptr
-            auto p = std::make_shared<signal<Args...>>(
-                std::forward<signal<Args...>>(sig)
+            std::shared_ptr<signal<Args...>> p(
+                new signal<Args...>(std::forward<Args>(args)...)
             );
 
             npdebug("emitted signal ", p);
@@ -240,6 +253,12 @@ namespace flat::core
                 std::static_pointer_cast<helper::signal>(p)
             );
         }
+
+        // TODO: fix
+        // template<class ...Args> 
+        // void emit(signal<Args...>&& sig)
+        // {
+        // }
 
         /// for each signal accumulated, call each listener
         void broadcast();
