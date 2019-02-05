@@ -14,10 +14,10 @@ Syntax
 
 Project Metastuff
 -----------------
-- [!] build system (premake)
+- [x] build system (premake)
     - [x] build library
     - [x] build tests
-    - [!] build dependencies
+    - [x] build dependencies
 
 - [ ] uniform coding style (will it ever happen?)
     - [x] lowercase code
@@ -26,42 +26,75 @@ Project Metastuff
     - [?] comments style
     - [?] where to place brackets
 
+- [ ] uniform git commit messages (will it ever happen? (too))
+    - [x] max 72 characters
+    - [ ] use imperative form
+
+
+Mini Math
+---------
+- [x] vectors
+    - [x] works with any numeric type
+    - [x] +, -, +=, -= operators
+    - [x] dot, cross product
+- [ ] matrices
+    - [ ] matrix product
+    - [ ] +, -, +=, -= operators
+    - [ ] dot, cross product
+    - [ ] determinant
+
+Wrap SDL2
+---------
+- [n] video
+    - [x] window
+    - [x] renderer
+    - [!] texture (in VRAM)
+    - [ ] surface (in RAM)
+- [!] events
 
 Flatland
 --------
-- [ ] core
+- [!] core
     - [x] task and job
     - [x] signal, channel and listener
     - [!] initialization of the library (flatland.hpp)
     - [r] collector
-    - [?] object / labeled type
+        - [r] disallow two parents
+    - [!] labeled type
+        - [r] add a unique identifeir (hash or uuid)
 
 - [ ] graphics
-    - [ ] window
-    - [ ] layers
-    - [ ] renderable objects
-    - [ ] sprite
-    - [r] mouse / keyboard events
+    - [r] window
+    - [x] renderable objects
+        - [r] layers
+        - [r] sprite
+    - [!] mouse / keyboard events
+    - [ ] font loading
+        - [ ] default font (unscii)
     - [?] graphical lua console
 
 - [ ] sound
     - [?] audio resources loader
 
 - [ ] game
-    - [!] actor (entity)
-    - [?] scenes
-    - [?] maps
+    - [n] bounded (for collisions)
+        - [n] collision checker
+    - [n] entity (is bounded)
+        - [n] actor (has a sprite)
+    - [?] scenes (contains entities)
+    - [?] maps (maybe load tmx?)
     - [?] lua interface for game scripting
 
 
 Tests
 -----
-- [ ] core
+- [!] core
+    - [ ] prioritized
     - [x] task and job
     - [x] signal, channel and listener
 
 - [ ] graphics
-    - [ ] open a window
+    - [r] open a window
     - [ ] sprites
     - [?] animations
 
@@ -69,4 +102,5 @@ Tests
     - [ ] load and play audio files
 
 - [ ] game
+    - [n] bounds, collisions and actors
     - [?] simple game
