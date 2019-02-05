@@ -118,7 +118,7 @@ project "wsdl2"
         flags { "OptimizeSpeed" }
 
 --[[ main project ]]--
-project "libflatland"
+project "flatland"
     -- project
     language "C++"
     kind "SharedLib"
