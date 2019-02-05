@@ -90,7 +90,10 @@ test.add_specific("task", "test/task_test.cpp", {
 test.add_specific("signal", "test/signal_test.cpp", {
     "engine/signal.cpp",
     "engine/labelled.cpp",
-    "engine/task.cpp"
+    "engine/task.cpp",
+    "engine/flatland.cpp",
+    "lib/libwsdl2/events.cpp",
+    "lib/libwsdl2/wrapsdl2.cpp"
 })
 
 --[[ other tools ]]--
