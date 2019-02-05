@@ -60,20 +60,6 @@ local test = {
     end
 }
 
-local dependency = {
-    build = function(path, commands)
-        print("Building dependency under " .. path)
-        for k, cmd in pairs(commands) do
-            print("  Running " .. cmd)
-            os.execute("cd " .. path .. "; " .. cmd)
-        end
-    end
-}
-
---[[ dependencies ]]--
---dependency.build("lib/libwsdl2", { "./configure.py", "ninja" })
---dependency.build("lib/libmm", { "ninja" })
-
 --[[ project libmm ]]--
 project "mm"
     -- project
