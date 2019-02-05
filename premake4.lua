@@ -131,18 +131,11 @@ test.add_specific("task", "test/task_test.cpp", {
     "engine/task.cpp"
 }, {})
 
-sig_test_dep = {"wsdl2"}
-
-if sdl ~= nil then
-    sig_test_dep[#sig_test_dep + 1] = "SDL2"
-end
-
 test.add_specific("signal", "test/signal_test.cpp", {
     "engine/signal.cpp",
     "engine/labelled.cpp",
     "engine/task.cpp",
-    "engine/flatland.cpp"
-}, sig_test_dep)
+}, {})
 
 --[[ other tools ]]--
 -- generate tags file for vim

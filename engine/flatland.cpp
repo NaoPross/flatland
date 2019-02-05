@@ -143,10 +143,10 @@ int flat::init_flatland(window* w, float _fps)
     // init core channel
     
     npdebug("Flatland: Initializing core channel")
-    core_chan = new core::channel(core::priority_t::max); 
+    core_chan = new core::channel(main_job(), core::priority_t::max); 
 
     npdebug("Flatland: Initializing event channel")
-    event_chan = new core::channel(core::priority_t::max);
+    event_chan = new core::channel(main_job(), core::priority_t::max);
 
     // bind listeners
 

@@ -1,5 +1,4 @@
 #include "core/signal.hpp"
-#include "flatland.hpp"
 #include "debug.hpp"
 
 #include <functional>
@@ -7,8 +6,6 @@
 using namespace flat::core;
 
 /* channel */
-
-channel::channel(priority_t p) : channel(flat::main_job(), p) {}
 
 channel::channel(job& broadcaster, priority_t p) 
 {
