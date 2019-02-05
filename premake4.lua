@@ -92,7 +92,7 @@ test.add_specific("signal", "test/signal_test.cpp", {
     "engine/labelled.cpp",
     "engine/task.cpp",
     "engine/flatland.cpp",
-    "lib/libwsdl2/events.cpp",
+    "lib/libwsdl2/event.cpp",
     "lib/libwsdl2/wrapsdl2.cpp"
 })
 
