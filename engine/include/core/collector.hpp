@@ -4,6 +4,8 @@
 #include <list>
 #include <memory>
 
+#include "debug.hpp"
+
 namespace flat::core {
 
 template <class T> class collector;
@@ -11,57 +13,105 @@ template <class T> class collector;
 template <class T>
 class child
 {
-    std::weak_ptr<collector<T>> m_parent;
+    collector<T> * m_parent;
 
-public:
-
-    child(std::shared_ptr<collector<T>> _parent = nullptr)
-        : m_parent(_parent)
+    // only collector should access this method
+    void set_parent(collector<T> * obj)
     {
-    }
-
-    virtual ~child() {}
-
-    std::shared_ptr<collector<T>> parent()
-    {
-        return m_parent.lock();
-    }
-
-    void set_parent(std::shared_ptr<collector<T>> obj)
-    {
+        npdebug("Setting parent ", obj)
         m_parent = obj;
     }
 
-    bool child_of(std::shared_ptr<collector<T>> obj) const
+public:
+
+    // using set_parent
+    friend class collector<T>;
+
+    child() : m_parent(nullptr) {}
+
+    virtual ~child() {}
+
+    collector<T> * parent()
     {
-        return this == obj->parent().lock().get();
+        return m_parent;
+    }
+    
+    bool child_of(collector<T> * obj) const
+    {
+        return this == obj->parent();
     }
 };
 
+/*
+ * This class is made in order
+ * to take ownership of the objects
+ *
+ * Insertion is made by moving objects
+ */
+
 template <class T>
-struct collector : private std::list<std::shared_ptr<child<T>>>
+struct collector : private std::list<std::unique_ptr<child<T>>>
 {
+
+    // automaticly destructs all children
     ~collector() {}
-        
-    void attach(std::shared_ptr<child<T>> obj)
+
+    /*
+     * Same as attach(child<T>&& obj)
+     * but it copies the entering value
+     * Otherwise it is turned into an rvalue
+     */
+    void attach(T* obj)
     {
-        if (obj != nullptr)
-        {
-            insert(obj);
-            obj->set_parent(this); 
+        npdebug("Attaching existing object to ", this)
+
+        if (obj->parent() == nullptr) {
+            // take ownership of the passed pointer
+            auto it = this->emplace(end(), std::unique_ptr<child<T>>(obj));
+            (*it).get()->set_parent(this);
+
+        } else {
+            npdebug("Object has already a parent")
         }
     }
-
-    void detach(std::shared_ptr<child<T>> obj)
+    
+    /*
+     * Returns the pointer association
+     * to the entering object
+     * Do never delete it, collector
+     * takes its ownership
+     */ 
+    template <class S, class ...Args>
+    S* attach(Args&&... args)
     {
-        remove(obj);
-        obj->set_parent(nullptr);
+        npdebug("Attaching new object to ", this)
+
+        S * out;
+
+        // call move push_back
+        auto it = this->emplace(end(), std::unique_ptr<child<T>>(out = new S(args...)));
+        (*it).get()->set_parent(this);
+
+        return out;
     }
 
-    using std::list<std::shared_ptr<child<T>>>::clear;
+    /*
+     * Detaches object and 
+     * invalidates the pointer!
+     */
+    void detach(child<T>* obj)
+    {
+        this->remove_if([&](const auto& p) {
+            return p.get() == obj; 
+        });
+    }
 
-    using std::list<std::shared_ptr<child<T>>>::begin;
-    using std::list<std::shared_ptr<child<T>>>::end;
+    using std::list<std::unique_ptr<child<T>>>::clear;
+
+    using std::list<std::unique_ptr<child<T>>>::begin;
+    using std::list<std::unique_ptr<child<T>>>::end;
+
+    using std::list<std::unique_ptr<child<T>>>::size;
 
     /*iterator begin();
 

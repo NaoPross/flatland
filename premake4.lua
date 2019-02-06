@@ -137,6 +137,8 @@ test.add_specific("signal", "test/signal_test.cpp", {
     "engine/task.cpp",
 }, {})
 
+test.add_specific("collector", "test/collector_test.cpp", {}, {})
+
 --[[ other tools ]]--
 -- generate tags file for vim
 os.execute("if type ctags; then ctags -R --extra=f -f .tags . ; fi")
