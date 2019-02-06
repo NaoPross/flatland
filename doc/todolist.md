@@ -60,8 +60,8 @@ Flatland
     - [!] initialization of the library (flatland.hpp)
     - [x] collector
         - [x] disallow two parents
-    - [r] labeled type
-        - [r] add a unique identifeir (hash or uuid)
+    - [x] labeled type
+        - [x] add a unique identifeir (hash or uuid)
 
 - [ ] graphics
     - [r] window

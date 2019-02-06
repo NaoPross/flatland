@@ -40,10 +40,16 @@ core::job mainsync_job;
 core::channel * core_chan = 0;
 core::channel * event_chan = 0;
 
-std::list<std::weak_ptr<renderbase>> render_objects;
+/*
+ * Render-base objets mapping by their integer hash
+ */
+std::map<std::size_t, renderbase*> renderbases;
 
 std::shared_ptr<core::listener<std::string>> cmd_listener;
-std::shared_ptr<core::listener<std::shared_ptr<renderbase>, bool>> rndr_listener;
+
+// render mapping/unmapping listeners
+std::shared_ptr<core::listener<renderbase::map_pck> render_map;
+std::shared_ptr<core::listener<renderbase::unmap_pck> render_unmap;
 
 /* channels listeners callback */
 
@@ -67,25 +73,23 @@ void cmd_callback(std::string out)
     }
 }
 
-void rndrbase_callback(std::shared_ptr<renderbase> obj, bool insert)
+void render_map_cb(renderbase::map_pck obj)
 {
-    if (insert)
+    if (renderbases.count(obj.sender->hash) > 0)
     {
-        // avoid doubling objects
-        for (auto w : render_objects)
-        {
-            if (w.lock().get() == obj.get())
-                return;
-        }
+        // object already exists!!!!
+        // PANIC
+        npdebug("Renderbase object with duplicate object created")
+        // TODO manage this fucking situation
+    }
 
-        render_objects.push_back(obj);
-
-    } else
-        render_objects.remove_if([&](const auto& v) {
-            return std::owner_less<std::weak_ptr<renderbase>>()(obj, v);
-        });
+    renderbases.insert(std::pair(obj.sender->hash, obj.sender));
 }
 
+void render_unmap_cb(renderbase::unmap_pck obj)
+{
+    renderbases.erase(obj.uuid);
+}
 
 /* Functions implementation */
 
