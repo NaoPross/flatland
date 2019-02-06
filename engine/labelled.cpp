@@ -1,20 +1,26 @@
 #include "core/labelled.hpp"
 
-#include <stdlib.h>
+#include<functional>
+#include <random>
 
-using namespace std;
 using namespace flat::core;
 
-labelled::labelled(const std::string& _label, bool allow_null) 
-    : label((!allow_null && _label.empty()) ? random_label() : _label) {}
+std::hash<std::string> hash_gen;
 
-string labelled::random_label(uint8_t length) {
-    
-    string out;
+labelled::labelled(const std::string& _label) 
+    : label(_label), 
+      hash((_label.empty()) ? random_hash() : hash_gen(_label))
+{
+}
 
-    for (uint8_t i = 0; i < length; ++i)
-        out += (char)(rand() % 93 + 33);
+// random generation
 
-    return out;
+std::default_random_engine generator(std::random_device{}());
+std::uniform_int_distribution<long long unsigned> distribution(0,0xFFFFFFFFFFFFFFFF);
+
+
+std::size_t labelled::random_hash() {
+
+    return distribution(generator);  
 }
 

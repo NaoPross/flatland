@@ -58,9 +58,9 @@ Flatland
     - [x] task and job
     - [x] signal, channel and listener
     - [!] initialization of the library (flatland.hpp)
-    - [r] collector
-        - [r] disallow two parents
-    - [!] labeled type
+    - [x] collector
+        - [x] disallow two parents
+    - [r] labeled type
         - [r] add a unique identifeir (hash or uuid)
 
 - [ ] graphics
@@ -92,6 +92,8 @@ Tests
     - [ ] prioritized
     - [x] task and job
     - [x] signal, channel and listener
+    - [x] collectors and children
+    - [r] label and hashes
 
 - [ ] graphics
     - [r] open a window
