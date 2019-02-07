@@ -185,3 +185,11 @@ uint32_t FlatWindow::winstatus_to_flags(window_status s)
     return flags;
 } */
 
+void window::render()
+{
+    for(auto& child : *this)
+        child.render();
+}
+
+
+

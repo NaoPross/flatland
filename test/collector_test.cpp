@@ -10,7 +10,7 @@ struct custom_type;
 
 struct overlap_functor
 {
-    bool operator()(const custom_type& rhs, const custom_type& lhs);
+    bool operator()(const custom_type& lhs, const custom_type& rhs);
 };
 
 struct custom_type : public child<custom_type, overlap_functor>
@@ -51,9 +51,9 @@ struct custom_type : public child<custom_type, overlap_functor>
     }
 };
 
-bool overlap_functor::operator()(const custom_type& rhs, const custom_type& lhs)
+bool overlap_functor::operator()(const custom_type& lhs, const custom_type& rhs)
 {
-    return lhs.overlap > rhs.overlap;
+    return lhs.overlap < rhs.overlap;
 }
 
 struct custom_collector : public collector<custom_type, overlap_functor>

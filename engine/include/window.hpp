@@ -102,6 +102,8 @@ public:
 
     using wsdl2::window::window;
 
+    // exactly the same as layer
+    // but a window is not a renderbase class
     void render();
 };
 

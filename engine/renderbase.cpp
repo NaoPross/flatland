@@ -27,3 +27,9 @@ uint32_t renderbase::overlap() const
 {
     return m_overlap;
 }
+
+bool helper::overlap::operator()(const renderbase& lhs, const renderbase& rhs)
+{
+    return lhs.overlap() < rhs.overlap();
+}
+

@@ -5,7 +5,7 @@
 
 namespace flat {
 
-struct layer : virtual public renderbase, public renderbase::child, public renderbase::collector
+struct layer : virtual public renderbase, public renderbase::collector
 {
     using renderbase::renderbase;    
 
