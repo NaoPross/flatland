@@ -4,7 +4,8 @@
 
 using namespace flat;
 
-renderbase::renderbase(const std::string& id) : core::labelled(id)
+renderbase::renderbase(uint32_t overlap_, const std::string& id) 
+    : core::labelled(id), m_overlap(overlap_)
 {
     // signal creation
     flat::core_channel()->emit(map_pck(this));
@@ -16,3 +17,13 @@ renderbase::~renderbase()
     flat::core_channel()->emit(unmap_pck(this));
 }
 
+
+void renderbase::set_overlap(uint32_t z)
+{
+    m_overlap = z;
+}
+
+uint32_t renderbase::overlap() const
+{
+    return m_overlap;
+}

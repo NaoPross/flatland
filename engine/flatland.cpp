@@ -48,8 +48,8 @@ std::map<std::size_t, renderbase*> renderbases;
 std::shared_ptr<core::listener<std::string>> cmd_listener;
 
 // render mapping/unmapping listeners
-std::shared_ptr<core::listener<renderbase::map_pck> render_map;
-std::shared_ptr<core::listener<renderbase::unmap_pck> render_unmap;
+std::shared_ptr<core::listener<renderbase::map_pck>> render_map;
+std::shared_ptr<core::listener<renderbase::unmap_pck>> render_unmap;
 
 /* channels listeners callback */
 
@@ -75,19 +75,13 @@ void cmd_callback(std::string out)
 
 void render_map_cb(renderbase::map_pck obj)
 {
-    if (renderbases.count(obj.sender->hash) > 0)
-    {
-        // object already exists!!!!
-        // PANIC
-        npdebug("Renderbase object with duplicate object created")
-        // TODO manage this fucking situation
-    }
-
-    renderbases.insert(std::pair(obj.sender->hash, obj.sender));
+    npdebug("Constructing renderable object", obj.sender->uuid)
+    renderbases.insert(std::pair(obj.sender->uuid, obj.sender));
 }
 
 void render_unmap_cb(renderbase::unmap_pck obj)
 {
+    npdebug("Destructing renderable object ", obj.uuid)
     renderbases.erase(obj.uuid);
 }
 

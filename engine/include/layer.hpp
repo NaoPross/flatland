@@ -1,14 +1,13 @@
 #ifndef __FLATLAYER_H__
 #define __FLATLAYER_H__
 
-#include "core/collector.hpp"
 #include "renderbase.hpp"
 
 namespace flat {
 
-struct layer : public renderbase, public core::child<renderbase>, public core::collector<renderbase>
+struct layer : virtual public renderbase, public renderbase::child, public renderbase::collector
 {
-    using core::child<renderbase>::child;    
+    using renderbase::renderbase;    
 
     virtual void render() override;
 

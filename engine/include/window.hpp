@@ -36,7 +36,7 @@ struct window_status
     unsigned char focus;
 };*/
 
-class window : public core::collector<renderbase>, public wsdl2::window
+class window : public renderbase::collector, public wsdl2::window
 {
     /*std::string title;
     window_status status;

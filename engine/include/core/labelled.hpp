@@ -12,13 +12,17 @@ namespace flat
     }
 }
 
-struct flat::core::labelled
+class flat::core::labelled
 {
+    static std::size_t count;
+
+public:
+
     const std::string label;
-    const std::size_t hash;
+    const std::size_t uuid;
 
     labelled(const std::string& label = "");
 
-    static std::size_t random_hash();
+    //static std::size_t random_hash();
 };
 

@@ -12,3 +12,8 @@ FlatLayer::~FlatLayer()
 
 }*/
 
+void layer::render()
+{
+    for (auto& child : *this)
+        child.render();
+}
