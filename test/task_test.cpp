@@ -37,12 +37,15 @@ void ciao() {
     std::cout << "ciao!" << std::endl;
 }
 
+void hola() {
+    std::cout << "hola!" << std::endl;
+}
+
 
 int main(int argc, char *argv[]) {
 
 
     std::cout << "Testing functions" << std::endl;
-    std::cout << "should print once: hello!" << std::endl;
 
     job f_job;
 
@@ -54,11 +57,13 @@ int main(int argc, char *argv[]) {
         auto ciao_fn_task = f_job.delegate_task(ciao);
     }
 
+    // test a function and give ownership of the tast to the job
+    f_job.add_task(hola);
+
     f_job();
 
     std::cout << std::endl;
     std::cout << "Testing methods" << std::endl;
-    std::cout << "should print once: today we have no motd!" << std::endl;
 
     job m_job;
 

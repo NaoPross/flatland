@@ -3,8 +3,8 @@
 #include "priority.hpp"
 
 #include <functional>
-#include <variant>
 #include <memory>
+#include <list>
 
 namespace flat {
     namespace core {
@@ -46,6 +46,9 @@ namespace flat {
             /// run tasks
             void invoke_tasks();
             inline void operator()() { invoke_tasks(); } 
+
+        private:
+            std::list<std::shared_ptr<task>> m_owned_tasks;
         };
     }
 }
