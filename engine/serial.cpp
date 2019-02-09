@@ -8,14 +8,14 @@ using namespace wsdl2::event;
 template <class T>
 inline void emit(event_t * e)
 {
-    flat::core_channel().emit(T(*e), flat::core::priority_t::max);
+    flat::core_channel().emit(T(*e));
+//flat::core::priority_t::max, 
 }
 
 void flat::serial::broadcast()
 {
     while(auto m_event = poll_event())
     {
-        npdebug("SDL event detected")
         event_t * ev = m_event.get();
 
         switch (m_event->type())
@@ -23,9 +23,11 @@ void flat::serial::broadcast()
 
         // keyboard events
         case SDL_KEYUP:
+            npdebug("SDL key event detected")
             emit<e_key>(ev);
             break;
         case SDL_KEYDOWN:
+            npdebug("SDL key event detected")
             emit<e_key>(ev);
             break;
 
