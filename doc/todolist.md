@@ -64,9 +64,9 @@ Flatland
         - [x] add a unique identifeir (hash or uuid)
 
 - [ ] graphics
-    - [r] window
+    - [x] window
     - [x] renderable objects
-        - [r] layers
+        - [x] layers
         - [r] sprite
     - [!] mouse / keyboard events
     - [ ] font loading

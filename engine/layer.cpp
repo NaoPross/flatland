@@ -1,6 +1,9 @@
 #include "layer.hpp"
+#include "sprite.hpp"
 
 using namespace flat;
+
+const uint32_t layer::bg_level = 0;
 
 layer::layer(  uint32_t overlap, 
         sprite * bg, 
