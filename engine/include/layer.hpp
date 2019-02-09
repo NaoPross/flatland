@@ -5,13 +5,22 @@
 
 namespace flat {
 
+class sprite;
+
 struct layer : virtual public renderbase, public renderbase::collector
 {
-    using renderbase::renderbase;    
+    layer(uint32_t overlap = 1, sprite * bg = 0, const std::string& id = "");
 
+    // background modifiers
+    void set_background(sprite * bg);
+    sprite * background();
+
+    void clear_backgrounds();
+
+    static const uint32_t bg_level;
+
+    // render function
     virtual void render() override;
-
-    // TODO add features
 };
 
 }

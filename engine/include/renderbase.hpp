@@ -58,7 +58,7 @@ public:
     using collector = typename core::collector<renderbase, helper::overlap>;
 
     // Send a 'created' signal in component reserved channel
-    renderbase(uint32_t overlap = 0, const std::string& id = "");
+    renderbase(uint32_t overlap = 1, const std::string& id = "");
 
     // Send a 'deleted' signal in component reserved channel
     virtual ~renderbase();
