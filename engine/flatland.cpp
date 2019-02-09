@@ -20,17 +20,13 @@ using namespace flat;
 
 float flatland_dt;
 
-window * g_window = 0;
-
-//flat_status status;
-
 float fps;
 float fps_pause = 5;
 
 // loopers booleans
 
 bool running = false;
-bool loop = false;
+bool loop_state = false;
 
 // exit code
 int exit_code = 0;
@@ -46,14 +42,14 @@ public:
 
     core::channel core_chan;
 
-    task_man();
-
-private:
-
     /*
     * Render-base objets mapping by their integer hash
     */
-    std::map<std::size_t, renderbase*> renderbases;
+    std::unordered_map<std::size_t, renderbase*> renderbases;
+
+    task_man();
+
+private:
 
     // render mapping/unmapping listeners
     std::shared_ptr<core::listener<renderbase::map_pck>> render_map;
@@ -110,32 +106,40 @@ struct force_quit_call
     force_quit_call(const std::string& reason) : m_reason(reason) {}
 };
 
+renderbase * find_renderable(std::size_t uuid)
+{
+    auto it = task_manager.renderbases.find(uuid);
+
+    return (it == task_manager.renderbases.end()) ? NULL : (*it).second;
+}
+
+std::vector<renderbase*> find_renderable(const std::string& label)
+{
+    std::vector<renderbase*> out;
+
+    for (auto& pair : task_manager.renderbases)
+    {
+        if (pair.second->label == label)
+            out.push_back(pair.second);
+    }
+
+    return out;
+}
+
 /* Main loop */
 
-int flat::init_flatland(const std::string& title,
-                        init_predicate p, 
-                        std::size_t width,
-                        std::size_t height,
-                        float _fps)
+bool flat::init()
 {
     npdebug("Flatland: Initializing flatland")
-
     npdebug("Flatland: Initializing SDL")
 
     // initialize SDL
-    wsdl2::initialize();
-    
-    npdebug("Flatland: Initializing window")
+    return wsdl2::initialize();
+}
 
-    // init window
-    
-    window win(title, width, height);
-
-    g_window = &win;
+int flat::loop(window& win, float _fps)
+{
     fps = _fps;
-
-    // call predicate
-    p(win);
 
     npdebug("Flatland: Opening window")
     win.open();
@@ -143,7 +147,7 @@ int flat::init_flatland(const std::string& title,
     /* Game loop */
 
     running = true;
-    loop = true;
+    loop_state = true;
 
     clock_t delay = 0;
 
@@ -175,7 +179,7 @@ int flat::init_flatland(const std::string& title,
 
             delay -= clock();
 
-        } while (loop);
+        } while (loop_state);
         
         //SDL_Delay((uint32_t)(1000 / fps_pause));
         wsdl2::delay((uint32_t) (1000.0f / fps_pause));
@@ -185,7 +189,6 @@ int flat::init_flatland(const std::string& title,
     npdebug("Flatland: closing window")
 
     win.close();
-    g_window = 0;
 
     npdebug("Flatland: quitting SDL")
 
@@ -197,7 +200,7 @@ int flat::init_flatland(const std::string& title,
 void flat::quit(int code)
 {
     running = false;
-    loop = false;
+    loop_state = false;
     exit_code = code;
 }
 

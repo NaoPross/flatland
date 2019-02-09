@@ -2,6 +2,7 @@
 #define __FLATLAND_H__
 
 #include <string>
+#include <vector>
 
 namespace flat {
 
@@ -31,19 +32,8 @@ class renderbase;
  * Initialization
  */
 
-struct init_predicate
-{
-    virtual ~init_predicate(){}
-
-    // initialization call
-    virtual void operator()(window&) {}
-};
-
-int init_flatland(const std::string& title,
-                  init_predicate p = init_predicate(), 
-                  std::size_t width = 800,
-                  std::size_t height = 600,
-                  float fps = 60);
+bool init();
+int loop(window&, float fps = 60);
 
 void quit(int code = 0);
 void force_quit(int code, const std::string& reason = "");
@@ -59,10 +49,9 @@ core::channel& core_channel();
 core::job& main_job();
 
 // TODO, accessors to renderbases
+renderbase * find_renderable(std::size_t uuid);
 
-/* Window and status accessors */
-
-window * current_window();
+std::vector<renderbase*> find_renderable(const std::string& label);
 
 }
 

@@ -102,6 +102,10 @@ public:
 
     using wsdl2::window::window;
 
+    window( const std::string& title, 
+            std::size_t width = 860, 
+            std::size_t height = 640);
+
     // exactly the same as layer
     // but a window is not a renderbase class
     void render();

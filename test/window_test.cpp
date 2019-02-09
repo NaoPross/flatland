@@ -6,6 +6,8 @@
 #include "core/signal.hpp"
 #include <SDL2/SDL.h>
 
+#include "window.hpp"
+
 #include <iostream>
 
 using namespace flat;
@@ -47,18 +49,25 @@ void key_cb(wsdl2::event::e_key event)
 }
 
 std::shared_ptr<core::listener<wsdl2::event::e_key>> catch_key;
-std::shared_ptr<core::task> gloop_cb;
+//std::shared_ptr<core::task> gloop_cb;
 
 int main() {
 
     npdebug("Initializing window_test")
    
     // bind main loop task
-    gloop_cb = main_job().delegate_task(&gloop);
+    main_job().add_task(&gloop);
 
     catch_key = core_channel().connect(&key_cb);
 
-    int code = init_flatland("Window test");
-    return code;
+    if (!init())
+    {
+        npdebug("Cannot initialize flatland")
+        return -1;
+    }
+
+    window win("Window test");
+
+    return loop(win);
 }
 

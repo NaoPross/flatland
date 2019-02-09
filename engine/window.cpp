@@ -185,6 +185,13 @@ uint32_t FlatWindow::winstatus_to_flags(window_status s)
     return flags;
 } */
 
+window::window( const std::string& title, 
+        std::size_t width, 
+        std::size_t height)
+
+    : wsdl2::window(title, width, height) {}
+
+
 void window::render()
 {
     for(auto& child : *this)
