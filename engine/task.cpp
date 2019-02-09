@@ -19,7 +19,11 @@ namespace flat {
         }
 
         void job::add_task(task::callback f, priority_t p) {
-            insert(std::make_shared<task>(f, p));
+            auto shared = std::make_shared<task>(f, p);
+            insert(shared);
+
+            // own the task
+            m_owned_tasks.push_front(shared);
         }
 
         void job::invoke_tasks() {
