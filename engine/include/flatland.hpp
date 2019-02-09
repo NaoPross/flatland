@@ -1,28 +1,14 @@
 #ifndef __FLATLAND_H__
 #define __FLATLAND_H__
 
+#include <string>
+
 namespace flat {
 
 class window;
 
 /*struct flat_status
 {
-
-    flat_status(unsigned char _video = 1,
-                unsigned char _audio = 1,
-                unsigned char _timer = 1,
-                unsigned char _events = 1,
-                unsigned char _joystick = 0,
-                unsigned char _controller = 0,
-                unsigned char _haptic = 0,
-                unsigned char _error = 0,
-                unsigned char _running = 0,
-                unsigned char _loop = 0)
-
-        : video(_video), audio(_audio), timer(_timer), events(_events),
-          joystick(_joystick), controller(_controller), haptic(_haptic),
-          error(_error), running(_running), loop(_loop) {}
-
     unsigned char video;
     unsigned char audio;
     unsigned char timer;
@@ -30,13 +16,7 @@ class window;
     unsigned char joystick;
     unsigned char controller;
     unsigned char haptic;
-    unsigned char error;
-    unsigned char running;
-    unsigned char loop;
 };*/
-
-int init_flatland(window*, float fps = 60);
-void quit();
 
 namespace core {
     
@@ -47,10 +27,32 @@ namespace core {
 
 class renderbase;
 
-/* Engine channels */
+/*
+ * Initialization
+ */
 
-core::channel * core_channel();
-core::channel * event_channel();
+struct init_predicate
+{
+    virtual ~init_predicate(){}
+
+    // initialization call
+    virtual void operator()(window&) {}
+};
+
+int init_flatland(const std::string& title,
+                  init_predicate p = init_predicate(), 
+                  std::size_t width = 800,
+                  std::size_t height = 600,
+                  float fps = 60);
+
+void quit(int code = 0);
+void force_quit(int code, const std::string& reason = "");
+
+/* 
+ * Engine channels 
+ */
+
+core::channel& core_channel();
 
 /* Main job access */
 
@@ -61,12 +63,6 @@ core::job& main_job();
 /* Window and status accessors */
 
 window * current_window();
-
-//flat_status flatland_status();
-
-/* Window and status modifiers */
-
-//void load_flatland_status(const flat_status&);
 
 }
 

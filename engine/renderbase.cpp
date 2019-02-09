@@ -8,13 +8,13 @@ renderbase::renderbase(uint32_t overlap_, const std::string& id)
     : core::labelled(id), m_overlap(overlap_)
 {
     // signal creation
-    flat::core_channel()->emit(map_pck(this));
+    flat::core_channel().emit(map_pck(this));
 }
 
 renderbase::~renderbase()
 {
     // signal destruction
-    flat::core_channel()->emit(unmap_pck(this));
+    flat::core_channel().emit(unmap_pck(this));
 }
 
 

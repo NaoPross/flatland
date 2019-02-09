@@ -8,13 +8,14 @@ using namespace wsdl2::event;
 template <class T>
 inline void emit(event_t * e)
 {
-    flat::event_channel()->emit(flat::core::signal<T>(flat::core::priority_t::max, T(*e)));
+    flat::core_channel().emit(T(*e), flat::core::priority_t::max);
 }
 
 void flat::serial::broadcast()
 {
     while(auto m_event = poll_event())
     {
+        npdebug("SDL event detected")
         event_t * ev = m_event.get();
 
         switch (m_event->type())
@@ -49,6 +50,8 @@ void flat::serial::broadcast()
 
         // window events
         case SDL_WINDOWEVENT:
+
+            npdebug("Window event detected")
 
             // from poll_event it's safe to cast without checking
             switch (dynamic_cast<wsdl2::event::window::e_window*>(ev)->action())

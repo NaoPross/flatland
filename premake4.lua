@@ -19,7 +19,8 @@ solution "flatland"
 sdl = libdirs { os.findlib("SDL2") }
 
 if (#sdl ~= 0) then
-    sdl = sdl[1].."/libSDL2.so"
+    --sdl = sdl[1].."/libSDL2.so"
+    sdl = "SDL2"
     print("SDL library found: "..sdl)
 else
     sdl = nil
@@ -28,7 +29,7 @@ end
 
 --[[ custom lua code ]]--
 local test = {
-    add_specific = function(name, src, tested_src, deps)
+    add_specific = function(name, src, tested_src, deps, inc)
         local sources = {}
         table.insert(sources, src)
 
@@ -39,12 +40,21 @@ local test = {
         end
         print("}")
 
+        local includes = {}
+        table.insert(includes, "engine/include")
+        table.insert(includes, "lib/include")
+        
+        for k, v in pairs(inc) do
+            print("Adding include path:", v)
+            table.insert(includes, v)
+        end
+
         project("libflatland-test-" .. name)
             language("C++")
             kind("ConsoleApp")
             location("build/")
 
-            includedirs({ "engine/include", "lib/include" })
+            includedirs(includes)
             files(sources)
 
             links(deps)
@@ -129,15 +139,20 @@ project "flatland"
 -- add tests
 test.add_specific("task", "test/task_test.cpp", {
     "engine/task.cpp"
-}, {})
+}, {}, {})
 
 test.add_specific("signal", "test/signal_test.cpp", {
     "engine/signal.cpp",
     "engine/labelled.cpp",
     "engine/task.cpp",
-}, {})
+}, {}, {})
 
-test.add_specific("collector", "test/collector_test.cpp", {}, {})
+test.add_specific("collector", "test/collector_test.cpp", {}, {}, {})
+
+test.add_specific("window", "test/window_test.cpp", {
+    "engine/*.cpp",
+    "lib/libwsdl2/*.cpp"
+}, {sdl}, {"lib/include/wsdl2"})
 
 --[[ other tools ]]--
 -- generate tags file for vim

@@ -11,9 +11,8 @@ using namespace flat;
 
 #include "core/task.hpp"
 #include "core/signal.hpp"
+#include "serial.hpp"
 #include "window.hpp"
-#include "exception.hpp"
-#include "exceptions/forcequit.hpp"
 
 #include "wsdl2/wsdl2.hpp"
 
@@ -33,170 +32,113 @@ float fps_pause = 5;
 bool running = false;
 bool loop = false;
 
+// exit code
+int exit_code = 0;
+
 // jobs and channels
 
-core::job mainsync_job;
+// needed to determine initialization order
+class task_man
+{
+public:
 
-core::channel * core_chan = 0;
-core::channel * event_chan = 0;
+    core::job m_job;
+
+    core::channel core_chan;
+
+    task_man();
+
+private:
+
+    /*
+    * Render-base objets mapping by their integer hash
+    */
+    std::map<std::size_t, renderbase*> renderbases;
+
+    // render mapping/unmapping listeners
+    std::shared_ptr<core::listener<renderbase::map_pck>> render_map;
+    std::shared_ptr<core::listener<renderbase::unmap_pck>> render_unmap;
+
+    std::shared_ptr<core::task> event_cb;
+
+    void render_map_cb(renderbase::map_pck obj)
+    {
+        npdebug("Constructing renderable object", obj.sender->uuid)
+        renderbases.insert(std::pair(obj.sender->uuid, obj.sender));
+    }
+
+    void render_unmap_cb(renderbase::unmap_pck obj)
+    {
+        npdebug("Destructing renderable object ", obj.uuid)
+        renderbases.erase(obj.uuid);
+    }
+};
+
+task_man::task_man() : core_chan(m_job, core::priority_t::higher)
+{
+    // renderbase mapping
+    render_map = core_chan.connect(&task_man::render_map_cb, this);
+    render_unmap = core_chan.connect(&task_man::render_unmap_cb, this);
+
+    // events calling task
+    event_cb = m_job.delegate_task(&serial::broadcast, core::priority_t::max);
+}
 
 /*
- * Render-base objets mapping by their integer hash
+ * The class is initialized in global scope
+ * but the fields are initialized in the right order
  */
-std::map<std::size_t, renderbase*> renderbases;
-
-std::shared_ptr<core::listener<std::string>> cmd_listener;
-
-// render mapping/unmapping listeners
-std::shared_ptr<core::listener<renderbase::map_pck>> render_map;
-std::shared_ptr<core::listener<renderbase::unmap_pck>> render_unmap;
-
-/* channels listeners callback */
-
-void cmd_callback(std::string out)
-{
-    std::stringstream ss(out);
-    std::string buf;
-    
-    while(ss >> buf) 
-    {
-        if (buf == "quit")
-        {
-            npdebug("Flatland: quit request attempted")
-            flat::quit();
-
-        } else if (buf == "echo") {
-            
-            ss >> buf;
-            npdebug("Flatland: ", buf)
-        }
-    }
-}
-
-void render_map_cb(renderbase::map_pck obj)
-{
-    npdebug("Constructing renderable object", obj.sender->uuid)
-    renderbases.insert(std::pair(obj.sender->uuid, obj.sender));
-}
-
-void render_unmap_cb(renderbase::unmap_pck obj)
-{
-    npdebug("Destructing renderable object ", obj.uuid)
-    renderbases.erase(obj.uuid);
-}
-
-/* Functions implementation */
-
-/*uint32_t status_to_flags(const flat_status& s)
-{
-    uint32_t flags = 0;
-
-    if (s.audio)
-        flags |= SDL_INIT_AUDIO;
-    if (s.timer)
-        flags |= SDL_INIT_TIMER;
-    if (s.video)
-        flags |= SDL_INIT_VIDEO;
-    if (s.joystick)
-        flags |= SDL_INIT_JOYSTICK;
-    if (s.haptic)
-        flags |= SDL_INIT_HAPTIC;
-    if (s.controller)
-        flags |= SDL_INIT_GAMECONTROLLER;
-    if (s.events)
-        flags |= SDL_INIT_EVENTS;
-    if (s.haptic)
-        flags |= SDL_INIT_HAPTIC;
-    if (s.controller)
-        flags |= SDL_INIT_GAMECONTROLLER;
-    if (s.events)
-        flags |= SDL_INIT_EVENTS;
-    
-    return flags; 
-}*/
+task_man task_manager;
 
 /* Accessors */
 
-core::channel * flat::core_channel()
+core::channel& flat::core_channel()
 {
-    return core_chan;
-}
-
-core::channel * flat::event_channel()
-{
-    return event_chan;
+    return task_manager.core_chan;
 }
 
 core::job& flat::main_job()
 {
-    return mainsync_job;
+    return task_manager.m_job;
 }
+
+// force quit call type
+struct force_quit_call 
+{
+    std::string m_reason;
+
+    force_quit_call(const std::string& reason) : m_reason(reason) {}
+};
 
 /* Main loop */
 
-int flat::init_flatland(window* w, float _fps)
+int flat::init_flatland(const std::string& title,
+                        init_predicate p, 
+                        std::size_t width,
+                        std::size_t height,
+                        float _fps)
 {
     npdebug("Flatland: Initializing flatland")
 
-    // init core channel
-    
-    npdebug("Flatland: Initializing core channel")
-    core_chan = new core::channel(main_job(), core::priority_t::max); 
+    npdebug("Flatland: Initializing SDL")
 
-    npdebug("Flatland: Initializing event channel")
-    event_chan = new core::channel(main_job(), core::priority_t::max);
-
-    // bind listeners
-
-    /*cmd_listener = core_chan->connect(cmd_callback);
-
-    // control if print was not already connected
-    if (cmd_listener == nullptr) {
-        
-        npdebug("Flatland: Could not connect 'cmd' listener")
-        npdebug("Flatland: Do not connect to core channel another listener with filter name 'print' before flatland initialization")
-        npdebug("Flatland: Aborting")
-        return -1;
-    }
-
-    rndr_listener = core_chan->connect(rndrbase_callback);
-
-    // control if print was not already connected
-    if (rndr_listener == nullptr) {
-        
-        npdebug("Flatland: Could not connect 'render' listener")
-        npdebug("Flatland: Do not connect to core channel another listener with filter name 'print' before flatland initialization")
-        npdebug("Flatland: Aborting")
-        return -1;
-    }*/
-
-    // init variables
+    // initialize SDL
+    wsdl2::initialize();
     
     npdebug("Flatland: Initializing window")
 
-    g_window = w;
-    //status = s;
+    // init window
+    
+    window win(title, width, height);
+
+    g_window = &win;
     fps = _fps;
 
-    // init SDL
-    
-    npdebug("Flatland: Initializing SDL")
-    
-    /*uint32_t flags = status_to_flags(s);
-    
-    if ( SDL_Init(flags | SDL_INIT_NOPARACHUTE) < 0)
-    {
-        npdebug("Error: SDL_Init failed")
-        return -1;
-    }*/
-    
-    // initialize SDL
-    wsdl2::initialize();
-
-    // init window
+    // call predicate
+    p(win);
 
     npdebug("Flatland: Opening window")
-    g_window->open();
+    win.open();
     
     /* Game loop */
 
@@ -218,14 +160,14 @@ int flat::init_flatland(window* w, float _fps)
             try {
 
                 /* Invoke main sync job tasks */
-                mainsync_job();
+                task_manager.m_job();
 
-            } catch (const ForceQuit& f) {
+            } catch (const force_quit_call& f) {
                 
                 npdebug("Flatland: a force quit call was thrown")
                 npdebug("Possible reason: ", f.m_reason);
 
-                quit();
+                quit(exit_code);
             }
 
             //SDL_Delay((uint32_t) (1000.0f / fps));
@@ -242,28 +184,26 @@ int flat::init_flatland(window* w, float _fps)
 
     npdebug("Flatland: closing window")
 
-    g_window->close();
+    win.close();
+    g_window = 0;
 
     npdebug("Flatland: quitting SDL")
 
-    // finalize core channel
-    delete core_chan;
-    delete event_chan;
-
     wsdl2::quit();
-    //SDL_Quit();
 
-    return 0;
+    return exit_code;
 }
 
-void flat::quit()
+void flat::quit(int code)
 {
     running = false;
     loop = false;
+    exit_code = code;
 }
 
-/*flat_status flat::flatland_status()
+void flat::force_quit(int code, const std::string& reason)
 {
-    return status;
-}*/
+    exit_code = code;
+    throw force_quit_call(reason);
+}
 
