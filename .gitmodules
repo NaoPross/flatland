@@ -1,6 +1,6 @@
-[submodule "lib/libmm"]
-	path = lib/libmm
-	url = https://github.com/NaoPross/libmm.git
-[submodule "lib/libwsdl2"]
-	path = lib/libwsdl2
-	url = https://github.com/NaoPross/libwsdl2.git
+#[submodule "lib/libmm"]
+#	path = lib/libmm
+#	url = https://github.com/NaoPross/libmm.git
+#[submodule "lib/libwsdl2"]
+#	path = lib/libwsdl2
+#	url = https://github.com/NaoPross/libwsdl2.git

@@ -1,0 +1,8 @@
+add_library(Flatland::Flatland SHARED IMPORTED)
+
+set_target_properties(Flatland::Flatland PROPERTIES
+
+  INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
+  INTERFACE_LINK_LIBRARIES "WSDL2::WSDL2;MM::MM;>"
+)
+
