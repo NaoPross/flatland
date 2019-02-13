@@ -46,6 +46,9 @@ void layer::clear_backgrounds()
 void layer::render()
 {
     for (auto& child : *this)
-        child.render();
+    {
+        if (child.is_visible())
+            child.render();
+    }
 }
 

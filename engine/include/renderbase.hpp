@@ -26,6 +26,8 @@ class renderbase : virtual public core::labelled, public core::child<renderbase,
 {
     uint32_t m_overlap;    
 
+    bool visible;
+
 public:
 
     /*
@@ -63,11 +65,40 @@ public:
     // Send a 'deleted' signal in component reserved channel
     virtual ~renderbase();
 
-    virtual void render() = 0;
-
+    /*
+     * Overlap = Z rendering order
+     *
+     * It determines wether a renderbase will show up
+     * above or below another renderbase.
+     */
     void set_overlap(uint32_t z);
-
     uint32_t overlap() const;
+
+    /*
+     * Show/hide renderbase
+     */
+    inline void show()
+    {
+        visible = true;
+    }
+
+    inline void hide()
+    {
+        visible = false;
+    }
+
+    inline void toggle_visibility
+    {
+        visible = !visible;
+    }
+
+    inline void is_visible() const
+    {
+        return visible;
+    }
+
+    // virtual render call
+    virtual void render() = 0;
 };
 
 }

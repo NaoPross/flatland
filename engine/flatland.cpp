@@ -31,6 +31,9 @@ bool loop_state = false;
 // exit code
 int exit_code = 0;
 
+// renderer
+window * main_win;
+
 // jobs and channels
 
 // needed to determine initialization order
@@ -106,6 +109,12 @@ struct force_quit_call
     force_quit_call(const std::string& reason) : m_reason(reason) {}
 };
 
+// renderer
+wsdl2::renderer * renderer()
+{
+    return (main_win != NULL) ? &main_win->get_renderer() : NULL;
+}
+
 renderbase * find_renderable(std::size_t uuid)
 {
     auto it = task_manager.renderbases.find(uuid);
@@ -143,6 +152,8 @@ int flat::loop(window& win, float _fps)
 
     npdebug("Flatland: Opening window")
     win.open();
+
+    main_win = &win;
     
     /* Game loop */
 
@@ -189,6 +200,8 @@ int flat::loop(window& win, float _fps)
     npdebug("Flatland: closing window")
 
     win.close();
+
+    main_win = 0;
 
     npdebug("Flatland: quitting SDL")
 

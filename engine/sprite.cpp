@@ -1,30 +1,55 @@
 #include "sprite.hpp"
+#include "flatland.cpp"
 
 using namespace flat;
 
+/* 
+ * Sprite section
+ */ 
+
+sprite( std::size_t width, 
+        std::size_t height,
+        wsdl2::pixelformat::format p,
+        wsdl2::texture::access a)
+    
+    : wsdl2::texture(*renderer(), p, a, width, height)
+{
+
+}
+
+
 void sprite::render()
 {
-    // TODO, render texture
+    // TODO, finally render that f***cking texture
 }
 
-wsdl2::texture& sprite::texture()
+void sprite::focus()
 {
-    return m_texture;
+    core_channel().emit(focus_call(this)); 
 }
 
-const wsdl2::texture& sprite::texture() const
+/*
+ * Animation section
+ */
+
+animation::animation(   std::size_t width, 
+                        std::size_t height,
+                        wsdl2::pixelformat::format p = wsdl2::pixelformat::format::unknown)
+
+    : sprite(width, height, p, wsdl2::texture::access::streaming) 
 {
-    return m_texture;
+    evolving_task = main_job().delegate_task(&animation::evolve, this);
 }
 
-void sprite::set_focused(bool flag)
+void animation::resume()
 {
-    // TODO, send signal: focus taken
-    m_focused = flag;
+    if (!is_evolving())
+        evolving_task = main_job().delegate_task(&animation::evolve, this);
 }
 
-bool sprite::focused() const
+void animation::pause()
 {
-    return m_focused;
+    if (is_evolving())
+        evolving_task = nullptr; // this should remove the task
 }
 

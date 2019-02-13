@@ -5,7 +5,7 @@
 using namespace flat;
 
 renderbase::renderbase(uint32_t overlap_, const std::string& id) 
-    : core::labelled(id), m_overlap(overlap_)
+    : core::labelled(id), m_overlap(overlap_), visible(true)
 {
     // signal creation
     flat::core_channel().emit(map_pck(this));

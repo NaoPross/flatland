@@ -26,6 +26,11 @@ namespace core {
     class channel;
 }
 
+namespace wsdl2
+{
+    class renderer;
+}
+
 class renderbase;
 
 /*
@@ -41,12 +46,13 @@ void force_quit(int code, const std::string& reason = "");
 /* 
  * Engine channels 
  */
-
 core::channel& core_channel();
 
-/* Main job access */
-
+// Main job access
 core::job& main_job();
+
+// Renderer public access
+wsdl2::renderer * renderer();
 
 // TODO, accessors to renderbases
 renderbase * find_renderable(std::size_t uuid);
