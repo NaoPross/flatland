@@ -1,0 +1,14 @@
+get_filename_component(FLATLAND_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+include(CMakeFindDependencyMacro)
+
+list(APPEND CMAKE_MODULE_PATH ${FLATLAND_CMAKE_DIR})
+find_dependency(MM REQUIRED)
+find_dependency(WSDL2 REQUIRED)
+list(REMOVE_AT CMAKE_MODULE_PATH -1)
+
+if(NOT TARGET Flatland::Flatland)
+    include("${FLATLAND_CMAKE_DIR}/FlatlandTargets.cmake")
+endif()
+
+set(FLATLAND_LIBRARIES Flatland::Flatland)

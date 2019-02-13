@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef NPDEBUG
+#define NPDEBUG
+
 #ifdef DEBUG
 #include <iostream>
 #include <sstream>
@@ -45,4 +48,6 @@ namespace _np {
         return expr;
     }
 }
-#endif
+
+#endif // defined DEBUG
+#endif // not defined NPDEBUG

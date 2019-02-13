@@ -36,19 +36,18 @@ void gloop()
     step++;
 }
 
-void key_cb(wsdl2::event::e_key event)
+void key_cb(const wsdl2::event::key event)
 {
     npdebug("Key response")
 
-    if (event.action() == wsdl2::event::e_key::action_t::down
-       && event.get() == SDLK_ESCAPE)
+    if (event.type == wsdl2::event::key::action::down
+       && event.keysym.sym == SDLK_ESCAPE)
     {
         npdebug("ESC key pressed, exiting")
         quit();
     }
 }
 
-std::shared_ptr<core::listener<wsdl2::event::e_key>> catch_key;
 //std::shared_ptr<core::task> gloop_cb;
 
 int main() {
@@ -58,7 +57,7 @@ int main() {
     // bind main loop task
     main_job().add_task(&gloop);
 
-    catch_key = core_channel().connect(&key_cb);
+    auto catch_key = core_channel().connect(&key_cb);
 
     if (!init())
     {
@@ -66,7 +65,7 @@ int main() {
         return -1;
     }
 
-    window win("Window test");
+    window win("Window test", 800, 600);
 
     return loop(win);
 }
