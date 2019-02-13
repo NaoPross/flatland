@@ -51,9 +51,9 @@ find_package(WSDL2 0.1 REQUIRED
 
 # external libraries ( SDL? )
 target_link_libraries(flatland
-    PRIVATE
-        MM
-        WSDL2
+    INTERFACE
+        MM::MM
+        WSDL2::WSDL2
 )
 
 # include directories
@@ -89,10 +89,11 @@ target_compile_features(task_test
         cxx_std_17
 )
 
-add_test(   NAME task_test
-            CONFIGURATIONS Debug
-            WORKING_DIRECTORY test
-            COMMAND task_test
+add_test(
+    NAME task_test
+    CONFIGURATIONS Debug
+    WORKING_DIRECTORY test
+    COMMAND task_test
 )
 
 # signal_test
@@ -108,24 +109,31 @@ target_compile_features(signal_test
         cxx_std_17
 )
 
-add_test(   NAME signal_test
-            CONFIGURATIONS Debug
-            WORKING_DIRECTORY test
-            COMMAND signal_test
+add_test(
+    NAME signal_test
+    CONFIGURATIONS Debug
+    WORKING_DIRECTORY test
+    COMMAND signal_test
 )
 
 # collector_test
 add_executable(collector_test test/collector_test.cpp)
+
+target_link_libraries(collector_test
+    PRIVATE
+        Flatland::flatland
+)
 
 target_compile_features(collector_test
     PRIVATE
         cxx_std_17
 )
 
-add_test(   NAME collector_test
-            CONFIGURATIONS Debug
-            WORKING_DIRECTORY test
-            COMMAND collector_test
+add_test(
+    NAME collector_test
+    CONFIGURATIONS Debug
+    WORKING_DIRECTORY test
+    COMMAND collector_test
 )
 
 # window_test
@@ -141,10 +149,11 @@ target_compile_features(window_test
         cxx_std_17
 )
 
-add_test(   NAME window_test
-            CONFIGURATIONS Debug
-            WORKING_DIRECTORY test
-            COMMAND window_test
+add_test(
+    NAME window_test
+    CONFIGURATIONS Debug
+    WORKING_DIRECTORY test
+    COMMAND window_test
 )
 
 # manage git submodule mm

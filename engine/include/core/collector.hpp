@@ -4,7 +4,7 @@
 #include <set>
 #include <memory>
 
-#include "debug.hpp"
+#include "../../debug.hpp"
 
 namespace flat::core {
 
