@@ -67,7 +67,7 @@ Flatland
     - [x] window
     - [x] renderable objects
         - [x] layers
-        - [r] sprite
+        - [!] sprite
     - [!] mouse / keyboard events
     - [ ] font loading
         - [ ] default font (unscii)
@@ -96,7 +96,7 @@ Tests
     - [r] label and hashes
 
 - [ ] graphics
-    - [r] open a window
+    - [x] open a window
     - [ ] sprites
     - [?] animations
 

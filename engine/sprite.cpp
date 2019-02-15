@@ -1,26 +1,127 @@
 #include "sprite.hpp"
-#include "flatland.cpp"
+#include "flatland.hpp"
 
 using namespace flat;
+
+/*
+ * Texture loading section
+ */
+
+std::unordered_map<std::string, std::weak_ptr<wsdl2::texture>> textures;
+
+std::shared_ptr<wsdl2::texture> texloader::get(const string& path, wsdl2::pixelformat::format p, wsdl2::texture::access a)
+{
+    std::shared_ptr<wsdl2::texture> tex = nullptr;
+    auto it = textures.find(path);
+
+    auto rend = renderer();
+
+    // check non existence
+    if (it == textures.end() || (*it).expired())
+    {
+        // check initialization state
+        if (rend != NULL)
+        {
+            // TODO, switch format and load the texture
+            texture.insert(std::pair<std::string, std::weak_ptr<wsdl2::texture>>(path, tex));
+        } else {
+            
+            npdebug("Could not load texture: ", path, ". Loading before calling flat::init")
+        }
+
+    } else
+        tex = (*it).lock();
+
+    return tex;
+}
+
+std::shared_ptr<wsdl2::texture> create( const string& name,
+                                        std::size_t width, 
+                                        std::size_t height,
+                                        wsdl2::pixelformat::format p, 
+                                        wsdl2::texture::access a)
+{
+    std::shared_ptr<wsdl2::texture> tex = nullptr;
+    auto it = textures.find(name);
+
+    auto rend = renderer();
+
+    // check initialization state and non existence
+    if (rend != NULL && (it == textures.end() || (*it).expired()))
+    {
+        tex = std::make_shared<wsdl2::texture>(*rend, p, a, width, height);
+        texture.insert(std::pair<std::string, std::weak_ptr<wsdl2::texture>>(path, tex));
+    }
+
+    return tex;
+}
 
 /* 
  * Sprite section
  */ 
 
-sprite( std::size_t width, 
-        std::size_t height,
-        wsdl2::pixelformat::format p,
-        wsdl2::texture::access a)
-    
-    : wsdl2::texture(*renderer(), p, a, width, height)
-{
+/*
+ * Construct a sprite basing on a loaded texture 
+ * Passing a null texture will throw an exception
+ */
+sprite( std::shared_ptr<wsdl2::texture> tex,
+        const wsdl2::rect bounds&,
+        const wsdl2::rect viewport&, 
+        const std::string& lab,
+        uint32_t overlap)
 
+    : renderbase(lab, overlap), 
+      m_texture(tex), 
+      m_bounds(bounds),
+      m_viewport(viewport) 
+{
+    if (tex == nullptr)
+    {
+        npdebug("Giving a null texture to the sprite labelled: ", lab)
+        throw std::runtime_error("Giving a null texture to a sprite");
+    }
 }
+
+
+/*
+ * Sprite bounds are the same as the image bounds:
+ *
+ * Bounds = (0, 0, img-width, img-height)
+ */
+sprite( std::shared_ptr<wsdl2::texture> tex,
+        int x, int y,
+        const wsdl2::rect viewport&, 
+        const std::string& lab,
+        uint32_t overlap)
+
+    : sprite(tex, {x, y, tex->width, tex->height}, viewport, lab, overlap) {}
+
+/*
+ * Viewport and bounds are deduced from the image size, precisely:
+ *
+ * Bounds = (x, y, img-width, img-height)
+ * Viewport = (0, 0, img-width, img-height)
+ */
+sprite( std::shared_ptr<wsdl2::texture> tex,
+        int x, int y,
+        const std::string& lab,
+        uint32_t overlap)
+
+    : sprite(tex, {x, y, tex->width, tex->height}, {0, 0, tex->width, tex->height}, lab, overlap) {}
+
+
+sprite( std::shared_ptr<wsdl2::texture> tex,
+        wsdl2::rect bounds,
+        const std::string& lab,
+        uint32_t overlap);
+
+    : sprite(tex, bounds, {0, 0, tex->width, tex->height}, lab, overlap) {}
 
 
 void sprite::render()
 {
-    // TODO, finally render that f***cking texture
+    // TODO, generalize with flip angle
+    m_texture->render(m_viewport, m_bounds); 
 }
 
 void sprite::focus()
@@ -28,28 +129,154 @@ void sprite::focus()
     core_channel().emit(focus_call(this)); 
 }
 
+void sprite::set_location(int x, int y)
+{
+    m_bounds.x = x;
+    m_bounds.y = y;
+}
+
+void sprite::set_location(const mm::vec2<int>& l)
+{
+    m_bounds.x = l[0];
+    m_bounds.y = l[1]; 
+}
+
+void sprite::set_width(std::size_t width)
+{
+    m_bounds.w = width;
+}
+
+void sprite::set_height(std::size_t height)
+{
+    m_bounds.h = height;
+}
+
+void sprite::set_size(std::size_t width, std::size_t height)
+{
+    m_bounds.w = width;
+    m_bounds.h = height;
+}
+
+void sprite::set_bounds(const wsdl2::rect& b)
+{
+    m_bounds = b;
+}
+
+mm::vec2<int> sprite::location() const
+{
+    return mm::vec2<int>(m_bounds.x, m_bounds.y);
+}
+
+std::size_t sprite::width() const
+{
+    return m_bounds.w;
+}
+
+std::size_t sprite::height() const
+{
+    return m_bounds.h;
+}
+
+wsdl2::rect sprite::bounds()
+{
+    return m_bounds;
+}
+
+const wsdl2::rect& sprite::bounds() const
+{
+    return m_bounds;
+}
+
+void sprite::set_viewport(const wsdl2::rect& v)
+{
+    m_viewport = v;
+}
+
+wsdl2::rect sprite::viewport()
+{
+    return m_viewport;
+}
+
+const wsdl2::rect& sprite::viewport() const
+{
+    return m_viewport;
+}
+
 /*
- * Animation section
+ * Tileset section
  */
 
-animation::animation(   std::size_t width, 
-                        std::size_t height,
-                        wsdl2::pixelformat::format p = wsdl2::pixelformat::format::unknown)
+tileset::tileset( std::shared_ptr<wsdl2::texture> tex,
+                  const wsdl2::rect& bounds,
+                  const std::initializer_list<wsdl2::rect>& init,
+                  const std::string& lab,
+                  uint32_t overlap)
 
-    : sprite(width, height, p, wsdl2::texture::access::streaming) 
+    : sprite(tex, bounds, lab, overlap), m_current(0)
 {
-    evolving_task = main_job().delegate_task(&animation::evolve, this);
+    if (init.size() == 0)
+        map(0, {0, 0, tex->width, tex->height});
+    else {
+       
+        std::size_t i = 0; 
+
+        for (auto rect : init)
+            map(i++, rect);
+    }
 }
 
-void animation::resume()
+tileset::tileset( std::shared_ptr<wsdl2::texture> tex,
+                  int x, int y,
+                  const std::initializer_list<wsdl2::rect>& init,
+                  const std::string& lab,
+                  uint32_t overlap)
+
+    : tileset(tex, {x, y, tex->width, tex->height}, init, lab, overlap)
 {
-    if (!is_evolving())
-        evolving_task = main_job().delegate_task(&animation::evolve, this);
+
 }
 
-void animation::pause()
+void tileset::map(std::size_t i, const wsdl2::rect& rect)
 {
-    if (is_evolving())
-        evolving_task = nullptr; // this should remove the task
+    this->insert(std::pair<std::size_t, wsdl2::rect>(i, rect));
 }
+
+void tileset::set(std::size_t i)
+{
+    if ((auto it = this->find(i)) != this->end())
+    {
+        m_current = i;
+        set_viewport(it.second);
+    }
+}
+
+std::size_t tileset::current() const
+{
+    return m_current;
+}
+
+void tileset::clear()
+{
+    std::unordered_map<std::size_t, wsdl2::rect>::clear();
+
+    // take the default viewport
+    map(0, {0, 0, m_texture->width, m_texture->height});
+    m_current = 0;
+}
+
+void tileset::erase(std::size_t i)
+{
+    std::unordered_map<std::size_t, wsdl2::rect>::erase(i);
+
+    if (size() == 0)
+    {
+        // take the default viewport
+        map(0, {0, 0, m_texture->width, m_texture->height});
+        m_current = 0;
+    }
+
+    if (m_current == i)
+        set(this->begin().first);
+}
+
 
