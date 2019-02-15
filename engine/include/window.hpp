@@ -5,6 +5,7 @@
 #include "wsdl2/video.hpp"
 #include "renderbase.hpp"
 #include "core/collector.hpp"
+#include "core/task.hpp"
 
 //class SDL_Window;
 //class SDL_KeyEvent;

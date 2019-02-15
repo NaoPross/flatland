@@ -87,12 +87,12 @@ public:
         visible = false;
     }
 
-    inline void toggle_visibility
+    inline void toggle_visibility()
     {
         visible = !visible;
     }
 
-    inline void is_visible() const
+    inline bool is_visible() const
     {
         return visible;
     }

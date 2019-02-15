@@ -3,6 +3,13 @@
 
 #include <string>
 #include <vector>
+#include <functional>
+#include "window.hpp"
+
+namespace wsdl2 {
+
+    class renderer;
+}
 
 namespace flat {
 
@@ -26,19 +33,19 @@ namespace core {
     class channel;
 }
 
-namespace wsdl2
-{
-    class renderer;
-}
-
 class renderbase;
 
 /*
  * Initialization
+ *
+ * init: get a new window instance in lambda, 
+ *       it'll be erased exiting the loop function
+ *
+ * loop: start a new loop
  */
 
-bool init();
-int loop(window&, float fps = 60);
+bool init(const std::function<window*()>& f = [](){ return new window("Default", 860, 640); });
+int loop(float fps = 60);
 
 void quit(int code = 0);
 void force_quit(int code, const std::string& reason = "");
@@ -50,6 +57,9 @@ core::channel& core_channel();
 
 // Main job access
 core::job& main_job();
+
+// public window access
+window * main_window();
 
 // Renderer public access
 wsdl2::renderer * renderer();

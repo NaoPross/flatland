@@ -26,11 +26,11 @@ class texloader
      * In case the texture already exists the pixelformat and the access
      * parameters are ignored
      */
-    std::shared_ptr<wsdl2::texture> get(const string& path, 
+    std::shared_ptr<wsdl2::texture> get(const std::string& path, 
                                         wsdl2::pixelformat::format p = wsdl2::pixelformat::format::unknown, 
                                         wsdl2::texture::access a = wsdl2::texture::access::static_);
 
-    std::shared_ptr<wsdl2::texture> create( const string& name, // needed for mapping
+    std::shared_ptr<wsdl2::texture> create( const std::string& name, // needed for mapping
                                             std::size_t width, 
                                             std::size_t height,
                                             wsdl2::pixelformat::format p = wsdl2::pixelformat::format::unknown, 
@@ -59,8 +59,8 @@ public:
      * Passing a null texture will throw an exception
      */
     sprite( std::shared_ptr<wsdl2::texture>,
-            const wsdl2::rect bounds&,
-            const wsdl2::rect viewport&, 
+            const wsdl2::rect& bounds,
+            const wsdl2::rect& viewport, 
             const std::string& lab = "",
             uint32_t overlap = 1);
     
@@ -71,7 +71,7 @@ public:
      */
     sprite( std::shared_ptr<wsdl2::texture>,
             int x, int y,
-            const wsdl2::rect viewport&, 
+            const wsdl2::rect& viewport, 
             const std::string& lab = "",
             uint32_t overlap = 1);
 
@@ -87,7 +87,7 @@ public:
             uint32_t overlap = 1);
 
     sprite( std::shared_ptr<wsdl2::texture>,
-            const wsdl2::rect bounds&,
+            const wsdl2::rect& bounds,
             const std::string& lab = "",
             uint32_t overlap = 1);
 
@@ -142,7 +142,7 @@ public:
  * A zero value must always exist, then clearing the map
  * means to reset to the default viewport
  */
-class tileset : public sprite : private std::unordered_map<std::size_t, wsdl2::rect>
+class tileset : public sprite, private std::unordered_map<std::size_t, wsdl2::rect>
 {
     // privatize viewport accessors
     using sprite::set_viewport;

@@ -109,6 +109,12 @@ struct force_quit_call
     force_quit_call(const std::string& reason) : m_reason(reason) {}
 };
 
+// public window access
+window * main_window()
+{
+    return main_win;
+}
+
 // renderer
 wsdl2::renderer * renderer()
 {
@@ -137,23 +143,27 @@ std::vector<renderbase*> find_renderable(const std::string& label)
 
 /* Main loop */
 
-bool flat::init()
+bool flat::init(const std::function<window*()>& f)
 {
-    npdebug("Flatland: Initializing flatland")
-    npdebug("Flatland: Initializing SDL")
+    npdebug("Initializing flatland")
+    npdebug("Initializing SDL")
 
     // initialize SDL
-    return wsdl2::initialize();
+    return wsdl2::initialize() && ((main_win = f()) != NULL);
 }
 
-int flat::loop(window& win, float _fps)
+int flat::loop(float _fps)
 {
     fps = _fps;
 
-    npdebug("Flatland: Opening window")
-    win.open();
+    npdebug("Opening window")
 
-    main_win = &win;
+    if (main_win != NULL)
+        main_win->open();
+    else {
+        npdebug("Failed to open the initialized window or no window is available")
+        return -2;
+    }
     
     /* Game loop */
 
@@ -199,7 +209,10 @@ int flat::loop(window& win, float _fps)
 
     npdebug("Flatland: closing window")
 
-    win.close();
+    main_win->close();
+
+    // delete window instance
+    delete main_win; 
 
     main_win = 0;
 
