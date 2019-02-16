@@ -8,7 +8,7 @@
 
 namespace flat {
 
-class texloader
+namespace texloader
 {
      /*
      * Get a texture, from a specified path.
@@ -26,16 +26,14 @@ class texloader
      * In case the texture already exists the pixelformat and the access
      * parameters are ignored
      */
-    std::shared_ptr<wsdl2::texture> get(const std::string& path, 
-                                        wsdl2::pixelformat::format p = wsdl2::pixelformat::format::unknown, 
-                                        wsdl2::texture::access a = wsdl2::texture::access::static_);
+    std::shared_ptr<wsdl2::texture> get(const std::string& path);
 
     std::shared_ptr<wsdl2::texture> create( const std::string& name, // needed for mapping
                                             std::size_t width, 
                                             std::size_t height,
                                             wsdl2::pixelformat::format p = wsdl2::pixelformat::format::unknown, 
                                             wsdl2::texture::access a = wsdl2::texture::access::static_);
-};
+}
 
 /*
  *  Textured sprite, used for static rendering

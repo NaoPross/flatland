@@ -116,7 +116,7 @@ window * main_window()
 }
 
 // renderer
-wsdl2::renderer * renderer()
+wsdl2::renderer * flat::renderer()
 {
     return (main_win != NULL) ? &main_win->get_renderer() : NULL;
 }

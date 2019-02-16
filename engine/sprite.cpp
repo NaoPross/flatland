@@ -10,7 +10,7 @@ using namespace flat;
 
 std::unordered_map<std::string, std::weak_ptr<wsdl2::texture>> textures;
 
-std::shared_ptr<wsdl2::texture> texloader::get(const std::string& path, wsdl2::pixelformat::format p, wsdl2::texture::access a)
+std::shared_ptr<wsdl2::texture> texloader::get(const std::string& path)
 {
     std::shared_ptr<wsdl2::texture> tex = nullptr;
     auto it = textures.find(path);
@@ -23,11 +23,26 @@ std::shared_ptr<wsdl2::texture> texloader::get(const std::string& path, wsdl2::p
         // check initialization state
         if (rend != NULL)
         {
-            // TODO, switch format and load the texture
-            textures.insert(std::pair<std::string, std::weak_ptr<wsdl2::texture>>(path, tex));
+            npdebug("Trying to load ", path)
+
+            // get the optional
+            auto opt_tex = wsdl2::texture::load(path, *rend);
+
+            npdebug("Loaded ", path)
+
+            if (opt_tex)
+            {
+                // force to initialize pointer with the move semantic
+                tex = std::shared_ptr<wsdl2::texture>(new wsdl2::texture(std::move(*opt_tex)));
+                textures.insert(std::pair<std::string, std::weak_ptr<wsdl2::texture>>(path, tex));
+
+            } else {
+                npdebug("Could not load the texture ", path, ". Non-existing file or wrong format");
+            }
+
         } else {
             
-            npdebug("Could not load texture: ", path, ". Loading before calling flat::init")
+            npdebug("Could not load the texture: ", path, ". Loading before calling flat::init")
         }
 
     } else
@@ -95,7 +110,7 @@ sprite::sprite( std::shared_ptr<wsdl2::texture> tex,
                 const std::string& lab,
                 uint32_t overlap)
 
-    : sprite(tex, wsdl2::rect{x, y, tex->width, tex->height}, viewport, lab, overlap) {}
+    : sprite(tex, wsdl2::rect{x, y, tex->width(), tex->height()}, viewport, lab, overlap) {}
 
 /*
  * Viewport and bounds are deduced from the image size, precisely:
@@ -108,7 +123,7 @@ sprite::sprite( std::shared_ptr<wsdl2::texture> tex,
                 const std::string& lab,
                 uint32_t overlap)
 
-    : sprite(tex, wsdl2::rect{x, y, tex->width, tex->height}, {0, 0, tex->width, tex->height}, lab, overlap) {}
+    : sprite(tex, wsdl2::rect{x, y, tex->width(), tex->height()}, {0, 0, tex->width(), tex->height()}, lab, overlap) {}
 
 
 sprite::sprite( std::shared_ptr<wsdl2::texture> tex,
@@ -116,7 +131,7 @@ sprite::sprite( std::shared_ptr<wsdl2::texture> tex,
                 const std::string& lab,
                 uint32_t overlap)
 
-    : sprite(tex, bounds, wsdl2::rect{0, 0, tex->width, tex->height}, lab, overlap) {}
+    : sprite(tex, bounds, wsdl2::rect{0, 0, tex->width(), tex->height()}, lab, overlap) {}
 
 
 void sprite::render()
@@ -216,7 +231,7 @@ tileset::tileset( std::shared_ptr<wsdl2::texture> tex,
     : sprite(tex, bounds, lab, overlap), m_current(0)
 {
     if (init.size() == 0)
-        map(0, wsdl2::rect{0, 0, tex->width, tex->height});
+        map(0, wsdl2::rect{0, 0, tex->width(), tex->height()});
     else {
        
         std::size_t i = 0; 
@@ -232,7 +247,7 @@ tileset::tileset( std::shared_ptr<wsdl2::texture> tex,
                   const std::string& lab,
                   uint32_t overlap)
 
-    : tileset(tex, wsdl2::rect{x, y, tex->width, tex->height}, init, lab, overlap)
+    : tileset(tex, wsdl2::rect{x, y, tex->width(), tex->height()}, init, lab, overlap)
 {
 
 }
@@ -263,7 +278,7 @@ void tileset::clear()
     std::unordered_map<std::size_t, wsdl2::rect>::clear();
 
     // take the default viewport
-    map(0, wsdl2::rect{0, 0, m_texture->width, m_texture->height});
+    map(0, wsdl2::rect{0, 0, m_texture->width(), m_texture->height()});
     m_current = 0;
 }
 
@@ -274,7 +289,7 @@ void tileset::erase(std::size_t i)
     if (size() == 0)
     {
         // take the default viewport
-        map(0, wsdl2::rect{0, 0, m_texture->width, m_texture->height});
+        map(0, wsdl2::rect{0, 0, m_texture->width(), m_texture->height()});
         m_current = 0;
     }
 

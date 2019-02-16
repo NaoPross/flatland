@@ -5,6 +5,9 @@ project(
     DESCRIPTION "A 2D game engine"
     LANGUAGES CXX)
 
+# set debug mode
+#SET( CMAKE_BUILD_TYPE Debug ... FORCE )
+
 # defining flatland target and giving sources
 add_library(flatland SHARED
 
@@ -89,6 +92,11 @@ target_compile_features(task_test
         cxx_std_17
 )
 
+target_compile_definitions(task_test
+    PRIVATE
+        $<$<CONFIG:Debug>:DEBUG>
+)
+
 add_test(
     NAME task_test
     CONFIGURATIONS Debug
@@ -107,6 +115,11 @@ target_link_libraries(signal_test
 target_compile_features(signal_test
     PRIVATE
         cxx_std_17
+)
+
+target_compile_definitions(signal_test
+    PRIVATE
+        $<$<CONFIG:Debug>:DEBUG>
 )
 
 add_test(
@@ -129,6 +142,11 @@ target_compile_features(collector_test
         cxx_std_17
 )
 
+target_compile_definitions(collector_test
+    PRIVATE
+        $<$<CONFIG:Debug>:DEBUG>
+)
+
 add_test(
     NAME collector_test
     CONFIGURATIONS Debug
@@ -149,11 +167,41 @@ target_compile_features(window_test
         cxx_std_17
 )
 
+target_compile_definitions(window_test
+    PRIVATE
+        $<$<CONFIG:Debug>:DEBUG>
+)
+
 add_test(
     NAME window_test
     CONFIGURATIONS Debug
     WORKING_DIRECTORY test
     COMMAND window_test
+)
+
+# sprite_test
+add_executable(sprite_test test/sprite_test.cpp)
+
+target_link_libraries(sprite_test
+    PRIVATE
+        Flatland::flatland
+)
+
+target_compile_features(sprite_test
+    PRIVATE
+        cxx_std_17
+)
+
+target_compile_definitions(sprite_test
+    PRIVATE
+        $<$<CONFIG:Debug>:DEBUG>
+)
+
+add_test(
+    NAME sprite_test
+    CONFIGURATIONS Debug
+    WORKING_DIRECTORY test
+    COMMAND sprite_test
 )
 
 # manage git submodule mm

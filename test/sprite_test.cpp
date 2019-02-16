@@ -6,6 +6,7 @@
 #include "core/signal.hpp"
 
 #include "window.hpp"
+#include "sprite.hpp"
 
 #include <iostream>
 
@@ -49,22 +50,33 @@ void key_cb(const wsdl2::event::key event)
 
 int main() {
 
-    npdebug("Initializing window_test")
+    npdebug("Initializing sprite_test")
    
     // bind main loop task
     main_job().add_task(&gloop);
 
     auto catch_key = core_channel().connect(&key_cb);
 
-    if (!init())
+    window * win = 0;
+
+    if (!init([&](){ return win = new window("Window test", 800, 600); }))
     {
         npdebug("Cannot initialize flatland")
         return -1;
     }
 
-    window win("Window test", 800, 600);
+    // sprite initialization
+    //
+    npdebug("Load the image")
+    
+    auto tex = texloader::get("test/res/culo.bmp");
 
-    // sprite section
+    if (tex == nullptr)
+        return -1;
 
-    return loop(win);
+    npdebug("Attach a new sprite to the window")
+
+    win->attach<sprite>(tex, wsdl2::rect{200, 300, 100, 100});
+
+    return loop();
 }
