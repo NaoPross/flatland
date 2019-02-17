@@ -59,24 +59,43 @@ int main() {
 
     window * win = 0;
 
-    if (!init([&](){ return win = new window("Window test", 800, 600); }))
+    if (!init([&](){ 
+        win = new window("Window test", 800, 600); 
+        win->open();
+        return win;
+    }))
     {
         npdebug("Cannot initialize flatland")
         return -1;
     }
 
-    // sprite initialization
+    // streaming texture initialization
     //
-    npdebug("Load the image")
-    
-    auto tex = texloader::get("test/res/culo.bmp");
+    /*npdebug("Creating the texture")
+
+    auto tex = texloader::create("soos", 200, 200, wsdl2::pixelformat::format::unknown, wsdl2::texture::access::streaming);
 
     if (tex == nullptr)
         return -1;
 
-    npdebug("Attach a new sprite to the window")
+    npdebug("Attach a new sprite to the window, step 1")
 
-    win->attach<sprite>(tex, wsdl2::rect{200, 300, 100, 100});
+    win->attach<sprite>(tex, wsdl2::rect{200, 300, 100, 100});*/
+
+    // sprite initialization
+    //
+    npdebug("Load the image")
+    
+    auto tex = texloader::get("test/res/chiara.bmp");
+
+    if (tex == nullptr)
+        return -1;
+
+    npdebug("Attach a new sprite to the window, step 2")
+
+    win->attach<sprite>(tex, wsdl2::rect{100, 100, 300, 300});
+
+    npdebug("Attach a new sprite to the window, step 2 succeded")
 
     return loop();
 }

@@ -51,11 +51,11 @@ std::shared_ptr<wsdl2::texture> texloader::get(const std::string& path)
     return tex;
 }
 
-std::shared_ptr<wsdl2::texture> create( const std::string& name,
-                                        std::size_t width, 
-                                        std::size_t height,
-                                        wsdl2::pixelformat::format p, 
-                                        wsdl2::texture::access a)
+std::shared_ptr<wsdl2::texture> texloader::create( const std::string& name,
+                                                   std::size_t width, 
+                                                   std::size_t height,
+                                                   wsdl2::pixelformat::format p, 
+                                                   wsdl2::texture::access a)
 {
     std::shared_ptr<wsdl2::texture> tex = nullptr;
     auto it = textures.find(name);

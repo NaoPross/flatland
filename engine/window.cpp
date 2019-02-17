@@ -20,11 +20,19 @@ window::window( const std::string& title,
 
 void window::render()
 {
+    npdebug("Clearing window content")
+
+    get_renderer().clear();
+
+    npdebug("Rendering all content")
+
     for(auto& child : *this)
     {
         if (child.is_visible())
             child.render();
     }
+
+    get_renderer().present();
 }
 
 
