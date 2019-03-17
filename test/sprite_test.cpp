@@ -84,16 +84,17 @@ int main() {
 
     // sprite initialization
     //
-    npdebug("Load the image")
     
-    auto tex = texloader::get("test/res/chiara.bmp");
+    npdebug("Load the image")
 
-    if (tex == nullptr)
+    sprite * try_sprite = sprite::from_file("test/res/chiara.bmp", wsdl2::rect{100, 100, 300, 300});
+
+    if (try_sprite == NULL)
         return -1;
 
     npdebug("Attach a new sprite to the window, step 2")
 
-    win->attach<sprite>(tex, wsdl2::rect{100, 100, 300, 300});
+    win->attach(try_sprite);
 
     npdebug("Attach a new sprite to the window, step 2 succeded")
 

@@ -178,7 +178,7 @@ int flat::loop(float _fps)
     {
         do {
 
-            flatland_dt = 1.0f / fps + delay / CLOCKS_PER_SEC;
+            flatland_dt = 1.0f / fps + static_cast<float>(delay) / CLOCKS_PER_SEC;
 
             delay = clock();
 

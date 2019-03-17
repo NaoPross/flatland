@@ -3,6 +3,7 @@
 
 #include <set>
 #include <memory>
+#include <algorithm>
 
 #include "../../debug.hpp"
 
@@ -106,7 +107,7 @@ public:
     /*
      * Returns the pointer association
      * to the entering object
-     * Do never delete it, collector
+     * Do never delete that pointer, because the collector
      * takes its ownership
      */ 
     template <class S, class ...Args>
@@ -129,11 +130,11 @@ public:
      */
     void detach(child<T, Order>* obj)
     {
-        auto it = collection.find_if([&](const auto& p) {
+        auto it = std::find_if(collection.begin(), collection.end(), [&](const auto& p) {
             return p.get() == obj; 
         });
 
-        this->erase(it);
+        collection.erase(it);
     }
 
     // multiset clear: clears the container freeing all objects

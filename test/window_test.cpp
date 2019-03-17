@@ -59,14 +59,19 @@ int main() {
 
     auto catch_key = core_channel().connect(&key_cb);
 
-    if (!init())
+    window * win = 0;
+
+    if (!init([&](){
+
+        win = new window("Window test", 800, 600);
+        win->open();
+        return win;
+    }))
     {
         npdebug("Cannot initialize flatland")
         return -1;
     }
 
-    window win("Window test", 800, 600);
-
-    return loop(win);
+    return loop();
 }
 
