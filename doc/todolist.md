@@ -48,9 +48,9 @@ Wrap SDL2
 - [n] video
     - [x] window
     - [x] renderer
-    - [!] texture (in VRAM)
-    - [ ] surface (in RAM)
-- [!] events
+    - [x] texture (in VRAM)
+    - [x] surface (in RAM)
+- [x] events
 
 Flatland
 --------
