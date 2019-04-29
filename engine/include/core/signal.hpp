@@ -1,9 +1,7 @@
 #pragma once
 
 #include "task.hpp"
-#include "types.hpp"
 #include "priority.hpp"
-#include "labelled.hpp"
 #include "../../debug.hpp"
 
 #include <tuple>

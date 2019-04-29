@@ -10,9 +10,7 @@ project(
 
 # defining flatland target and giving sources
 add_library(flatland SHARED
-
     ${CMAKE_CURRENT_SOURCE_DIR}/engine/flatland.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/engine/labelled.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/engine/layer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/engine/renderbase.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/engine/signal.cpp

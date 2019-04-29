@@ -1,7 +1,6 @@
 #ifndef __FLAT_RENDER_BASE_H__
 #define __FLAT_RENDER_BASE_H__
 
-#include "core/labelled.hpp"
 #include <memory>
 #include <string>
 #include "core/collector.hpp"
@@ -22,7 +21,7 @@ namespace helper
 
 }
 
-class renderbase : virtual public core::labelled, public core::child<renderbase, helper::overlap>
+class renderbase : public core::child<renderbase, helper::overlap>
 {
     uint32_t m_overlap;    
 
@@ -60,7 +59,7 @@ public:
     using collector = typename core::collector<renderbase, helper::overlap>;
 
     // Send a 'created' signal in component reserved channel
-    renderbase(uint32_t overlap = 1, const std::string& id = "");
+    renderbase(uint32_t overlap = 1);
 
     // Send a 'deleted' signal in component reserved channel
     virtual ~renderbase();
