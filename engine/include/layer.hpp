@@ -9,7 +9,7 @@ class sprite;
 
 struct layer : virtual public renderbase, public renderbase::collector
 {
-    layer(uint32_t overlap = 1, sprite * bg = 0, const std::string& id = "");
+    layer(uint32_t overlap = 1, sprite * bg = 0);
 
     // background modifiers
     void set_background(sprite * bg);

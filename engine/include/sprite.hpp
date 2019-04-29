@@ -60,7 +60,6 @@ public:
     sprite( std::shared_ptr<wsdl2::texture>,
             const wsdl2::rect& bounds,
             const wsdl2::rect& viewport, 
-            const std::string& lab = "",
             uint32_t overlap = 1);
     
     /*
@@ -71,7 +70,6 @@ public:
     sprite( std::shared_ptr<wsdl2::texture>,
             int x, int y,
             const wsdl2::rect& viewport, 
-            const std::string& lab = "",
             uint32_t overlap = 1);
 
     /*
@@ -82,12 +80,10 @@ public:
      */
     sprite( std::shared_ptr<wsdl2::texture>,
             int x = 0, int y = 0,
-            const std::string& lab = "",
             uint32_t overlap = 1);
 
     sprite( std::shared_ptr<wsdl2::texture>,
             const wsdl2::rect& bounds,
-            const std::string& lab = "",
             uint32_t overlap = 1);
 
     ~sprite() {}
@@ -161,13 +157,11 @@ public:
     tileset( std::shared_ptr<wsdl2::texture>,
              const wsdl2::rect& bounds,
              const std::initializer_list<wsdl2::rect>& init = {},
-             const std::string& lab = "",
              uint32_t overlap = 1);
 
     tileset( std::shared_ptr<wsdl2::texture>,
              int x = 0, int y = 0,
              const std::initializer_list<wsdl2::rect>& init = {},
-             const std::string& lab = "",
              uint32_t overlap = 1);
 
     void map(std::size_t, const wsdl2::rect&);

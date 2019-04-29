@@ -14,7 +14,7 @@ std::shared_ptr<wsdl2::texture> texloader::get(const std::string& path)
 {
     std::shared_ptr<wsdl2::texture> tex = nullptr;
     auto it = textures.find(path);
-
+#if 0
     auto rend = renderer();
 
     // check non existence
@@ -48,6 +48,7 @@ std::shared_ptr<wsdl2::texture> texloader::get(const std::string& path)
     } else
         tex = it->second.lock();
 
+#endif
     return tex;
 }
 
@@ -59,7 +60,7 @@ std::shared_ptr<wsdl2::texture> texloader::create( const std::string& name,
 {
     std::shared_ptr<wsdl2::texture> tex = nullptr;
     auto it = textures.find(name);
-
+#if 0
     auto rend = renderer();
 
     // check initialization state and non existence
@@ -68,6 +69,7 @@ std::shared_ptr<wsdl2::texture> texloader::create( const std::string& name,
         tex = std::make_shared<wsdl2::texture>(*rend, p, a, width, height);
         textures.insert(std::pair<std::string, std::weak_ptr<wsdl2::texture>>(name, tex));
     }
+#endif
 
     return tex;
 }
@@ -83,17 +85,15 @@ std::shared_ptr<wsdl2::texture> texloader::create( const std::string& name,
 sprite::sprite( std::shared_ptr<wsdl2::texture> tex,
                 const wsdl2::rect& bounds,
                 const wsdl2::rect& viewport, 
-                const std::string& lab,
                 uint32_t overlap)
 
-    : renderbase(overlap, lab), 
+    : renderbase(overlap), 
       m_bounds(bounds),
       m_viewport(viewport),
       m_texture(tex)
 {
     if (tex == nullptr)
     {
-        npdebug("Giving a null texture to the sprite labelled: ", lab)
         throw std::runtime_error("Giving a null texture to a sprite");
     }
 }
@@ -107,10 +107,9 @@ sprite::sprite( std::shared_ptr<wsdl2::texture> tex,
 sprite::sprite( std::shared_ptr<wsdl2::texture> tex,
                 int x, int y,
                 const wsdl2::rect& viewport, 
-                const std::string& lab,
                 uint32_t overlap)
 
-    : sprite(tex, wsdl2::rect{x, y, tex->width(), tex->height()}, viewport, lab, overlap) {}
+    : sprite(tex, wsdl2::rect{x, y, tex->width(), tex->height()}, viewport, overlap) {}
 
 /*
  * Viewport and bounds are deduced from the image size, precisely:
@@ -120,18 +119,15 @@ sprite::sprite( std::shared_ptr<wsdl2::texture> tex,
  */
 sprite::sprite( std::shared_ptr<wsdl2::texture> tex,
                 int x, int y,
-                const std::string& lab,
                 uint32_t overlap)
-
-    : sprite(tex, wsdl2::rect{x, y, tex->width(), tex->height()}, {0, 0, tex->width(), tex->height()}, lab, overlap) {}
+    : sprite(tex, wsdl2::rect{x, y, tex->width(), tex->height()}, {0, 0, tex->width(), tex->height()}, overlap) {}
 
 
 sprite::sprite( std::shared_ptr<wsdl2::texture> tex,
                 const wsdl2::rect& bounds,
-                const std::string& lab,
                 uint32_t overlap)
 
-    : sprite(tex, bounds, wsdl2::rect{0, 0, tex->width(), tex->height()}, lab, overlap) {}
+    : sprite(tex, bounds, wsdl2::rect{0, 0, tex->width(), tex->height()}, overlap) {}
 
 
 void sprite::render()
@@ -226,10 +222,9 @@ const wsdl2::rect& sprite::viewport() const
 tileset::tileset( std::shared_ptr<wsdl2::texture> tex,
                   const wsdl2::rect& bounds,
                   const std::initializer_list<wsdl2::rect>& init,
-                  const std::string& lab,
                   uint32_t overlap)
 
-    : sprite(tex, bounds, lab, overlap), m_current(0)
+    : sprite(tex, bounds, overlap), m_current(0)
 {
     if (init.size() == 0)
         map(0, wsdl2::rect{0, 0, tex->width(), tex->height()});
@@ -245,10 +240,9 @@ tileset::tileset( std::shared_ptr<wsdl2::texture> tex,
 tileset::tileset( std::shared_ptr<wsdl2::texture> tex,
                   int x, int y,
                   const std::initializer_list<wsdl2::rect>& init,
-                  const std::string& lab,
                   uint32_t overlap)
 
-    : tileset(tex, wsdl2::rect{x, y, tex->width(), tex->height()}, init, lab, overlap)
+    : tileset(tex, wsdl2::rect{x, y, tex->width(), tex->height()}, init, overlap)
 {
 
 }

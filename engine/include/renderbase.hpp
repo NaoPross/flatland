@@ -50,7 +50,7 @@ public:
     // notice: after destruction the pointer won't be valid anymore
     struct unmap_pck
     {
-        unmap_pck(renderbase * _ptr) : uuid(_ptr->uuid) {}
+        unmap_pck(renderbase * _ptr) : uuid(0) {}
         
         std::size_t uuid;
     };

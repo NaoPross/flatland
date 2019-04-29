@@ -5,11 +5,7 @@ using namespace flat;
 
 const uint32_t layer::bg_level = 0;
 
-layer::layer(  uint32_t overlap, 
-        sprite * bg, 
-        const std::string& id)
-
-    : renderbase(overlap, id)
+layer::layer(uint32_t overlap, sprite * bg) : renderbase(overlap)
 {
     set_background(bg);
 }
