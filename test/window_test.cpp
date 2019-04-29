@@ -1,72 +1,47 @@
 #include "flatland.hpp"
-#include "debug.hpp"
 
 #include "wsdl2/event.hpp"
 #include "core/task.hpp"
 #include "core/signal.hpp"
-#include <SDL2/SDL.h>
 
 #include "window.hpp"
+#include "debug.hpp"
 
-#include <iostream>
-
-using namespace flat;
-
-int step = 0;
 
 void gloop()
 {
-    if (step % 30 == 0)     
-    {
-        npdebug("Step: ", step)
-    }
 
-    if (step == 200)
-    {
-        npdebug("Step limit reached: exiting")
-        quit();
-    }
-
-    if (step == 210)
-    {
-        npdebug("Step limit exceded: forcing to stop the loop")
-        force_quit(-1);
-    }
-
-    step++;
 }
 
 void key_cb(const wsdl2::event::key event)
 {
-    npdebug("Key response")
-
-    if (event.type == wsdl2::event::key::action::down
-       && event.keysym.sym == SDLK_ESCAPE)
-    {
-        npdebug("ESC key pressed, exiting")
-        quit();
+    if (event.type == wsdl2::event::key::action::down) {
+        npdebug("you pressed ", static_cast<char>(event.keysym.sym));
     }
 }
 
-//std::shared_ptr<core::task> gloop_cb;
-
 int main() {
 
-    npdebug("Initializing window_test")
-   
-    // bind main loop task
-    main_job().add_task(&gloop);
+    flat::initialize();
 
-    auto catch_key = core_channel().connect(&key_cb);
+    flat::state engine;
+    flat::window win("Window Test");
 
-    if (!init())
-    {
-        npdebug("Cannot initialize flatland")
-        return -1;
-    }
+    engine.update.add_task(&gloop);
 
-    window win("Window test", 800, 600);
+    auto render_task = engine.render.delegate_task(&flat::window::render, &win);
 
-    return loop(win);
+    auto keylist = engine.events.connect(&key_cb);
+    auto quitlist = engine.events.connect<void, wsdl2::event::quit>(
+        [&](wsdl2::event::quit e) {
+            engine.running = false;
+        }
+    );
+
+    win.open();
+    flat::run(engine);
+    flat::quit();
+
+    return 0;
 }
 
