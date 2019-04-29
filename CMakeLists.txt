@@ -15,7 +15,6 @@ add_library(flatland SHARED
     ${CMAKE_CURRENT_SOURCE_DIR}/engine/labelled.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/engine/layer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/engine/renderbase.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/engine/serial.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/engine/signal.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/engine/sprite.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/engine/task.cpp
@@ -202,6 +201,31 @@ add_test(
     CONFIGURATIONS Debug
     WORKING_DIRECTORY test
     COMMAND sprite_test
+)
+
+# flatland_test 
+add_executable(flatland_test test/flatland_test.cpp)
+
+target_link_libraries(flatland_test
+    PRIVATE
+        Flatland::flatland
+)
+
+target_compile_features(flatland_test
+    PRIVATE
+        cxx_std_17
+)
+
+target_compile_definitions(flatland_test
+    PRIVATE
+        $<$<CONFIG:Debug>:DEBUG>
+)
+
+add_test(
+    NAME flatland_test
+    CONFIGURATIONS Debug
+    WORKING_DIRECTORY test
+    COMMAND flatland_test 
 )
 
 # manage git submodule mm
