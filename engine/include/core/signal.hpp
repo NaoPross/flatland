@@ -188,7 +188,7 @@ namespace flat::core
      * is an object type through which signals are emitted.
      * and is an object type through which listener get their signals.
      */
-    class channel : virtual public labelled
+    class channel
     {
     private:
         // this is a set because sets do not allow identical elements
