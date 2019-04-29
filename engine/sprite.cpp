@@ -15,7 +15,6 @@ std::shared_ptr<wsdl2::texture> texloader::get(const std::string& path)
     std::shared_ptr<wsdl2::texture> tex = nullptr;
     auto it = textures.find(path);
 
-#if 0
     auto rend = renderer();
 
     // check non existence
@@ -49,7 +48,6 @@ std::shared_ptr<wsdl2::texture> texloader::get(const std::string& path)
     } else
         tex = it->second.lock();
 
-#endif
     return tex;
 }
 
@@ -62,7 +60,6 @@ std::shared_ptr<wsdl2::texture> texloader::create( const std::string& name,
     std::shared_ptr<wsdl2::texture> tex = nullptr;
     auto it = textures.find(name);
 
-#if 0
     auto rend = renderer();
 
     // check initialization state and non existence
@@ -72,7 +69,6 @@ std::shared_ptr<wsdl2::texture> texloader::create( const std::string& name,
         textures.insert(std::pair<std::string, std::weak_ptr<wsdl2::texture>>(name, tex));
     }
 
-#endif
     return tex;
 }
 

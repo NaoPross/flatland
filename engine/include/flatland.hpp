@@ -1,13 +1,19 @@
 #pragma once
 
-#include <chrono>
-#include <thread>
-
 #include "core/signal.hpp"
 #include "core/task.hpp"
 #include "wsdl2/wsdl2.hpp"
 
 namespace flat {
+
+    /* Structure containing the state of the engine i.e.
+     * 
+     *  - jobs (containing task) that are called when ran with flat::run
+     *  - channels to broadcast events
+     *  - global variables, like running
+     *  - global graphics objects like textures
+     * 
+     */
     struct state {
         /// indicate whether the engine is running
         bool running = false;
@@ -23,6 +29,7 @@ namespace flat {
         /// input events
         core::channel events;
 
+        /// the event broadcast is handled by update
         state() : events(update) {}
     };
 
