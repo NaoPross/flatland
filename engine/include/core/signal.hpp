@@ -265,11 +265,26 @@ namespace flat::core
         void broadcast();
 
         /// connect a closure
-        // template<typename ...Args, typename Closure>
-        // std::shared_ptr<listener<Args...>> connect(Closure f)
-        // {
-            // TODO: fix
-        // }
+        /// note: sadly it is not possile to infere the signature of a closure
+        ///       and it is therefore required to specify manually its
+        ///       template arguments to match the signature.
+        ///
+        ///       Example:
+        ///
+        ///       channel.connect<double, int, int>([](int a, int b) -> double {
+        ///           return static_cast<double>(a + b);
+        ///       })
+        ///
+        template<typename R, typename ...Args, typename Closure>
+        std::shared_ptr<listener<Args...>> connect(Closure&& f)
+        {
+            return _connect(static_cast<std::function<R(Args...)>>(
+                // closure that forwards ...args to f
+                [f](Args&& ...args) constexpr -> R {
+                    return f(std::forward<Args>(args)...);
+                })
+            );
+        }
 
         /// connect a function
         template<typename R, typename ...Args>

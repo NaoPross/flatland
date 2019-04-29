@@ -15,6 +15,7 @@ std::shared_ptr<wsdl2::texture> texloader::get(const std::string& path)
     std::shared_ptr<wsdl2::texture> tex = nullptr;
     auto it = textures.find(path);
 
+#if 0
     auto rend = renderer();
 
     // check non existence
@@ -48,6 +49,7 @@ std::shared_ptr<wsdl2::texture> texloader::get(const std::string& path)
     } else
         tex = it->second.lock();
 
+#endif
     return tex;
 }
 
@@ -60,6 +62,7 @@ std::shared_ptr<wsdl2::texture> texloader::create( const std::string& name,
     std::shared_ptr<wsdl2::texture> tex = nullptr;
     auto it = textures.find(name);
 
+#if 0
     auto rend = renderer();
 
     // check initialization state and non existence
@@ -69,6 +72,7 @@ std::shared_ptr<wsdl2::texture> texloader::create( const std::string& name,
         textures.insert(std::pair<std::string, std::weak_ptr<wsdl2::texture>>(name, tex));
     }
 
+#endif
     return tex;
 }
 
@@ -87,9 +91,9 @@ sprite::sprite( std::shared_ptr<wsdl2::texture> tex,
                 uint32_t overlap)
 
     : renderbase(overlap, lab), 
-      m_texture(tex), 
       m_bounds(bounds),
-      m_viewport(viewport) 
+      m_viewport(viewport),
+      m_texture(tex)
 {
     if (tex == nullptr)
     {
@@ -142,7 +146,8 @@ void sprite::render()
 
 void sprite::focus()
 {
-    core_channel().emit(focus_call(this)); 
+    // TODO: fix
+    // core_channel().emit(focus_call(this)); 
 }
 
 void sprite::set_location(int x, int y)
@@ -157,17 +162,17 @@ void sprite::set_location(const mm::vec2<int>& l)
     m_bounds.y = l[1]; 
 }
 
-void sprite::set_width(std::size_t width)
+void sprite::set_width(int width)
 {
     m_bounds.w = width;
 }
 
-void sprite::set_height(std::size_t height)
+void sprite::set_height(int height)
 {
     m_bounds.h = height;
 }
 
-void sprite::set_size(std::size_t width, std::size_t height)
+void sprite::set_size(int width, int height)
 {
     m_bounds.w = width;
     m_bounds.h = height;
@@ -183,12 +188,12 @@ mm::vec2<int> sprite::location() const
     return mm::vec2<int>({m_bounds.x, m_bounds.y});
 }
 
-std::size_t sprite::width() const
+int sprite::width() const
 {
     return m_bounds.w;
 }
 
-std::size_t sprite::height() const
+int sprite::height() const
 {
     return m_bounds.h;
 }

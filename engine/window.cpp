@@ -13,9 +13,7 @@ window::window( const std::string& title,
         std::size_t height)
 
     : wsdl2::window(title, width, height)
-{
-    rendering_task = main_job().delegate_task(&window::render, this, core::priority_t::min);
-}
+{}
 
 
 void window::render()

@@ -40,6 +40,7 @@ namespace texloader
  */
 class sprite : virtual public renderbase
 {
+private:
     // location and rectangular size, in pixel
     wsdl2::rect m_bounds;
 
@@ -106,16 +107,16 @@ public:
     void set_location(int x, int y);
     void set_location(const mm::vec2<int>&);
 
-    void set_width(std::size_t width);
-    void set_height(std::size_t height);
-    void set_size(std::size_t width, std::size_t height);
+    void set_width(int width);
+    void set_height(int height);
+    void set_size(int width, int height);
 
     void set_bounds(const wsdl2::rect&);
 
     mm::vec2<int> location() const;
 
-    std::size_t width() const;
-    std::size_t height() const;
+    int width() const;
+    int height() const;
     
     wsdl2::rect bounds();
     const wsdl2::rect& bounds() const;
