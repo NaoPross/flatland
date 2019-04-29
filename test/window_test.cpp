@@ -8,15 +8,16 @@
 #include "debug.hpp"
 
 
-void gloop()
-{
+void gloop() {
 
 }
 
-void key_cb(const wsdl2::event::key event)
-{
+void key_cb(const wsdl2::event::key event) {
     if (event.type == wsdl2::event::key::action::down) {
         npdebug("you pressed ", static_cast<char>(event.keysym.sym));
+        if (event.keysym.sym == SDLK_ESCAPE) {
+            flat::state::get().running = false;
+        }
     }
 }
 
@@ -24,7 +25,7 @@ int main() {
 
     flat::initialize();
 
-    flat::state engine;
+    flat::state& engine = flat::state::get();
     flat::window win("Window Test");
 
     engine.update.add_task(&gloop);
@@ -39,7 +40,8 @@ int main() {
     );
 
     win.open();
-    flat::run(engine);
+
+    flat::run();
     flat::quit();
 
     return 0;

@@ -6,8 +6,15 @@
 #include <chrono>
 #include <thread>
 
+flat::state& flat::state::get() {
+    static state singleton;
+    return singleton;
+}
 
 bool flat::initialize() {
+    // instantiate singleton
+    flat::state::get();
+
     return wsdl2::initialize();
 }
     
@@ -15,7 +22,8 @@ void flat::quit() {
     wsdl2::quit();
 }
 
-void flat::run(flat::state& s) {
+void flat::run() {
+    flat::state& s = flat::state::get();
     std::chrono::time_point<std::chrono::steady_clock> start, end;
 
     s.running = true;
@@ -31,6 +39,8 @@ void flat::run(flat::state& s) {
                 }, ev.value());
             }
         }
+
+        // TODO: separate update and render in different threads
 
         // call game update tasks
         s.update();

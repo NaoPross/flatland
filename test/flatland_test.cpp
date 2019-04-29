@@ -23,7 +23,7 @@ namespace test {
 int main(int, char**) {
     flat::initialize();
 
-    flat::state engine;
+    flat::state& engine = flat::state::get();
     flat::window win("Flatland Test");
 
     // connect events callbacks
@@ -50,7 +50,7 @@ int main(int, char**) {
     auto render_task = engine.render.delegate_task(&flat::window::render, &win);
     win.open();
 
-    flat::run(engine);
+    flat::run();
     flat::quit();
 
     return 0;

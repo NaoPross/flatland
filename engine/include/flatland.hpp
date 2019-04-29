@@ -6,7 +6,7 @@
 
 namespace flat {
 
-    /* Structure containing the state of the engine i.e.
+    /* Singleton data structure containing the state of the engine i.e.
      * 
      *  - jobs (containing task) that are called when ran with flat::run
      *  - channels to broadcast events
@@ -15,6 +15,7 @@ namespace flat {
      * 
      */
     struct state {
+    public:
         /// indicate whether the engine is running
         bool running = false;
 
@@ -29,6 +30,13 @@ namespace flat {
         /// input events
         core::channel events;
 
+        /// signleton pattern
+        state(const state& other) = delete;
+        void operator=(const state& other) = delete;
+
+        static state& get();
+
+    private:
         /// the event broadcast is handled by update
         state() : events(update) {}
     };
@@ -37,5 +45,5 @@ namespace flat {
     bool initialize();
     void quit();
 
-    void run(state& s);
+    void run();
 }
