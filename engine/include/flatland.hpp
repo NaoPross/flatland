@@ -2,7 +2,12 @@
 
 #include "core/signal.hpp"
 #include "core/task.hpp"
+
 #include "wsdl2/wsdl2.hpp"
+#include "wsdl2/video.hpp"
+
+#include <unordered_map>
+
 
 namespace flat {
 
@@ -30,15 +35,22 @@ namespace flat {
         /// input events
         core::channel events;
 
-        /// signleton pattern
+        /// singleton pattern
         state(const state& other) = delete;
         void operator=(const state& other) = delete;
 
         static state& get();
 
+        void set_renderer(wsdl2::renderer& r);
+        wsdl2::renderer& renderer();
+
     private:
         /// the event broadcast is handled by update
         state() : events(update) {}
+
+        /// graphics
+        wsdl2::renderer *m_renderer = nullptr;
+        std::unordered_map<std::string, std::weak_ptr<wsdl2::texture>> m_textures;
     };
 
 

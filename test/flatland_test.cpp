@@ -26,6 +26,9 @@ int main(int, char**) {
     flat::state& engine = flat::state::get();
     flat::window win("Flatland Test");
 
+    engine.set_renderer(win.get_renderer());
+
+
     // connect events callbacks
     auto keylist = engine.events.connect<void, wsdl2::event::key>(
         [&](wsdl2::event::key event) {

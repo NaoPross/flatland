@@ -11,6 +11,20 @@ flat::state& flat::state::get() {
     return singleton;
 }
 
+void flat::state::set_renderer(wsdl2::renderer& r) {
+    m_renderer = &r;
+}
+
+wsdl2::renderer& flat::state::renderer() {
+#ifdef DEBUG
+    if (m_renderer == nullptr) {
+        throw std::runtime_error("requested renderer without having it set (nullptr)");
+    }
+#endif
+
+    return *m_renderer;
+}
+
 bool flat::initialize() {
     // instantiate singleton
     flat::state::get();
