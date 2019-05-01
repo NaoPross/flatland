@@ -201,6 +201,31 @@ add_test(
     COMMAND sprite_test
 )
 
+# entities_test 
+add_executable(entities_test test/entities_test.cpp)
+
+target_link_libraries(entities_test
+    PRIVATE
+        Flatland::flatland
+)
+
+target_compile_features(entities_test
+    PRIVATE
+        cxx_std_17
+)
+
+target_compile_definitions(entities_test
+    PRIVATE
+        $<$<CONFIG:Debug>:DEBUG>
+)
+
+add_test(
+    NAME entities_test
+    CONFIGURATIONS Debug
+    WORKING_DIRECTORY test
+    COMMAND entities_test 
+)
+
 # flatland_test 
 add_executable(flatland_test test/flatland_test.cpp)
 
