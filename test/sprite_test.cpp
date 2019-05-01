@@ -47,7 +47,8 @@ int main() {
         return -1;
     }
 
-    win.attach<flat::sprite>(tex, wsdl2::rect{100, 100, 300, 300});
+
+    win.insert(std::make_shared<flat::sprite>(tex, wsdl2::rect{100, 100, 300, 300}));
     
     win.open();
 

@@ -1,12 +1,15 @@
 #ifndef __FLATSPRITE_H__
 #define __FLATSPRITE_H__
 
-#include "renderbase.hpp"
 #include "wsdl2/video.hpp"
 #include "mm/mmvec.hpp"
+
+#include "renderable.hpp"
+
 #include <list>
 
 namespace flat {
+
 
 namespace texloader
 {
@@ -38,7 +41,7 @@ namespace texloader
 /*
  *  Textured sprite, used for static rendering
  */
-class sprite : virtual public renderbase
+class sprite : public renderable
 {
 private:
     // location and rectangular size, in pixel

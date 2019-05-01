@@ -87,7 +87,7 @@ sprite::sprite( std::shared_ptr<wsdl2::texture> tex,
                 const wsdl2::rect& viewport, 
                 uint32_t overlap)
 
-    : renderbase(overlap), 
+    : renderable(), 
       m_bounds(bounds),
       m_viewport(viewport),
       m_texture(tex)

@@ -11,8 +11,7 @@ project(
 # defining flatland target and giving sources
 add_library(flatland SHARED
     ${CMAKE_CURRENT_SOURCE_DIR}/engine/flatland.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/engine/layer.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/engine/renderbase.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/engine/renderable.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/engine/signal.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/engine/sprite.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/engine/task.cpp
@@ -126,30 +125,6 @@ add_test(
     COMMAND signal_test
 )
 
-# collector_test
-add_executable(collector_test test/collector_test.cpp)
-
-target_link_libraries(collector_test
-    PRIVATE
-        Flatland::flatland
-)
-
-target_compile_features(collector_test
-    PRIVATE
-        cxx_std_17
-)
-
-target_compile_definitions(collector_test
-    PRIVATE
-        $<$<CONFIG:Debug>:DEBUG>
-)
-
-add_test(
-    NAME collector_test
-    CONFIGURATIONS Debug
-    WORKING_DIRECTORY test
-    COMMAND collector_test
-)
 
 # window_test
 add_executable(window_test test/window_test.cpp)
