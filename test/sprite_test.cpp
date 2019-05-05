@@ -55,7 +55,6 @@ int main() {
     }
     
     win.open();
-
     flat::run();
     flat::quit();
 
