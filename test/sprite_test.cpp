@@ -41,14 +41,18 @@ int main() {
 
 
     // sprite initialization
-    auto tex = flat::texloader::get("test/res/chiara.bmp");
-    if (tex == nullptr) {
+    if (auto surf = wsdl2::surface::load("test/res/chiara.bmp")) {
+        auto tex = wsdl2::texture(win.get_renderer(), *surf);
+        auto tileset = std::make_shared<flat::tileset>(std::move(tex));
+        auto sprite = std::make_shared<flat::sprite>(mm::vec2<int>{0, 0}, tileset);
+
+        sprite->move(mm::vec2<int>{100, 100});
+
+        win.insert(std::static_pointer_cast<flat::renderable>(sprite));
+    } else {
         npdebug("failed to load texture")
         return -1;
     }
-
-
-    win.insert(std::make_shared<flat::sprite>(tex, wsdl2::rect{100, 100, 300, 300}));
     
     win.open();
 

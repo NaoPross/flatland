@@ -1,295 +1,55 @@
 #include "sprite.hpp"
-#include "flatland.hpp"
-#include "core/signal.hpp"
 
 using namespace flat;
 
-/*
- * Texture loading section
- */
-
-std::unordered_map<std::string, std::weak_ptr<wsdl2::texture>> textures;
-
-std::shared_ptr<wsdl2::texture> texloader::get(const std::string& path)
+tileset::tileset(wsdl2::texture&& src) : m_texture(std::move(src))
 {
-    std::shared_ptr<wsdl2::texture> tex = nullptr;
-    auto it = textures.find(path);
-#if 0
-    auto rend = renderer();
+    emplace(0, wsdl2::rect{0, 0, src.width(), src.height()});
+}
 
-    // check non existence
-    if (it == textures.end() || it->second.expired())
-    {
-        // check initialization state
-        if (rend != NULL)
-        {
-            npdebug("Trying to load ", path)
+tileset::tileset(wsdl2::texture&& src, std::size_t cell_w, std::size_t cell_h,
+    std::size_t margin /* = 0 */, std::size_t spacing /* = 0 */) 
+    : m_texture(std::move(src))
+{
+    const std::size_t cols = (src.width()  - 2 * margin) / (cell_w + spacing);
+    const std::size_t rows = (src.height() - 2 * margin) / (cell_h + spacing);
 
-            // get the optional
-            auto opt_tex = wsdl2::texture::load(path, *rend);
-
-            npdebug("Loaded ", path)
-
-            if (opt_tex)
-            {
-                // force to initialize pointer with the move semantic
-                tex = std::shared_ptr<wsdl2::texture>(new wsdl2::texture(std::move(*opt_tex)));
-                textures.insert(std::pair<std::string, std::weak_ptr<wsdl2::texture>>(path, tex));
-
-            } else {
-                npdebug("Could not load the texture ", path, ". Non-existing file or wrong format");
-            }
-
-        } else {
-            
-            npdebug("Could not load the texture: ", path, ". Loading before calling flat::init")
+    for (std::size_t i = 0; i < cols; i++) {
+        for (std::size_t j = 0; j < rows; j++) {
+            // TODO: check in edge cases
+            emplace(i + j, wsdl2::rect {
+                static_cast<int>(margin + i * (cell_w + spacing)),
+                static_cast<int>(margin + j * (cell_h + spacing)),
+                static_cast<int>(cell_w),
+                static_cast<int>(cell_h)
+            });
         }
-
-    } else
-        tex = it->second.lock();
-
-#endif
-    return tex;
-}
-
-std::shared_ptr<wsdl2::texture> texloader::create( const std::string& name,
-                                                   std::size_t width, 
-                                                   std::size_t height,
-                                                   wsdl2::pixelformat::format p, 
-                                                   wsdl2::texture::access a)
-{
-    std::shared_ptr<wsdl2::texture> tex = nullptr;
-    auto it = textures.find(name);
-#if 0
-    auto rend = renderer();
-
-    // check initialization state and non existence
-    if (rend != NULL && (it == textures.end() || it->second.expired()))
-    {
-        tex = std::make_shared<wsdl2::texture>(*rend, p, a, width, height);
-        textures.insert(std::pair<std::string, std::weak_ptr<wsdl2::texture>>(name, tex));
-    }
-#endif
-
-    return tex;
-}
-
-/* 
- * Sprite section
- */ 
-
-/*
- * Construct a sprite basing on a loaded texture 
- * Passing a null texture will throw an exception
- */
-sprite::sprite( std::shared_ptr<wsdl2::texture> tex,
-                const wsdl2::rect& bounds,
-                const wsdl2::rect& viewport, 
-                uint32_t overlap)
-
-    : renderable(), 
-      m_bounds(bounds),
-      m_viewport(viewport),
-      m_texture(tex)
-{
-    if (tex == nullptr)
-    {
-        throw std::runtime_error("Giving a null texture to a sprite");
     }
 }
 
-
-/*
- * Sprite bounds are the same as the image bounds:
- *
- * Bounds = (0, 0, img-width, img-height)
- */
-sprite::sprite( std::shared_ptr<wsdl2::texture> tex,
-                int x, int y,
-                const wsdl2::rect& viewport, 
-                uint32_t overlap)
-
-    : sprite(tex, wsdl2::rect{x, y, tex->width(), tex->height()}, viewport, overlap) {}
-
-/*
- * Viewport and bounds are deduced from the image size, precisely:
- *
- * Bounds = (x, y, img-width, img-height)
- * Viewport = (0, 0, img-width, img-height)
- */
-sprite::sprite( std::shared_ptr<wsdl2::texture> tex,
-                int x, int y,
-                uint32_t overlap)
-    : sprite(tex, wsdl2::rect{x, y, tex->width(), tex->height()}, {0, 0, tex->width(), tex->height()}, overlap) {}
+tileset::tileset(wsdl2::texture&& src,
+        std::initializer_list<std::pair<unsigned, wsdl2::rect>> viewports)
+    : std::unordered_map<unsigned, wsdl2::rect>(viewports.begin(), viewports.end()),
+      m_texture(std::move(src))
+{}
 
 
-sprite::sprite( std::shared_ptr<wsdl2::texture> tex,
-                const wsdl2::rect& bounds,
-                uint32_t overlap)
-
-    : sprite(tex, bounds, wsdl2::rect{0, 0, tex->width(), tex->height()}, overlap) {}
-
+sprite::sprite(vector_type pos, std::shared_ptr<tileset> tileset,
+        unsigned tileset_index /* = 0 */)
+    : renderable(),
+      entity(pos, {
+          tileset->at(tileset_index).w / 2,
+          tileset->at(tileset_index).h / 2
+      }),
+      m_tileset(tileset),
+      m_tileset_index(tileset_index)
+{}
 
 void sprite::render()
 {
-    // TODO, generalize with flip angle
-    m_texture->render(m_viewport, m_bounds); 
+    auto r = rect();
+
+    m_tileset->m_texture.render(
+        m_tileset->at(m_tileset_index), r
+    );
 }
-
-void sprite::focus()
-{
-    // TODO: fix
-    // core_channel().emit(focus_call(this)); 
-}
-
-void sprite::set_location(int x, int y)
-{
-    m_bounds.x = x;
-    m_bounds.y = y;
-}
-
-void sprite::set_location(const mm::vec2<int>& l)
-{
-    m_bounds.x = l[0];
-    m_bounds.y = l[1]; 
-}
-
-void sprite::set_width(int width)
-{
-    m_bounds.w = width;
-}
-
-void sprite::set_height(int height)
-{
-    m_bounds.h = height;
-}
-
-void sprite::set_size(int width, int height)
-{
-    m_bounds.w = width;
-    m_bounds.h = height;
-}
-
-void sprite::set_bounds(const wsdl2::rect& b)
-{
-    m_bounds = b;
-}
-
-mm::vec2<int> sprite::location() const
-{
-    return mm::vec2<int>({m_bounds.x, m_bounds.y});
-}
-
-int sprite::width() const
-{
-    return m_bounds.w;
-}
-
-int sprite::height() const
-{
-    return m_bounds.h;
-}
-
-wsdl2::rect sprite::bounds()
-{
-    return m_bounds;
-}
-
-const wsdl2::rect& sprite::bounds() const
-{
-    return m_bounds;
-}
-
-void sprite::set_viewport(const wsdl2::rect& v)
-{
-    m_viewport = v;
-}
-
-wsdl2::rect sprite::viewport()
-{
-    return m_viewport;
-}
-
-const wsdl2::rect& sprite::viewport() const
-{
-    return m_viewport;
-}
-
-/*
- * Tileset section
- */
-
-tileset::tileset( std::shared_ptr<wsdl2::texture> tex,
-                  const wsdl2::rect& bounds,
-                  const std::initializer_list<wsdl2::rect>& init,
-                  uint32_t overlap)
-
-    : sprite(tex, bounds, overlap), m_current(0)
-{
-    if (init.size() == 0)
-        map(0, wsdl2::rect{0, 0, tex->width(), tex->height()});
-    else {
-       
-        std::size_t i = 0; 
-
-        for (auto rect : init)
-            map(i++, rect);
-    }
-}
-
-tileset::tileset( std::shared_ptr<wsdl2::texture> tex,
-                  int x, int y,
-                  const std::initializer_list<wsdl2::rect>& init,
-                  uint32_t overlap)
-
-    : tileset(tex, wsdl2::rect{x, y, tex->width(), tex->height()}, init, overlap)
-{
-
-}
-
-void tileset::map(std::size_t i, const wsdl2::rect& rect)
-{
-    this->insert(std::pair<std::size_t, wsdl2::rect>(i, rect));
-}
-
-void tileset::set(std::size_t i)
-{
-    auto it = this->find(i);
-
-    if (it != this->end())
-    {
-        m_current = i;
-        set_viewport(it->second);
-    }
-}
-
-std::size_t tileset::current() const
-{
-    return m_current;
-}
-
-void tileset::clear()
-{
-    std::unordered_map<std::size_t, wsdl2::rect>::clear();
-
-    // take the default viewport
-    map(0, wsdl2::rect{0, 0, m_texture->width(), m_texture->height()});
-    m_current = 0;
-}
-
-void tileset::erase(std::size_t i)
-{
-    std::unordered_map<std::size_t, wsdl2::rect>::erase(i);
-
-    if (size() == 0)
-    {
-        // take the default viewport
-        map(0, wsdl2::rect{0, 0, m_texture->width(), m_texture->height()});
-        m_current = 0;
-    }
-
-    if (m_current == i)
-        set(this->begin()->first);
-}
-
-

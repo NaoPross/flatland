@@ -1,65 +1,45 @@
 #pragma once
 
 #include "mm/mmvec.hpp"
+#include "wsdl2/video.hpp"
 
 #include <variant>
 #include <utility>
+#include <vector>
 
 namespace flat
 {
-    class bounded
+    class entity
     {
     public:
         using vector_type = mm::vec2<int>;
 
-        enum class shape
-        {
-            rectangle,
-            circle,
-            from_points,
+        enum class bound_shape {
+            rectangle, circle, from_points
         };
 
-        bounded() = delete;
-        virtual ~bounded() {}
+        entity(vector_type pos, vector_type bound);
+        entity(vector_type pos, unsigned radius);
 
-        bounded(unsigned radius);
-        bounded(unsigned width, unsigned height);
+        std::pair<bound_shape, std::variant<unsigned, vector_type>> bound() const;
+        bool collides(const entity& other) const;
 
-        // TODO: think how to do this
-        // template<template<typename> typename Container>
-        // bounded(Container<vector_type>&& points) {}
+        inline void move(vector_type&& delta) { m_pos += delta; }
+        inline void position(vector_type&& pos) { m_pos = pos; }
+        inline const vector_type& position() const { return m_pos; }
 
-        virtual const vector_type& position() const = 0;
-
-        shape bound_shape() { return m_shape; }
-
-        bool collides(const bounded& other);
-
-    private:
-        bool m_can_collide;
-        shape m_shape;
-        std::variant<unsigned, std::pair<unsigned, unsigned>> m_size;
-    };
-
-
-    class entity : public bounded
-    {
-    public:
-        using vector_type = mm::vec2<int>;
-
-        virtual inline void move(vector_type&& delta) { m_pos += delta; }
-        virtual inline void position(vector_type&& pos) { m_pos = pos; }
-        virtual inline const vector_type& position() const override
-        {
-            return m_pos;
-        }
-
+        /// return a rectangle circumscribing the bound
+        wsdl2::rect rect() const;
 
     private:
         vector_type m_pos;
+        bound_shape m_bound_shape;
+        // TODO: add from_points with Container<vector_type>
+        std::variant<unsigned, vector_type> m_bound;
     };
 
     
+    // TODO: this is a placeholder class
     class actor : public entity
     {
     public:

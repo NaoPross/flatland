@@ -4,6 +4,7 @@
 #include "core/task.hpp"
 
 #include "renderable.hpp"
+#include "sprite.hpp"
 
 #include "wsdl2/wsdl2.hpp"
 #include "wsdl2/video.hpp"
@@ -50,11 +51,11 @@ namespace flat {
         /// the event broadcast is handled by update
         state() : events(update) {}
 
-        /// graphics
-        wsdl2::renderer *m_renderer = nullptr;
-        rendergroup m_renderables;
+        /// renderer object
+        wsdl2::renderer *m_renderer;
 
-        std::unordered_map<std::string, std::weak_ptr<wsdl2::texture>> m_textures;
+        rendergroup m_renderables;
+        std::unordered_map<std::string, std::weak_ptr<tileset>> m_textures;
     };
 
 

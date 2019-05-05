@@ -1,188 +1,72 @@
-#ifndef __FLATSPRITE_H__
-#define __FLATSPRITE_H__
+#pragma once
 
 #include "wsdl2/video.hpp"
-#include "mm/mmvec.hpp"
 
 #include "renderable.hpp"
+#include "entity.hpp"
 
-#include <list>
+#include <unordered_map>
 
 namespace flat {
 
+    class sprite;
 
-namespace texloader
-{
-     /*
-     * Get a texture, from a specified path.
-     * If the texture was not loaded, then
-     * it returns a new loaded texture.
-     * In case loading fails it returns a nullptr
+    /* A wrapper around a texture referenced by sprites
      *
-     * Warning: making the texture go out of scope
-     *          implies that it will be freed and 
-     *          no more available.
-     *          A texture persistence depends on
-     *          how many instances of this texture
-     *          are present.
-     *
-     * In case the texture already exists the pixelformat and the access
-     * parameters are ignored
+     * The purpose of a tileset is to map parts of an image (rectangles, viewports)
+     * (tileset source texture) to numbers which the sprite uses to access.
      */
-    std::shared_ptr<wsdl2::texture> get(const std::string& path);
-
-    std::shared_ptr<wsdl2::texture> create( const std::string& name, // needed for mapping
-                                            std::size_t width, 
-                                            std::size_t height,
-                                            wsdl2::pixelformat::format p = wsdl2::pixelformat::format::unknown, 
-                                            wsdl2::texture::access a = wsdl2::texture::access::static_);
-}
-
-/*
- *  Textured sprite, used for static rendering
- */
-class sprite : public renderable
-{
-private:
-    // location and rectangular size, in pixel
-    wsdl2::rect m_bounds;
-
-    // source viewport 
-    wsdl2::rect m_viewport;
-
-protected:
-
-    std::shared_ptr<wsdl2::texture> m_texture;
-
-public:
-
-    /*
-     * Construct a sprite basing on a loaded texture 
-     * Passing a null texture will throw an exception
-     */
-    sprite( std::shared_ptr<wsdl2::texture>,
-            const wsdl2::rect& bounds,
-            const wsdl2::rect& viewport, 
-            uint32_t overlap = 1);
-    
-    /*
-     * Sprite bounds are the same as the image bounds:
-     *
-     * Bounds = (0, 0, img-width, img-height)
-     */
-    sprite( std::shared_ptr<wsdl2::texture>,
-            int x, int y,
-            const wsdl2::rect& viewport, 
-            uint32_t overlap = 1);
-
-    /*
-     * Viewport and bounds are deduced from the image size, precisely:
-     *
-     * Viewport = (0, 0, img-width, img-height)
-     * Bounds = (x, y, img-width, img-height)
-     */
-    sprite( std::shared_ptr<wsdl2::texture>,
-            int x = 0, int y = 0,
-            uint32_t overlap = 1);
-
-    sprite( std::shared_ptr<wsdl2::texture>,
-            const wsdl2::rect& bounds,
-            uint32_t overlap = 1);
-
-    ~sprite() {}
-
-    struct focus_call
+    class tileset : private std::unordered_map<unsigned, wsdl2::rect>
     {
-        focus_call(sprite *s) : sender(s) {}
+    public:
+        friend class sprite;
 
-        sprite * sender;
+        /// generate with a single rectangle whose size is the entire texture
+        tileset(wsdl2::texture&& src);
+
+        /// generate with grid
+        tileset(wsdl2::texture&& src,
+                std::size_t cell_w,
+                std::size_t cell_h,
+                std::size_t margin = 0,
+                std::size_t spacing = 0);
+
+        /// generate from custom set of rectangles
+        tileset(wsdl2::texture&& src,
+                std::initializer_list<std::pair<unsigned, wsdl2::rect>> viewports);
+
+        /// inherited from unordered_map
+        using std::unordered_map<unsigned, wsdl2::rect>::operator[];
+        using std::unordered_map<unsigned, wsdl2::rect>::at;
+
+        using std::unordered_map<unsigned, wsdl2::rect>::size;
+
+        using std::unordered_map<unsigned, wsdl2::rect>::begin;
+        using std::unordered_map<unsigned, wsdl2::rect>::cbegin;
+        using std::unordered_map<unsigned, wsdl2::rect>::end;
+        using std::unordered_map<unsigned, wsdl2::rect>::cend;
+
+    private:
+        wsdl2::texture m_texture;
     };
 
-    // TODO, is it useful?
-    // send a focus signal (destinated to the owner actor)
-    void focus();
-
-    // bounds accessors
-    void set_location(int x, int y);
-    void set_location(const mm::vec2<int>&);
-
-    void set_width(int width);
-    void set_height(int height);
-    void set_size(int width, int height);
-
-    void set_bounds(const wsdl2::rect&);
-
-    mm::vec2<int> location() const;
-
-    int width() const;
-    int height() const;
-    
-    wsdl2::rect bounds();
-    const wsdl2::rect& bounds() const;
-
-    // viewport accessors
-    void set_viewport(const wsdl2::rect&);
-
-    wsdl2::rect viewport();
-    const wsdl2::rect& viewport() const;
-
-    // TODO add other features
-    //
-    // TODO flip angle?
-    
-    // render the texture
-    virtual void render() override;
-};
-
-/*
- * A sprite that automaticly maps the tileset by indexes
- *
- * A zero value must always exist, then clearing the map
- * means to reset to the default viewport
- */
-class tileset : public sprite, private std::unordered_map<std::size_t, wsdl2::rect>
-{
-    // privatize viewport accessors
-    using sprite::set_viewport;
-    using sprite::viewport;
-
-    std::size_t m_current;
-
-public:
-
-     /*
-     * Bounds are deduced from the image size, precisely:
-     *
-     * Bounds = (x, y, img-width, img-height)
-     *
-     * Init list = {} takes the full image as viewport
+    /* Any graphical entity with an image
      */
-    tileset( std::shared_ptr<wsdl2::texture>,
-             const wsdl2::rect& bounds,
-             const std::initializer_list<wsdl2::rect>& init = {},
-             uint32_t overlap = 1);
+    class sprite : public renderable, public entity
+    {
+    public:
+        using vector_type = entity::vector_type;
 
-    tileset( std::shared_ptr<wsdl2::texture>,
-             int x = 0, int y = 0,
-             const std::initializer_list<wsdl2::rect>& init = {},
-             uint32_t overlap = 1);
+        sprite(vector_type pos,
+               std::shared_ptr<tileset> tileset,
+               unsigned tileset_index = 0);
 
-    void map(std::size_t, const wsdl2::rect&);
+        // TODO: constructors for entity with weird shapes
 
-    void set(std::size_t);
-    std::size_t current() const;
+        virtual void render() override;
 
-    // access by []
-    using std::unordered_map<std::size_t, wsdl2::rect>::operator[];
-
-    void clear();
-
-    void erase(std::size_t);
-
-    // size
-    using std::unordered_map<std::size_t, wsdl2::rect>::size;
-};
-
+    private:
+        std::shared_ptr<tileset> m_tileset;
+        unsigned m_tileset_index;
+    };
 }
-
-#endif

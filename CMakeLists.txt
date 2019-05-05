@@ -13,6 +13,7 @@ add_library(flatland SHARED
     ${CMAKE_CURRENT_SOURCE_DIR}/engine/flatland.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/engine/renderable.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/engine/signal.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/engine/entity.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/engine/sprite.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/engine/task.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/engine/window.cpp

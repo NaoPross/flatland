@@ -18,7 +18,7 @@ void flat::state::set_renderer(wsdl2::renderer& r) {
 wsdl2::renderer& flat::state::renderer() {
 #ifdef DEBUG
     if (m_renderer == nullptr) {
-        throw std::runtime_error("requested renderer without having it set (nullptr)");
+        throw std::runtime_error("requested renderer without having it set first (nullptr)");
     }
 #endif
 
