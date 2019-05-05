@@ -23,17 +23,17 @@ namespace flat {
         friend class sprite;
 
         /// generate with a single rectangle whose size is the entire texture
-        tileset(wsdl2::texture&& src);
+        tileset(std::shared_ptr<wsdl2::texture> src);
 
         /// generate with grid
-        tileset(wsdl2::texture&& src,
+        tileset(std::shared_ptr<wsdl2::texture> src,
                 std::size_t cell_w,
                 std::size_t cell_h,
                 std::size_t margin = 0,
                 std::size_t spacing = 0);
 
         /// generate from custom set of rectangles
-        tileset(wsdl2::texture&& src,
+        tileset(std::shared_ptr<wsdl2::texture> src,
                 std::initializer_list<std::pair<unsigned, wsdl2::rect>> viewports);
 
         /// inherited from unordered_map
@@ -48,7 +48,7 @@ namespace flat {
         using std::unordered_map<unsigned, wsdl2::rect>::cend;
 
     private:
-        wsdl2::texture m_texture;
+        std::shared_ptr<wsdl2::texture> m_texture;
     };
 
     /* Any graphical entity with an image

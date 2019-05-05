@@ -3,17 +3,17 @@
 
 using namespace flat;
 
-tileset::tileset(wsdl2::texture&& src) : m_texture(std::move(src))
+tileset::tileset(std::shared_ptr<wsdl2::texture> src) : m_texture(src)
 {
-    emplace(0, wsdl2::rect{0, 0, src.width(), src.height()});
+    emplace(0, wsdl2::rect{0, 0, src->width(), src->height()});
 }
 
-tileset::tileset(wsdl2::texture&& src, std::size_t cell_w, std::size_t cell_h,
+tileset::tileset(std::shared_ptr<wsdl2::texture> src, std::size_t cell_w, std::size_t cell_h,
     std::size_t margin /* = 0 */, std::size_t spacing /* = 0 */) 
-    : m_texture(std::move(src))
+    : m_texture(src)
 {
-    const std::size_t cols = (src.width()  - 2 * margin) / (cell_w + spacing);
-    const std::size_t rows = (src.height() - 2 * margin) / (cell_h + spacing);
+    const std::size_t cols = (src->width()  - 2 * margin) / (cell_w + spacing);
+    const std::size_t rows = (src->height() - 2 * margin) / (cell_h + spacing);
 
     for (std::size_t i = 0; i < cols; i++) {
         for (std::size_t j = 0; j < rows; j++) {
@@ -28,10 +28,10 @@ tileset::tileset(wsdl2::texture&& src, std::size_t cell_w, std::size_t cell_h,
     }
 }
 
-tileset::tileset(wsdl2::texture&& src,
+tileset::tileset(std::shared_ptr<wsdl2::texture> src,
         std::initializer_list<std::pair<unsigned, wsdl2::rect>> viewports)
     : std::unordered_map<unsigned, wsdl2::rect>(viewports.begin(), viewports.end()),
-      m_texture(std::move(src))
+      m_texture(src)
 {}
 
 
@@ -50,7 +50,7 @@ void sprite::render()
 {
     auto r = rect();
 
-    m_tileset->m_texture.render(
+    m_tileset->m_texture->render(
         m_tileset->at(m_tileset_index), r
     );
 }

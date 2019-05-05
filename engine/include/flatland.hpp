@@ -55,7 +55,7 @@ namespace flat {
         wsdl2::renderer *m_renderer;
 
         rendergroup m_renderables;
-        std::unordered_map<std::string, std::weak_ptr<tileset>> m_textures;
+        std::unordered_map<std::string, std::weak_ptr<wsdl2::texture>> m_textures;
     };
 
 

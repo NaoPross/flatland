@@ -42,8 +42,8 @@ int main() {
 
     // sprite initialization
     if (auto surf = wsdl2::surface::load("test/res/chiara.bmp")) {
-        auto tex = wsdl2::texture(win.get_renderer(), *surf);
-        auto tileset = std::make_shared<flat::tileset>(std::move(tex));
+        auto tex = std::make_shared<wsdl2::texture>(win.get_renderer(), *surf);
+        auto tileset = std::make_shared<flat::tileset>(tex);
         auto sprite = std::make_shared<flat::sprite>(mm::vec2<int>{0, 0}, tileset);
 
         sprite->move(mm::vec2<int>{100, 100});
