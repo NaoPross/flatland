@@ -24,9 +24,20 @@ namespace flat
         std::pair<bound_shape, std::variant<unsigned, vector_type>> bound() const;
         bool collides(const entity& other) const;
 
-        inline void move(vector_type&& delta) { m_pos += delta; }
-        inline void position(vector_type&& pos) { m_pos = pos; }
-        inline const vector_type& position() const { return m_pos; }
+        inline void move(vector_type&& delta)
+        {
+            m_pos += delta;
+        }
+
+        inline void position(vector_type&& pos)
+        {
+            m_pos = pos;
+        }
+
+        inline const vector_type& position() const
+        {
+            return m_pos;
+        }
 
         /// return a rectangle circumscribing the bound
         wsdl2::rect rect() const;
@@ -38,7 +49,7 @@ namespace flat
         std::variant<unsigned, vector_type> m_bound;
     };
 
-    
+
     // TODO: this is a placeholder class
     class actor : public entity
     {

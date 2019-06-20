@@ -21,14 +21,17 @@
 
 #define npinspect(msg, expr, ...); _np::inspect(msg, expr, __VA_ARGS__);
 
-namespace _np {
+namespace _np
+{
     template<typename... Args>
-    inline void debug(const Args&... args) {
+    inline void debug(const Args& ... args)
+    {
         (std::cerr << ... << args) << std::endl;
     }
 
     template<typename Msg, typename Expr, typename... Args>
-    inline Expr& inspect(const Msg& msg, Expr& expr, const Args&... args) {
+    inline Expr& inspect(const Msg& msg, Expr& expr, const Args& ... args)
+    {
         npdebug(msg, expr, args...);
         return expr;
     }
@@ -39,12 +42,14 @@ namespace _np {
 #define npdebug(...); {}
 #define npinspect(...); {}
 
-namespace _np {
+namespace _np
+{
     template<typename... Args>
-    void debug(Args&... args) {}
+    void debug(Args& ... args) {}
 
     template<typename Msg, typename Expr, typename... Args>
-    inline Expr& inspect(const Msg& msg, Expr& expr, const Args&... args) {
+    inline Expr& inspect(const Msg& msg, Expr& expr, const Args& ... args)
+    {
         return expr;
     }
 }

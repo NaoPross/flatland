@@ -12,15 +12,16 @@
 #include <unordered_map>
 
 
-namespace flat {
+namespace flat
+{
 
     /* Singleton data structure containing the state of the engine i.e.
-     * 
+     *
      *  - jobs (containing task) that are called when ran with flat::run
      *  - channels to broadcast events
      *  - global variables, like running
      *  - global graphics objects like textures
-     * 
+     *
      */
     struct state {
     public:

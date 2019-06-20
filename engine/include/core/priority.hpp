@@ -3,8 +3,10 @@
 #include <memory>
 #include <set>
 
-namespace flat {
-    namespace core {
+namespace flat
+{
+    namespace core
+    {
         enum class priority_t : unsigned  {
             max = 0,
             higher = 1,
@@ -15,20 +17,23 @@ namespace flat {
             min = 6,
         };
 
-        class prioritized {
+        class prioritized
+        {
         public:
             const priority_t priority;
 
             prioritized(priority_t p = priority_t::none)
                 : priority(p) {}
-        };       
+        };
 
         struct prioritize {
-            bool operator()(const prioritized& lhs, const prioritized& rhs) {
+            bool operator()(const prioritized& lhs, const prioritized& rhs)
+            {
                 return lhs.priority < rhs.priority;
             }
 
-            bool operator()(const prioritized * const lhs, const prioritized * const rhs) {
+            bool operator()(const prioritized *const lhs, const prioritized *const rhs)
+            {
                 return lhs->priority < rhs->priority;
             }
 
@@ -46,7 +51,7 @@ namespace flat {
                     if (auto r = rhs.lock()) {
                         // if both valid, check their priority
                         // in case they are the same, left is prioritized
-                        
+
                         // TODO: replace with a thread safe method (std::owner_less)
                         return operator()(l.get(), r.get());
                     } else {

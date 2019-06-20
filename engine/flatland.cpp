@@ -7,16 +7,19 @@
 #include <thread>
 
 
-flat::state& flat::state::get() {
+flat::state& flat::state::get()
+{
     static state singleton;
     return singleton;
 }
 
-void flat::state::set_renderer(wsdl2::renderer& r) {
+void flat::state::set_renderer(wsdl2::renderer& r)
+{
     m_renderer = &r;
 }
 
-wsdl2::renderer& flat::state::renderer() {
+wsdl2::renderer& flat::state::renderer()
+{
 #ifdef DEBUG
     if (m_renderer == nullptr) {
         throw std::runtime_error("requested renderer without having it set first (nullptr)");
@@ -26,18 +29,21 @@ wsdl2::renderer& flat::state::renderer() {
     return *m_renderer;
 }
 
-bool flat::initialize() {
+bool flat::initialize()
+{
     // instantiate singleton
     flat::state::get();
 
     return wsdl2::initialize();
 }
-    
-void flat::quit() {
+
+void flat::quit()
+{
     wsdl2::quit();
 }
 
-void flat::run() {
+void flat::run()
+{
     flat::state& s = flat::state::get();
     std::chrono::time_point<std::chrono::steady_clock> start, end;
 
@@ -46,7 +52,8 @@ void flat::run() {
     do {
         start = std::chrono::steady_clock::now();
 
-        { // poll events and push them into the engine's channel
+        {
+            // poll events and push them into the engine's channel
             using namespace wsdl2::event;
             while (auto&& ev = poll()) {
                 std::visit([&](auto&& event) {

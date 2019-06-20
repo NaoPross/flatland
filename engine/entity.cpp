@@ -9,12 +9,12 @@ entity::entity(vector_type pos, vector_type bound)
 {}
 
 std::pair<entity::bound_shape, std::variant<unsigned, entity::vector_type>>
-entity::bound() const
+        entity::bound() const
 {
     return std::make_pair(m_bound_shape, m_bound);
 }
 
-bool entity::collides(const entity&) const 
+bool entity::collides(const entity&) const
 {
     // TODO implementation
     npdebug("warning: this method is not implemented");

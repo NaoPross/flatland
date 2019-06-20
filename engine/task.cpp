@@ -4,12 +4,15 @@
 #include <list>
 
 
-namespace flat {
-    namespace core {
+namespace flat
+{
+    namespace core
+    {
         task::task(task::callback f, priority_t p)
             : prioritized(p), m_callback(f) {}
 
-        std::shared_ptr<task> job::delegate_task(task::callback f, priority_t p) {
+        std::shared_ptr<task> job::delegate_task(task::callback f, priority_t p)
+        {
             auto shared = std::make_shared<task>(f, p);
             insert(shared);
 
@@ -18,7 +21,8 @@ namespace flat {
             return shared;
         }
 
-        void job::add_task(task::callback f, priority_t p) {
+        void job::add_task(task::callback f, priority_t p)
+        {
             auto shared = std::make_shared<task>(f, p);
             insert(shared);
 
@@ -26,8 +30,9 @@ namespace flat {
             m_owned_tasks.push_front(shared);
         }
 
-        void job::invoke_tasks() {
-            
+        void job::invoke_tasks()
+        {
+
             // expired tasks to remove
             std::list<job::value_type> to_erase;
 

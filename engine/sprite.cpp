@@ -9,7 +9,7 @@ tileset::tileset(std::shared_ptr<wsdl2::texture> src) : m_texture(src)
 }
 
 tileset::tileset(std::shared_ptr<wsdl2::texture> src, std::size_t cell_w, std::size_t cell_h,
-    std::size_t margin /* = 0 */, std::size_t spacing /* = 0 */) 
+                 std::size_t margin /* = 0 */, std::size_t spacing /* = 0 */)
     : m_texture(src)
 {
     const std::size_t cols = (src->width()  - 2 * margin) / (cell_w + spacing);
@@ -29,18 +29,18 @@ tileset::tileset(std::shared_ptr<wsdl2::texture> src, std::size_t cell_w, std::s
 }
 
 tileset::tileset(std::shared_ptr<wsdl2::texture> src,
-        std::initializer_list<std::pair<unsigned, wsdl2::rect>> viewports)
+                 std::initializer_list<std::pair<unsigned, wsdl2::rect>> viewports)
     : std::unordered_map<unsigned, wsdl2::rect>(viewports.begin(), viewports.end()),
       m_texture(src)
 {}
 
 
 sprite::sprite(vector_type pos, std::shared_ptr<tileset> tileset,
-        unsigned tileset_index /* = 0 */)
+               unsigned tileset_index /* = 0 */)
     : renderable(),
       entity(pos, {
-          tileset->at(tileset_index).w / 2,
-          tileset->at(tileset_index).h / 2
+        tileset->at(tileset_index).w / 2,
+        tileset->at(tileset_index).h / 2
       }),
       m_tileset(tileset),
       m_tileset_index(tileset_index)

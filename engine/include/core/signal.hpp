@@ -20,7 +20,7 @@ namespace flat::core
 
     namespace helper
     {
-        /* class helper::signal 
+        /* class helper::signal
          *
          * is a non constructible, but copyable object used only as abstract
          * pointer type. To make anything with it must be first downcasted to a
@@ -47,12 +47,11 @@ namespace flat::core
 
     /* class signal<...Args>
      *
-     * is a tuple wrapper that contains function arguments (...Args) 
+     * is a tuple wrapper that contains function arguments (...Args)
      * that are later used to call a callback stored in a listener.
      */
-    template <typename ...Args> 
-    struct signal : public helper::signal
-    {
+    template <typename ...Args>
+    struct signal : public helper::signal {
         const std::tuple<Args...> args;
 
         /// disallow empty constructor
@@ -71,11 +70,11 @@ namespace flat::core
         //     : helper::signal(other.priority),
         //       args(std::move(other.args)) {}
 
-        constexpr signal(const Args&... _args)
+        constexpr signal(const Args& ... _args)
             : helper::signal(priority_t::none), args(_args...) {}
 
         /// normal (inefficient) constructor that copies arguments
-        constexpr signal(priority_t p, const Args&... _args)
+        constexpr signal(priority_t p, const Args& ... _args)
             : helper::signal(p), args(_args...) {}
 
         // constexpr signal(priority_t p, const Args&... _args)
@@ -83,7 +82,7 @@ namespace flat::core
 
         /// normal constructor that forwards arguments
         /// this optimizes rvalue initializations
-        constexpr signal(Args&&... _args)
+        constexpr signal(Args&& ... _args)
             : helper::signal(priority_t::none),
               args(std::forward<Args>(_args)...)
         {}
@@ -122,7 +121,7 @@ namespace flat::core
             listener() = default;
         };
     }
-        
+
     /* class listener<F, ...Args>
      *
      * is an object holding a callback, that can be only called by passing
@@ -166,7 +165,7 @@ namespace flat::core
             // signals are shared resources, but for a perfect forward
             // with move semantics the resource end up owned by the callback
             //
-            // therefore a system to give ownership of the signal OR the 
+            // therefore a system to give ownership of the signal OR the
             // shared pointer to the callback, must be set in place
             std::apply(m_callback, (p->args));
 
@@ -180,7 +179,7 @@ namespace flat::core
         callback m_callback;
     };
 
-    
+
     /* class channel
      *
      * is an object type through which signals are emitted.
@@ -193,7 +192,7 @@ namespace flat::core
         std::list<std::weak_ptr<helper::listener>> m_listeners;
         queue<std::shared_ptr<helper::signal>> m_signals;
 
-        /// task to call 
+        /// task to call
         std::shared_ptr<task> m_broadcast;
 
         /// connect a std::function (this is a helper), see others below
@@ -218,13 +217,13 @@ namespace flat::core
             return lis_ptr;
         }
 
-             
+
     public:
         using ptr = std::shared_ptr<channel>;
 
         /// constructor
         channel(job& broadcaster, priority_t p = priority_t::none);
-   
+
         /// not default constructible
         channel() = delete;
 
@@ -236,8 +235,8 @@ namespace flat::core
         channel(channel&&) = default;
 
         /// add a signal to the queue/stack of signals (m_signals)
-        template<class ...Args> 
-        void emit(Args&&... args)
+        template<class ...Args>
+        void emit(Args&& ... args)
         {
             // create a shared_ptr
             std::shared_ptr<signal<Args...>> p(
@@ -254,7 +253,7 @@ namespace flat::core
         }
 
         // TODO: fix
-        // template<class ...Args> 
+        // template<class ...Args>
         // void emit(signal<Args...>&& sig)
         // {
         // }
@@ -298,7 +297,7 @@ namespace flat::core
 
         /// connect a member function
         template<typename R, typename T, typename ...Args>
-        std::shared_ptr<listener<Args...>> connect(R (T::*mf)(Args ...args), T* obj)
+        std::shared_ptr<listener<Args...>> connect(R (T::*mf)(Args ...args), T *obj)
         {
             return _connect(static_cast<std::function<R(Args...)>>(
                 // closure that forwards ...args to mf called on obj

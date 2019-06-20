@@ -8,7 +8,8 @@
 #include <unordered_map>
 
 
-namespace flat {
+namespace flat
+{
 
     class sprite;
 

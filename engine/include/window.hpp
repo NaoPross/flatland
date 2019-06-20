@@ -8,22 +8,23 @@
 
 #include <string>
 
-namespace flat {
+namespace flat
+{
 
-	class window : public rendergroup, public wsdl2::window
-	{
-	public:
+    class window : public rendergroup, public wsdl2::window
+    {
+    public:
 
-	    using wsdl2::window::window;
+        using wsdl2::window::window;
 
-	    window(const std::string& title, 
-	           std::size_t width = 860, 
-	           std::size_t height = 640);
+        window(const std::string& title,
+               std::size_t width = 860,
+               std::size_t height = 640);
 
-	    // exactly the same as layer
-	    // but a window is not a renderbase class
-	    void render() override;
-	};
+        // exactly the same as layer
+        // but a window is not a renderbase class
+        void render() override;
+    };
 
 }
 #endif

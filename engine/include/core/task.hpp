@@ -6,13 +6,16 @@
 #include <memory>
 #include <list>
 
-namespace flat {
-    namespace core {
+namespace flat
+{
+    namespace core
+    {
         // forward decl
         class job;
         class task;
 
-        class task : public prioritized {
+        class task : public prioritized
+        {
         public:
             using ptr = std::shared_ptr<task>;
             using callback = std::function<void(void)>;
@@ -20,13 +23,17 @@ namespace flat {
             task() = delete;
             task(callback f, priority_t p = priority_t::none);
 
-            inline void operator()() const { m_callback(); }
+            inline void operator()() const
+            {
+                m_callback();
+            }
 
         private:
             callback m_callback;
         };
 
-        class job : protected queue<std::weak_ptr<task>> {
+        class job : protected queue<std::weak_ptr<task>>
+        {
         public:
             /// add a task function owned by the job object
             void add_task(task::callback f, priority_t p = priority_t::none);
@@ -37,7 +44,8 @@ namespace flat {
             /// add a task methods not owned by the job object (weak_ptr),
             ///  this allows to make the task die when the owner object goes out of scope
             template<typename R, typename T>
-            inline std::shared_ptr<task> delegate_task(R T::*mf, T* obj, priority_t p = priority_t::none) {
+            inline std::shared_ptr<task> delegate_task(R T::*mf, T *obj, priority_t p = priority_t::none)
+            {
                 return delegate_task(static_cast<task::callback>([=]() -> void {
                     (obj->*mf)();
                 }), p);
@@ -45,7 +53,10 @@ namespace flat {
 
             /// run tasks
             void invoke_tasks();
-            inline void operator()() { invoke_tasks(); } 
+            inline void operator()()
+            {
+                invoke_tasks();
+            }
 
         private:
             std::list<std::shared_ptr<task>> m_owned_tasks;
