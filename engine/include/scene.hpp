@@ -11,11 +11,16 @@
 #include <string>
 
 #include <unordered_map>
+#include <unordered_set>
 
 
 namespace flat
 {
-    class scene
+    /* 
+     * A group of textures, tilesets and sprites that manages intelligently its
+     * resources.
+     */
+    class scene : public rendergroup
     {
     public:
         scene();
@@ -36,7 +41,7 @@ namespace flat
             auto&& tex = _tex.value();
 
             if (auto&& valid_ptr = std::make_shared<tileset>(tex, args...)) {
-                m_tilesets.insert({tex, valid_ptr});
+                m_tilesets.insert(valid_ptr);
                 return valid_ptr;
             }
 
@@ -56,7 +61,8 @@ namespace flat
             auto&& tileset = _tileset.value();
 
             if (auto&& valid_ptr = std::make_shared<sprite>(tileset, args...)) {
-                m_sprites.insert({tileset, valid_ptr});
+                m_sprites.insert(valid_ptr);
+                insert(std::static_pointer_cast<renderable>(valid_ptr));
                 return valid_ptr;
             }
 
@@ -65,18 +71,24 @@ namespace flat
 
         // bool load_tileset(std::shared_ptr<wsdl2::texture> texture);
         // bool load_sprite(std::shared_ptr<wsdl2::texture> texture);
+
+        inline auto& sprites() { return m_sprites; }
         
     private:
-        rendergroup m_renderables;
+        std::unordered_set<std::shared_ptr<sprite>> m_sprites;
 
-        std::unordered_multimap<std::shared_ptr<tileset>,
-                           std::shared_ptr<sprite>> m_sprites;
-
-        std::unordered_multimap<std::shared_ptr<wsdl2::texture>,
-                           std::shared_ptr<tileset>> m_tilesets;
+        std::unordered_set<std::shared_ptr<tileset>> m_tilesets;
 
         std::unordered_map<const std::string,
                            std::shared_ptr<wsdl2::texture>,
                            std::hash<std::string>> m_textures;
+    };
+
+    /*
+     * A renderable object whose job is to always render only the current scene
+     */
+    struct theater : public renderable
+    {
+        void render() override;
     };
 }

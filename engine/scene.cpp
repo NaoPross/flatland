@@ -21,6 +21,8 @@ scene::load_texture(const std::string& path)
         // check that is not expired
         if (auto&& valid_ptr = state.m_textures[path].lock()) {
             npdebug("found texture already loaded in global state");
+            // copy to local state
+            m_textures.insert({path, valid_ptr});
             return valid_ptr;
         }
     }
@@ -28,7 +30,7 @@ scene::load_texture(const std::string& path)
     // load new texture
     if (auto&& surf = wsdl2::surface::load(path)) {
         auto tex = std::make_shared<wsdl2::texture>(state.renderer(), *surf);
-
+        // insert into local and global state
         m_textures.insert({path, tex});
         state.m_textures.insert({path, tex});
 
@@ -38,4 +40,9 @@ scene::load_texture(const std::string& path)
     }
 
     return std::nullopt;
+}
+
+void theater::render()
+{
+    state::get().current_scene().render();
 }

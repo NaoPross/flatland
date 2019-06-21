@@ -52,7 +52,8 @@ namespace flat
         std::shared_ptr<wsdl2::texture> m_texture;
     };
 
-    /* Any graphical entity with an image
+    /* 
+     * Any graphical entity with an image
      */
     class sprite : public renderable, public entity
     {

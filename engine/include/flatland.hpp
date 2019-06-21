@@ -65,7 +65,6 @@ namespace flat
                            std::weak_ptr<wsdl2::texture>> m_textures;
     };
 
-
     bool initialize();
     void quit();
 
