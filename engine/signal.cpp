@@ -14,7 +14,7 @@ channel::channel(job& broadcaster, priority_t p)
 
 void channel::broadcast()
 {
-    npdebug("broadcasting signals from channel ", this);
+    // npdebug("broadcasting signals from channel ", this);
     std::list<std::weak_ptr<helper::listener>> to_erase;
 
     for (auto&& sig : m_signals) {
@@ -25,13 +25,13 @@ void channel::broadcast()
                 if (pt->invoke(sig))
                     invoked = true;
             } else {
-                npdebug("found an expired listener");
+                // npdebug("found an expired listener");
                 to_erase.push_front(l);
             }
         }
 
         if (!invoked)  {
-            npdebug("signal ", sig, " was ignored (not invoked)");
+            // npdebug("signal ", sig, " was ignored (not invoked)");
         }
     }
 

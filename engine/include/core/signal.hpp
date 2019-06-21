@@ -154,11 +154,12 @@ namespace flat::core
 
             // if dynamic cast fails
             if (!p) {
-                npdebug("invoked listener ", this, " with non-matching signal ", s);
+                // npdebug("invoked listener ", this, " with non-matching signal ", s);
                 return false;
             }
 
-            npdebug("invoked listener ", this, " with signal ", p);
+            // npdebug("invoked listener ", this, " with signal ", p);
+
             // here happens a copy construction of args, there is
             // a fundamental problem that needs to be adressed
             //
@@ -243,7 +244,7 @@ namespace flat::core
                 new signal<Args...>(std::forward<Args>(args)...)
             );
 
-            npdebug("emitted signal ", p);
+            // npdebug("emitted signal ", p);
 
             // insert pointer
             m_signals.insert(

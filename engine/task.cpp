@@ -39,11 +39,11 @@ namespace flat
             for (auto tp : *this) {
                 // check that the task has not expired
                 if (std::shared_ptr<task> t = tp.lock()) {
-                    npdebug("invoked job ", t);
+                    // npdebug("invoked job ", t);
                     std::invoke(*t);
                 } else {
                     to_erase.push_back(tp);
-                    npdebug("found an expired job");
+                    // npdebug("found an expired job");
                 }
             }
 
