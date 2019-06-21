@@ -3,13 +3,14 @@
 #include "core/signal.hpp"
 #include "core/task.hpp"
 
-#include "renderable.hpp"
-#include "sprite.hpp"
+#include "scene.hpp"
 
 #include "wsdl2/wsdl2.hpp"
 #include "wsdl2/video.hpp"
 
 #include <unordered_map>
+#include <string>
+#include <stack>
 
 
 namespace flat
@@ -25,6 +26,8 @@ namespace flat
      */
     struct state {
     public:
+        friend class scene;
+
         /// indicate whether the engine is running
         bool running = false;
 
@@ -48,15 +51,18 @@ namespace flat
         void set_renderer(wsdl2::renderer& r);
         wsdl2::renderer& renderer();
 
+        scene& current_scene();
+
     private:
-        /// the event broadcast is handled by update
-        state() : events(update) {}
+        state();
+        
+        // scenes
+        std::stack<scene> m_scenes;
 
         /// renderer object
         wsdl2::renderer *m_renderer;
-
-        rendergroup m_renderables;
-        std::unordered_map<std::string, std::weak_ptr<wsdl2::texture>> m_textures;
+        std::unordered_map<std::string,
+                           std::weak_ptr<wsdl2::texture>> m_textures;
     };
 
 

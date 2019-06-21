@@ -6,6 +6,12 @@
 #include <chrono>
 #include <thread>
 
+/// the event broadcast is handled by update
+flat::state::state() : events(update)
+{
+    m_scenes.emplace();
+}
+
 
 flat::state& flat::state::get()
 {
@@ -28,6 +34,12 @@ wsdl2::renderer& flat::state::renderer()
 
     return *m_renderer;
 }
+
+flat::scene& flat::state::current_scene()
+{
+    return m_scenes.top();
+}
+
 
 bool flat::initialize()
 {

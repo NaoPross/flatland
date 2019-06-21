@@ -15,6 +15,7 @@ add_library(flatland SHARED
     ${CMAKE_CURRENT_SOURCE_DIR}/engine/signal.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/engine/entity.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/engine/sprite.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/engine/scene.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/engine/task.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/engine/window.cpp
 )
@@ -175,6 +176,31 @@ add_test(
     CONFIGURATIONS Debug
     WORKING_DIRECTORY test
     COMMAND sprite_test
+)
+
+# scene_test
+add_executable(scene_test test/scene_test.cpp)
+
+target_link_libraries(scene_test
+    PRIVATE
+        Flatland::flatland
+)
+
+target_compile_features(scene_test
+    PRIVATE
+        cxx_std_17
+)
+
+target_compile_definitions(scene_test
+    PRIVATE
+        $<$<CONFIG:Debug>:DEBUG>
+)
+
+add_test(
+    NAME scene_test
+    CONFIGURATIONS Debug
+    WORKING_DIRECTORY test
+    COMMAND scene_test
 )
 
 # entities_test 

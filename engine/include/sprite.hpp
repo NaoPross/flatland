@@ -59,8 +59,8 @@ namespace flat
     public:
         using vector_type = entity::vector_type;
 
-        sprite(vector_type pos,
-               std::shared_ptr<tileset> tileset,
+        sprite(std::shared_ptr<tileset> tileset,
+               vector_type pos,
                unsigned tileset_index = 0);
 
         // TODO: constructors for entity with weird shapes

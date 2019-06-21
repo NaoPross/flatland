@@ -26,7 +26,7 @@ int main() {
     flat::initialize();
 
     flat::state& engine = flat::state::get();
-    flat::window win("Sprite Test");
+    flat::window win("Scene Test");
 
     engine.update.add_task(&gloop);
 
@@ -39,22 +39,16 @@ int main() {
         }
     );
 
+    engine.set_renderer(win.get_renderer());
+    auto s = engine.current_scene()
+        .load_sprite("test/res/chiara.bmp", mm::vec2<int>{0, 0})
+        .value();
 
-    // sprite initialization
-    if (auto surf = wsdl2::surface::load("test/res/chiara.bmp")) {
-        auto tex = std::make_shared<wsdl2::texture>(win.get_renderer(), *surf);
-        auto tileset = std::make_shared<flat::tileset>(tex);
-        auto sprite = std::make_shared<flat::sprite>(tileset, mm::vec2<int>{0, 0});
+    s->move({100, 100});
 
-        sprite->move(mm::vec2<int>{100, 100});
-
-        win.insert(std::static_pointer_cast<flat::renderable>(sprite));
-    } else {
-        npdebug("failed to load texture")
-        return -1;
-    }
-    
+    win.insert(std::static_pointer_cast<flat::renderable>(s));
     win.open();
+
     flat::run();
     flat::quit();
 

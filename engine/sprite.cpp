@@ -35,7 +35,7 @@ tileset::tileset(std::shared_ptr<wsdl2::texture> src,
 {}
 
 
-sprite::sprite(vector_type pos, std::shared_ptr<tileset> tileset,
+sprite::sprite(std::shared_ptr<tileset> tileset, vector_type pos,
                unsigned tileset_index /* = 0 */)
     : renderable(),
       entity(pos, {
