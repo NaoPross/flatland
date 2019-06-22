@@ -6,12 +6,15 @@
 #include <chrono>
 #include <thread>
 
+
+/* state singleton */
+
 /// the event broadcast is handled by update
 flat::state::state() : events(update)
 {
+    // create an empty scene
     m_scenes.emplace();
 }
-
 
 flat::state& flat::state::get()
 {
@@ -35,11 +38,30 @@ wsdl2::renderer& flat::state::renderer()
     return *m_renderer;
 }
 
+void flat::state::new_scene()
+{
+    pop_scene();
+    m_scenes.emplace();
+}
+
 flat::scene& flat::state::current_scene()
 {
     return m_scenes.top();
 }
 
+void flat::state::push_scene(flat::scene&& s)
+{
+    m_scenes.push(s);
+}
+
+void flat::state::pop_scene()
+{
+    if (m_scenes.size() > 1)
+        m_scenes.pop();
+}
+
+
+/* free functions */
 
 bool flat::initialize()
 {

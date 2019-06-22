@@ -13,7 +13,7 @@ namespace flat
 
     class sprite;
 
-    /* A wrapper around a texture referenced by sprites
+    /* A wrapper around a texture, referenced by sprites
      *
      * The purpose of a tileset is to map parts of an image (rectangles, viewports)
      * (tileset source texture) to numbers which the sprite uses to access.

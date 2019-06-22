@@ -9,6 +9,7 @@
 #include "wsdl2/video.hpp"
 
 #include <unordered_map>
+#include <optional>
 #include <string>
 #include <stack>
 
@@ -48,10 +49,15 @@ namespace flat
 
         static state& get();
 
+        /// renderer
         void set_renderer(wsdl2::renderer& r);
         wsdl2::renderer& renderer();
 
+        /// scenes
         scene& current_scene();
+        void new_scene(); // pop and create a new scene 
+        void push_scene(scene&& s);
+        void pop_scene();
 
     private:
         state();
@@ -61,8 +67,9 @@ namespace flat
 
         /// renderer object
         wsdl2::renderer *m_renderer;
-        std::unordered_map<std::string,
-                           std::weak_ptr<wsdl2::texture>> m_textures;
+        std::unordered_map<const std::string,
+                           std::weak_ptr<wsdl2::texture>,
+                           std::hash<std::string>> m_textures;
     };
 
     bool initialize();

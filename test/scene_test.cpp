@@ -56,8 +56,6 @@ int main() {
         .load_sprite("test/res/chiara.bmp", mm::vec2<int>{0, 0})
         .value();
 
-    s->move({100, 100});
-
     win.insert(std::make_shared<flat::theater>());
     win.open();
 
