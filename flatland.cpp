@@ -1,6 +1,6 @@
-#include "flatland.hpp"
+#include "flatland/flatland.hpp"
 
-#include "wsdl2/event.hpp"
+#include <wsdl2/event.hpp>
 
 #include <variant>
 #include <chrono>

@@ -10,14 +10,14 @@ project(
 
 # defining flatland target and giving sources
 add_library(flatland SHARED
-    ${CMAKE_CURRENT_SOURCE_DIR}/engine/flatland.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/engine/renderable.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/engine/signal.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/engine/entity.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/engine/sprite.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/engine/scene.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/engine/task.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/engine/window.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/flatland.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/renderable.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/signal.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/entity.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/sprite.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/scene.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/task.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/window.cpp
 )
 
 add_library(Flatland::flatland ALIAS flatland)
@@ -45,14 +45,17 @@ list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake)
 
 # find dependencies
 find_package(MM 0.1 REQUIRED
-                HINTS $<$<CMAKE_SYSTEM:Linux>:/usr/local/lib/)
+                HINTS $<$<CMAKE_SYSTEM:Linux>:/usr/local/lib/>)
 
 find_package(WSDL2 0.1 REQUIRED
-                HINTS $<$<CMAKE_SYSTEM:Linux>:/usr/local/lib/)
+                HINTS $<$<CMAKE_SYSTEM:Linux>:/usr/local/lib/>)
+
+find_package(sol2 3.0 REQUIRED
+                HINTS $<$<CMAKE_SYSTEM:Linux>:/usr/local/lib/>)
 
 # external libraries ( SDL? )
 target_link_libraries(flatland
-    INTERFACE
+    PUBLIC
         MM::MM
         WSDL2::WSDL2
 )
@@ -61,9 +64,9 @@ target_link_libraries(flatland
 target_include_directories(flatland
     PUBLIC
         $<INSTALL_INTERFACE:include>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/engine/include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/engine
+        ${CMAKE_CURRENT_SOURCE_DIR}/
 )
 
 target_compile_definitions(flatland
@@ -74,184 +77,8 @@ target_compile_definitions(flatland
 #################
 # Test section
 #################
+add_subdirectory(test)
 
-enable_testing()
-
-# task_test
-add_executable(task_test test/task_test.cpp)
-
-target_link_libraries(task_test
-    PRIVATE
-        Flatland::flatland
-)
-
-target_compile_features(task_test
-    PRIVATE
-        cxx_std_17
-)
-
-target_compile_definitions(task_test
-    PRIVATE
-        $<$<CONFIG:Debug>:DEBUG>
-)
-
-add_test(
-    NAME task_test
-    CONFIGURATIONS Debug
-    WORKING_DIRECTORY test
-    COMMAND task_test
-)
-
-# signal_test
-add_executable(signal_test test/signal_test.cpp)
-
-target_link_libraries(signal_test
-    PRIVATE
-        Flatland::flatland
-)
-
-target_compile_features(signal_test
-    PRIVATE
-        cxx_std_17
-)
-
-target_compile_definitions(signal_test
-    PRIVATE
-        $<$<CONFIG:Debug>:DEBUG>
-)
-
-add_test(
-    NAME signal_test
-    CONFIGURATIONS Debug
-    WORKING_DIRECTORY test
-    COMMAND signal_test
-)
-
-
-# window_test
-add_executable(window_test test/window_test.cpp)
-
-target_link_libraries(window_test
-    PRIVATE
-        Flatland::flatland
-)
-
-target_compile_features(window_test
-    PRIVATE
-        cxx_std_17
-)
-
-target_compile_definitions(window_test
-    PRIVATE
-        $<$<CONFIG:Debug>:DEBUG>
-)
-
-add_test(
-    NAME window_test
-    CONFIGURATIONS Debug
-    WORKING_DIRECTORY test
-    COMMAND window_test
-)
-
-# sprite_test
-add_executable(sprite_test test/sprite_test.cpp)
-
-target_link_libraries(sprite_test
-    PRIVATE
-        Flatland::flatland
-)
-
-target_compile_features(sprite_test
-    PRIVATE
-        cxx_std_17
-)
-
-target_compile_definitions(sprite_test
-    PRIVATE
-        $<$<CONFIG:Debug>:DEBUG>
-)
-
-add_test(
-    NAME sprite_test
-    CONFIGURATIONS Debug
-    WORKING_DIRECTORY test
-    COMMAND sprite_test
-)
-
-# scene_test
-add_executable(scene_test test/scene_test.cpp)
-
-target_link_libraries(scene_test
-    PRIVATE
-        Flatland::flatland
-)
-
-target_compile_features(scene_test
-    PRIVATE
-        cxx_std_17
-)
-
-target_compile_definitions(scene_test
-    PRIVATE
-        $<$<CONFIG:Debug>:DEBUG>
-)
-
-add_test(
-    NAME scene_test
-    CONFIGURATIONS Debug
-    WORKING_DIRECTORY test
-    COMMAND scene_test
-)
-
-# entities_test 
-add_executable(entities_test test/entities_test.cpp)
-
-target_link_libraries(entities_test
-    PRIVATE
-        Flatland::flatland
-)
-
-target_compile_features(entities_test
-    PRIVATE
-        cxx_std_17
-)
-
-target_compile_definitions(entities_test
-    PRIVATE
-        $<$<CONFIG:Debug>:DEBUG>
-)
-
-add_test(
-    NAME entities_test
-    CONFIGURATIONS Debug
-    WORKING_DIRECTORY test
-    COMMAND entities_test 
-)
-
-# flatland_test 
-add_executable(flatland_test test/flatland_test.cpp)
-
-target_link_libraries(flatland_test
-    PRIVATE
-        Flatland::flatland
-)
-
-target_compile_features(flatland_test
-    PRIVATE
-        cxx_std_17
-)
-
-target_compile_definitions(flatland_test
-    PRIVATE
-        $<$<CONFIG:Debug>:DEBUG>
-)
-
-add_test(
-    NAME flatland_test
-    CONFIGURATIONS Debug
-    WORKING_DIRECTORY test
-    COMMAND flatland_test 
-)
 
 # manage git submodule mm
 #find_path(MM_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib/libmm/include)
@@ -301,23 +128,26 @@ set_target_properties(flatland PROPERTIES EXPORT_NAME Flatland)
 # install public headers
 install(
     FILES  
-        ${CMAKE_CURRENT_SOURCE_DIR}/engine/include/flatland.hpp  
-        ${CMAKE_CURRENT_SOURCE_DIR}/engine/include/layer.hpp  
-        ${CMAKE_CURRENT_SOURCE_DIR}/engine/include/renderbase.hpp  
-        ${CMAKE_CURRENT_SOURCE_DIR}/engine/include/serial.hpp  
-        ${CMAKE_CURRENT_SOURCE_DIR}/engine/include/bound.hpp  
-        ${CMAKE_CURRENT_SOURCE_DIR}/engine/include/sprite.hpp  
-        ${CMAKE_CURRENT_SOURCE_DIR}/engine/include/types.hpp  
-        ${CMAKE_CURRENT_SOURCE_DIR}/engine/include/window.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/core/priority.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/core/signal.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/core/task.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/entity.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/debug.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/flatland.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/renderable.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/scene.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/sprite.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/window.hpp
+
     DESTINATION
         ${CMAKE_INSTALL_INCLUDEDIR}/flatland
 )
 
 install(
     DIRECTORY 
-        ${CMAKE_CURRENT_SOURCE_DIR}/engine/include/core
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/core
     DESTINATION
-        ${CMAKE_INSTALL_INCLUDEDIR}/flatland
+        ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
 # export targets

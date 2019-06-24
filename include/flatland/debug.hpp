@@ -39,8 +39,13 @@ namespace _np
 
 #else
 
+#ifndef npdebug
 #define npdebug(...); {}
+#endif
+
+#ifndef npinspect
 #define npinspect(...); {}
+#endif
 
 namespace _np
 {

@@ -1,9 +1,9 @@
-#include "flatland.hpp"
+#include "flatland/flatland.hpp"
 
-#include "window.hpp"
-#include "debug.hpp"
+#include "flatland/window.hpp"
+#include "flatland/debug.hpp"
 
-#include "wsdl2/event.hpp"
+#include <wsdl2/event.hpp>
 
 #include <functional>
 #include <iostream>

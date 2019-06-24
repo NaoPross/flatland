@@ -1,5 +1,5 @@
-#include "core/signal.hpp"
-#include "debug.hpp"
+#include "flatland/core/signal.hpp"
+#include "flatland/debug.hpp"
 
 #include <functional>
 

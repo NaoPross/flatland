@@ -1,12 +1,13 @@
-#include "flatland.hpp"
+#include "flatland/flatland.hpp"
 
-#include "wsdl2/event.hpp"
-#include "core/task.hpp"
-#include "core/signal.hpp"
+#include "flatland/core/task.hpp"
+#include "flatland/core/signal.hpp"
 
-#include "window.hpp"
-#include "sprite.hpp"
-#include "debug.hpp"
+#include "flatland/window.hpp"
+#include "flatland/sprite.hpp"
+#include "flatland/debug.hpp"
+
+#include <wsdl2/event.hpp>
 
 
 void gloop() {

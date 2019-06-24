@@ -1,6 +1,6 @@
-#include "scene.hpp"
+#include "flatland/scene.hpp"
 
-#include "flatland.hpp"
+#include "flatland/flatland.hpp"
 
 using namespace flat;
 

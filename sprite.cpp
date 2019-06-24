@@ -1,4 +1,4 @@
-#include "sprite.hpp"
+#include "flatland/sprite.hpp"
 
 
 using namespace flat;

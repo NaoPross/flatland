@@ -1,9 +1,8 @@
-#include "window.hpp"
+#include "flatland/window.hpp"
 
-#include "core/signal.hpp"
-#include "flatland.hpp"
+#include "flatland/core/signal.hpp"
+#include "flatland/flatland.hpp"
 
-#include <SDL2/SDL.h>
 #include <iostream>
 
 

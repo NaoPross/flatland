@@ -2,7 +2,7 @@
 
 #include "task.hpp"
 #include "priority.hpp"
-#include "../../debug.hpp"
+#include "../debug.hpp"
 
 #include <tuple>
 #include <list>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "wsdl2/video.hpp"
+#include <wsdl2/video.hpp>
 
 #include "renderable.hpp"
 #include "sprite.hpp"
