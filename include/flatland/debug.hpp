@@ -1,63 +1,78 @@
 #pragma once
 
-#ifndef NPDEBUG
-#define NPDEBUG
+#ifndef __NPDEBUG__
+#define __NPDEBUG__
 
-#ifdef DEBUG
 #include <iostream>
 #include <sstream>
 
-#define __FILENAME__ (\
-    __builtin_strrchr(__FILE__, '/') ? \
-    __builtin_strrchr(__FILE__, '/') + 1 : __FILE__)
+#ifndef NDEBUG
+    #define __FILENAME__ (\
+        __builtin_strrchr(__FILE__, '/') ? \
+        __builtin_strrchr(__FILE__, '/') + 1 : __FILE__)
 
-#define npdebug(...); { \
-    std::cerr << "[" << __FILENAME__ \
-              << ":" << __LINE__ \
-              << ", " << __func__ \
-              << "] " ; \
-    _np::debug(__VA_ARGS__); \
-}
-
-#define npinspect(msg, expr, ...); _np::inspect(msg, expr, __VA_ARGS__);
-
-namespace _np
-{
-    template<typename... Args>
-    inline void debug(const Args& ... args)
-    {
-        (std::cerr << ... << args) << std::endl;
+    #define npdebug_prep(); { \
+            std::cerr << "[" << __FILENAME__ \
+                      << ":" << __LINE__ \
+                      << ", " << __func__ \
+                      << "] " ; \
     }
 
-    template<typename Msg, typename Expr, typename... Args>
-    inline Expr& inspect(const Msg& msg, Expr& expr, const Args& ... args)
-    {
-        npdebug(msg, expr, args...);
-        return expr;
+    #define npdebug(...); { \
+        npdebug_prep(); \
+        np::va_debug(__VA_ARGS__); \
     }
-}
 
+    namespace np {
+        template<typename... Args>
+        inline void va_debug(Args&&... args) {
+            (std::cerr << ... << args) << std::endl;
+        }
+
+        template<typename T>
+        void range_debug(const T& t) {
+            range_debug("", t);
+        }
+
+        template<typename T>
+        void range_debug(const std::string& msg, const T& t) {
+            std::string out;
+            for (auto elem : t)
+                out += elem += ", ";
+
+            npdebug(msg, out);
+        }
+
+        template<typename T>
+        T inspect(const T& t) {
+            npdebug(t);
+            return t;
+        }
+
+        template<typename T>
+        T inspect(const std::string& msg, const T& t) {
+            npdebug(msg, t);
+            return t;
+        }
+    }
 #else
+    #define npdebug(...) {}
 
-#ifndef npdebug
-#define npdebug(...); {}
-#endif
+    namespace np {
+        template<typename... Args>
+        inline void va_debug(Args&... args) {}
 
-#ifndef npinspect
-#define npinspect(...); {}
-#endif
+        template<typename T>
+        inline void range_debug(const T& t) {}
 
-namespace _np
-{
-    template<typename... Args>
-    void debug(Args& ... args) {}
+        template<typename T>
+        inline void range_debug(const std::string& msg, const T& t) {}
 
-    template<typename Msg, typename Expr, typename... Args>
-    inline Expr& inspect(const Msg& msg, Expr& expr, const Args& ... args)
-    {
-        return expr;
+        template<typename T>
+        T inspect(const T& t) { return t; }
+
+        template<typename T>
+        T inspect(const std::string& msg, const T& t) { return t; }
     }
-}
-
-#endif // defined DEBUG
-#endif // not defined NPDEBUG
+#endif // NDEBUG
+#endif // __NPDEBUG__
