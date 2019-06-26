@@ -10,6 +10,7 @@
 
 #include <unordered_map>
 #include <optional>
+#include <memory>
 #include <string>
 #include <stack>
 
@@ -43,14 +44,12 @@ namespace flat
         /// input events
         core::channel events;
 
-        /// singleton pattern
-        state(const state& other) = delete;
-        void operator=(const state& other) = delete;
-
+        // singleton access methods
+        static state& create(wsdl2::renderer& r);
         static state& get();
 
-        /// renderer
-        void set_renderer(wsdl2::renderer& r);
+        /// renderer getter and setter
+        void renderer(wsdl2::renderer& r);
         wsdl2::renderer& renderer();
 
         /// scenes
@@ -60,8 +59,12 @@ namespace flat
         void pop_scene();
 
     private:
-        state();
-        
+        explicit state(wsdl2::renderer& r);
+
+        explicit state(state&& other) = delete;
+        explicit state(const state& other) = delete;
+        void operator=(const state& other) = delete;
+
         // scenes
         std::stack<scene> m_scenes;
 

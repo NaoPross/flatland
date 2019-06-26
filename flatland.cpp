@@ -8,21 +8,46 @@
 
 
 /* state singleton */
+/// singleton object
+static flat::state *flat_state_singleton = nullptr;
 
 /// the event broadcast is handled by update
-flat::state::state() : events(update)
+flat::state::state(wsdl2::renderer&) : events(update)
 {
     // create an empty scene
     m_scenes.emplace();
 }
 
-flat::state& flat::state::get()
+flat::state& flat::state::create(wsdl2::renderer& r)
 {
-    static state singleton;
+    static flat::state singleton = flat::state(r);
+
+#ifndef NDEBUG
+    if (flat_state_singleton != nullptr) {
+        throw std::logic_error(
+            "flat::state::create(...) was called 2 (or more) times"
+        );
+    }
+#endif
+
+    flat_state_singleton = &singleton;
     return singleton;
 }
 
-void flat::state::set_renderer(wsdl2::renderer& r)
+flat::state& flat::state::get()
+{
+#ifndef NDEBUG
+    if (flat_state_singleton == nullptr) {
+        throw std::logic_error(
+            "flat::state::create(...) was not called, "
+            "singleton not initialized"
+        );
+    }
+#endif
+    return *flat_state_singleton;
+}
+
+void flat::state::renderer(wsdl2::renderer& r)
 {
     m_renderer = &r;
 }
@@ -65,9 +90,6 @@ void flat::state::pop_scene()
 
 bool flat::initialize()
 {
-    // instantiate singleton
-    flat::state::get();
-
     return wsdl2::initialize();
 }
 

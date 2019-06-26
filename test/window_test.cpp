@@ -26,8 +26,8 @@ int main() {
 
     flat::initialize();
 
-    flat::state& engine = flat::state::get();
     flat::window win("Window Test");
+    flat::state& engine = flat::state::create(win.get_renderer());
 
     engine.update.add_task(&gloop);
 

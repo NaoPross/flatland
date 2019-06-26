@@ -23,11 +23,8 @@ namespace test {
 int main(int, char**) {
     flat::initialize();
 
-    flat::state& engine = flat::state::get();
     flat::window win("Flatland Test");
-
-    engine.set_renderer(win.get_renderer());
-
+    flat::state& engine = flat::state::create(win.get_renderer());
 
     // connect events callbacks
     auto keylist = engine.events.connect<void, wsdl2::event::key>(

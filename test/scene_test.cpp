@@ -40,8 +40,8 @@ void keypressed(const wsdl2::event::key event) {
 int main() {
     flat::initialize();
 
-    flat::state& engine = flat::state::get();
     flat::window win("Scene Test");
+    flat::state& engine = flat::state::create(win.get_renderer());
 
     auto render_task = engine.render.delegate_task(&flat::window::render, &win);
 
@@ -52,7 +52,6 @@ int main() {
         }
     );
 
-    engine.set_renderer(win.get_renderer());
     auto s = engine.current_scene()
         .load_sprite("test/res/chiara.bmp", mm::vec2<int>{0, 0})
         .value();

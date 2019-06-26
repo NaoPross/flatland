@@ -26,8 +26,8 @@ void key_cb(const wsdl2::event::key event) {
 int main() {
     flat::initialize();
 
-    flat::state& engine = flat::state::get();
     flat::window win("Sprite Test");
+    flat::state& engine = flat::state::create(win.get_renderer());
 
     engine.update.add_task(&gloop);
 

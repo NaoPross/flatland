@@ -23,6 +23,8 @@ namespace flat
     class scene : public rendergroup
     {
     public:
+        std::string title = "Untitled Scene";
+
         scene();
 
         std::optional<std::shared_ptr<wsdl2::texture>>
