@@ -14,11 +14,15 @@ std::pair<entity::bound_shape, std::variant<unsigned, entity::vector_type>>
     return std::make_pair(m_bound_shape, m_bound);
 }
 
-bool entity::collides(const entity&) const
+bool entity::collides(const entity& other) const
 {
-    // TODO implementation
-    npdebug("warning: this method is not implemented");
-    return false;
+    if (m_bound_shape == bound_shape::rectangle) {
+        return rect().intersects(other.rect());
+    } else {
+        // TODO implementation
+        std::logic_error("warning: this method is not implemented");
+        return false;
+    }
 }
 
 
