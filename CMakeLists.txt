@@ -35,6 +35,10 @@ target_compile_options(flatland
         $<$<CXX_COMPILER_ID:MSVC>: /W4>
 )
 
+# target_link_libraries(flatland
+#     PRIVATE "$<$<CXX_COMPILER_ID:GNU>:-fsanitize=address -fno-omit-frame-pointer>"
+# )
+
 # setting up c++ standard 17
 target_compile_features(flatland
     PRIVATE

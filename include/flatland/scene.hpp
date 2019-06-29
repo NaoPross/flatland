@@ -4,6 +4,7 @@
 
 #include "renderable.hpp"
 #include "sprite.hpp"
+#include "entity.hpp"
 
 
 #include <memory>

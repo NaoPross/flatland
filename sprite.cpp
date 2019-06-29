@@ -38,7 +38,7 @@ tileset::tileset(std::shared_ptr<wsdl2::texture> src,
 sprite::sprite(std::shared_ptr<tileset> tileset, vector_type pos,
                unsigned tileset_index /* = 0 */)
     : renderable(),
-      entity(pos, {
+      entity(pos, { 0, 0,
         tileset->at(tileset_index).w / 2,
         tileset->at(tileset_index).h / 2
       }),
@@ -48,7 +48,7 @@ sprite::sprite(std::shared_ptr<tileset> tileset, vector_type pos,
 
 void sprite::render()
 {
-    auto r = rect();
+    auto&& r = enclosing_rect();
 
     m_tileset->m_texture->render(
         m_tileset->at(m_tileset_index), r
