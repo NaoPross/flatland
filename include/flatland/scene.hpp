@@ -96,7 +96,7 @@ namespace flat
     /*
      * A renderable object whose job is to always render only the current scene
      */
-    struct theater : public renderable
+    struct theater : public trait::renderable
     {
         void render() override;
     };

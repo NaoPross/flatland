@@ -55,7 +55,7 @@ namespace flat
     /* 
      * Any graphical entity with an image
      */
-    class sprite : public renderable, public entity
+    class sprite : public trait::renderable, public entity
     {
     public:
         using vector_type = entity::vector_type;
@@ -68,7 +68,7 @@ namespace flat
 
         virtual void render() override;
 
-    private:
+    protected:
         std::shared_ptr<tileset> m_tileset;
         unsigned m_tileset_index;
     };

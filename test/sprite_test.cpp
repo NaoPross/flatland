@@ -49,7 +49,7 @@ int main() {
 
         sprite->move(mm::vec2<int>{100, 100});
 
-        win.insert(std::static_pointer_cast<flat::renderable>(sprite));
+        win.insert(std::static_pointer_cast<flat::trait::renderable>(sprite));
     } else {
         npdebug("failed to load texture")
         return -1;

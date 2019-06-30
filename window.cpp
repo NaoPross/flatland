@@ -18,7 +18,7 @@ void window::render()
     get_renderer().clear();
 
     for(auto&& child : *this) {
-        if (child->is_visible())
+        if (child->visible)
             child->render();
     }
 

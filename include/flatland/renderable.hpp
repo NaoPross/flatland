@@ -7,49 +7,37 @@
 
 namespace flat
 {
-    /// Literally anything that needs to be rendered
-    struct renderable {
-    public:
-        /* The Z value indicates the rendering order.
-         * A Z value of 0 is just after the background.
-         * the higher the value the more on the front (rendered on top)
-         */
-        unsigned z = 0;
-        bool visible = true;
+    namespace trait {
+        /// Literally anything that needs to be rendered
+        struct renderable {
+        public:
+            /* The Z value indicates the rendering order.
+            * A Z value of 0 is just after the background.
+            * the higher the value the more on the front (rendered on top)
+            */
+            unsigned z = 0;
+            bool visible = true;
 
-        virtual ~renderable() {}
-        virtual void render() = 0;
-
-        void hide()
-        {
-            visible = false;
-        }
-
-        void show()
-        {
-            visible = true;
-        }
-
-        bool is_visible()
-        {
-            return visible;
-        }
-    };
+            virtual ~renderable() {}
+            virtual void render() = 0;
+        };
+    }
 
     /* A group of renderable objects sorted by their z value */
-    class rendergroup : public renderable, public std::set<std::shared_ptr<renderable>>
+    class rendergroup : public trait::renderable,
+                        public std::set<std::shared_ptr<trait::renderable>>
     {
     public:
         void render() override
         {
             for (auto&& child : *this)
-                if (child->is_visible())
+                if (child->visible)
                     child->render();
         }
     };
 }
 
-inline bool operator<(const flat::renderable& lhs, const flat::renderable& rhs)
+inline bool operator<(const flat::trait::renderable& lhs, const flat::trait::renderable& rhs)
 {
     return lhs.z < rhs.z;
 }
