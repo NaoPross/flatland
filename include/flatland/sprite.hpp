@@ -1,10 +1,9 @@
 #pragma once
 
-#include "wsdl2/video.hpp"
+#include "trait/renderable.hpp"
+#include "trait/positioned.hpp"
 
-#include "renderable.hpp"
-#include "entity.hpp"
-
+#include <wsdl2/video.hpp>
 #include <unordered_map>
 
 
@@ -55,21 +54,24 @@ namespace flat
     /* 
      * Any graphical entity with an image
      */
-    class sprite : public trait::renderable, public entity
+    class sprite : public trait::renderable,
+                   public trait::positioned
     {
     public:
-        using vector_type = entity::vector_type;
+        sprite(std::shared_ptr<tileset> tileset, unsigned index = 0);
 
-        sprite(std::shared_ptr<tileset> tileset,
-               vector_type pos,
-               unsigned tileset_index = 0);
+        /// trait::renderable
+        virtual void render() const override {}
+        virtual void render(wsdl2::rect target) const;
 
-        // TODO: constructors for entity with weird shapes
-
-        virtual void render() override;
+        /// trait::positioned
+        mm::vec2<int>& pos() override { return m_pos; }
+        void pos(const mm::vec2<int>& newpos) override { m_pos = newpos; }
 
     protected:
+        mm::vec2<int> m_pos;
+
         std::shared_ptr<tileset> m_tileset;
-        unsigned m_tileset_index;
+        unsigned m_ts_index;
     };
 }

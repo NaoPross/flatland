@@ -35,22 +35,15 @@ tileset::tileset(std::shared_ptr<wsdl2::texture> src,
 {}
 
 
-sprite::sprite(std::shared_ptr<tileset> tileset, vector_type pos,
-               unsigned tileset_index /* = 0 */)
-    : renderable(),
-      entity(pos, { 0, 0,
-        tileset->at(tileset_index).w / 2,
-        tileset->at(tileset_index).h / 2
-      }),
-      m_tileset(tileset),
-      m_tileset_index(tileset_index)
+/* class sprite */
+
+sprite::sprite(std::shared_ptr<tileset> tileset, unsigned index /* = 0 */)
+    : m_pos({0, 0}), m_tileset(tileset), m_ts_index(index)
 {}
 
-void sprite::render()
+void sprite::render(wsdl2::rect target) const
 {
-    auto&& r = enclosing_rect();
-
     m_tileset->m_texture->render(
-        m_tileset->at(m_tileset_index), r
+        m_tileset->at(m_ts_index), target
     );
 }

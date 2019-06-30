@@ -42,7 +42,7 @@ scene::load_texture(const std::string& path)
     return std::nullopt;
 }
 
-void theater::render()
+void theater::render() const
 {
     state::get().current_scene().render();
 }

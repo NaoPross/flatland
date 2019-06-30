@@ -1,19 +1,12 @@
 #pragma once
 
-#include <wsdl2/video.hpp>
-
-#include "renderable.hpp"
+#include "flatland/trait/renderable.hpp"
 #include "sprite.hpp"
-#include "entity.hpp"
+#include "debug.hpp"
 
-
-#include <memory>
 #include <optional>
-#include <string>
-
-#include <unordered_map>
 #include <unordered_set>
-
+#include <unordered_map>
 
 namespace flat
 {
@@ -98,6 +91,6 @@ namespace flat
      */
     struct theater : public trait::renderable
     {
-        void render() override;
+        void render() const override;
     };
 }

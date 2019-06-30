@@ -7,7 +7,8 @@
 
 namespace flat
 {
-    namespace trait {
+    namespace trait
+    {
         /// Literally anything that needs to be rendered
         struct renderable {
         public:
@@ -18,8 +19,8 @@ namespace flat
             unsigned z = 0;
             bool visible = true;
 
-            virtual ~renderable() {}
-            virtual void render() = 0;
+            virtual ~renderable() = default;
+            virtual void render() const = 0;
         };
     }
 
@@ -28,7 +29,7 @@ namespace flat
                         public std::set<std::shared_ptr<trait::renderable>>
     {
     public:
-        void render() override
+        void render() const override
         {
             for (auto&& child : *this)
                 if (child->visible)

@@ -1,1 +1,1 @@
-#include "flatland/renderable.hpp"
+#include "flatland/trait/renderable.hpp"

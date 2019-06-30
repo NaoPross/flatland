@@ -13,10 +13,11 @@ add_library(flatland SHARED
     ${CMAKE_CURRENT_SOURCE_DIR}/flatland.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/renderable.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/signal.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/entity.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/bounded.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sprite.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/scene.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/task.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/widget.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/window.cpp
 )
 
@@ -67,8 +68,8 @@ target_link_libraries(flatland
 # include directories
 target_include_directories(flatland
     PUBLIC
-        $<INSTALL_INTERFACE:include>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include/>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/>
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/
 )
@@ -132,15 +133,20 @@ set_target_properties(flatland PROPERTIES EXPORT_NAME Flatland)
 # install public headers
 install(
     FILES  
+        # core
         ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/core/priority.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/core/signal.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/core/task.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/entity.hpp
+        # traits
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/trait/bounded.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/trait/positioned.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/trait/renderable.hpp
+        # others
         ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/debug.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/flatland.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/renderable.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/scene.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/sprite.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/widget.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/window.hpp
 
     DESTINATION

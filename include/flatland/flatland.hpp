@@ -5,7 +5,6 @@
 
 #include "scene.hpp"
 
-#include <wsdl2/wsdl2.hpp>
 #include <wsdl2/video.hpp>
 
 #include <unordered_map>

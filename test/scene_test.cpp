@@ -53,7 +53,7 @@ int main() {
     );
 
     auto s = engine.current_scene()
-        .load_sprite("test/res/chiara.bmp", mm::vec2<int>{0, 0})
+        .load_sprite("test/res/chiara.bmp")
         .value();
 
     win.insert(std::make_shared<flat::theater>());
