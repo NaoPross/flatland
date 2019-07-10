@@ -19,6 +19,7 @@ add_library(flatland SHARED
     ${CMAKE_CURRENT_SOURCE_DIR}/task.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/widget.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/window.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/luaint/lua_scene.cpp
 )
 
 add_library(Flatland::flatland ALIAS flatland)
@@ -141,6 +142,8 @@ install(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/trait/bounded.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/trait/positioned.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/trait/renderable.hpp
+        # lua
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/luaint/lua_scene.hpp
         # others
         ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/debug.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/flatland.hpp

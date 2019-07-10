@@ -1,4 +1,4 @@
-#include "lua/lua_scene.hpp"
+#include "luaint/lua_scene.hpp"
 #include "scene.hpp"
 
 using namespace flatland;
