@@ -35,6 +35,20 @@ namespace flatland::lua {
         // TODO, some low level operation
     };
 
+    class scene : public flatland::scene
+    {
+    public:
+        using flatland::scene::scene;
+
+        std::object lua_load_texture(const std::string& path)
+        {
+            auto opt = load_texture(path);
+            return (opt) ? texture(path, *this, *opt) : sol::lua_nil;
+        }
+
+        // TODO, variadic args loader functions
+    }
+
     sol::object current_scene();
     sol::object pop_scene();
     sol::object new_scene();
