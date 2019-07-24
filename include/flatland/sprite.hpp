@@ -58,11 +58,12 @@ namespace flat
                    public trait::positioned
     {
     public:
-        sprite(std::shared_ptr<tileset> tileset, unsigned index = 0);
+        sprite(std::shared_ptr<tileset> tileset,
+               mm::vec2<int> pos = {0, 0},
+               unsigned index = 0);
 
         /// trait::renderable
-        virtual void render() const override {}
-        virtual void render(wsdl2::rect target) const;
+        virtual void render(const wsdl2::rect& target) const;
 
         /// trait::positioned
         mm::vec2<int>& pos() override { return m_pos; }

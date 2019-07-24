@@ -37,8 +37,10 @@ tileset::tileset(std::shared_ptr<wsdl2::texture> src,
 
 /* class sprite */
 
-sprite::sprite(std::shared_ptr<tileset> tileset, unsigned index /* = 0 */)
-    : m_pos({0, 0}), m_tileset(tileset), m_ts_index(index)
+sprite::sprite(std::shared_ptr<tileset> tileset,
+               mm::vec2<int> pos = /* {0, 0} */,
+               unsigned index /* = 0 */)
+    : m_pos(pos), m_tileset(tileset), m_ts_index(index)
 {}
 
 void sprite::render(wsdl2::rect target) const

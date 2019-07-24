@@ -6,7 +6,7 @@ using namespace flat;
 
 /// collision between types
 template<>
-bool bound::are_colliding<>(const rectangle& r, const rectangles& rs)
+bool bound::are_overlapping<>(const rectangle& r, const rectangles& rs)
 {
     for (auto&& i : rs.m_rects)
         if (r.m_rect.intersects(i))
@@ -16,14 +16,14 @@ bool bound::are_colliding<>(const rectangle& r, const rectangles& rs)
 }
 
 template<>
-bool bound::are_colliding<>(const bound::rectangle& , const bound::circle& )
+bool bound::are_overlapping<>(const bound::rectangle& , const bound::circle& )
 {
     std::logic_error("not implemented");
     return false;
 }
 
 template<>
-bool bound::are_colliding<>(const bound::rectangles& , const bound::circle& )
+bool bound::are_overlapping<>(const bound::rectangles& , const bound::circle& )
 {
     std::logic_error("not implemented");
     return false;
@@ -31,7 +31,7 @@ bool bound::are_colliding<>(const bound::rectangles& , const bound::circle& )
 
 /* bound::rectangle */
 
-bool bound::rectangle::collides(const bound::rectangle& other) const
+bool bound::rectangle::overlaps(const bound::rectangle& other) const
 {
     return other.m_rect.intersects(m_rect);
 }
@@ -40,7 +40,7 @@ bool bound::rectangle::collides(const bound::rectangle& other) const
 
 /* bound::circle */
 
-bool bound::circle::collides(const bound::circle& other) const
+bool bound::circle::overlaps(const bound::circle& other) const
 {
     if (static_cast<unsigned>((m_pos - other.m_pos).length()) <= (m_radius + other.m_radius))
         return true;
@@ -62,7 +62,7 @@ wsdl2::rect bound::circle::enclosing_rect() const
 /* bound::rectangles */
 
 // TODO: check if this is actually faster, and improve
-bool bound::rectangles::collides(const bound::rectangles& other) const
+bool bound::rectangles::overlaps(const bound::rectangles& other) const
 {
     // check if they are in the same quadrant
     std::pair<int, int> quad = std::make_pair(
@@ -81,7 +81,7 @@ bool bound::rectangles::collides(const bound::rectangles& other) const
     // closure to check for intersections
     auto check_intersections =
         [](auto begin, auto end, auto obegin, auto oend) -> bool{
-        // if they are colliding it should take less time otherwise
+        // if they are overlapping it should take less time otherwise
         // the loop will take m_rects.size() * other.m_rects.size()
         // iterations
         for (auto&& it = begin; it != end; ++it)
