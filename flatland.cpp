@@ -13,15 +13,19 @@
 static flat::state *flat_state_singleton = nullptr;
 
 /// the event broadcast is handled by update
-flat::state::state(wsdl2::renderer&) : events(update)
+flat::state::state(const std::string& title, 
+                   std::size_t width, 
+                   std::size_t height) : m_window(title, width, height), events(update)
 {
     // create an empty scene
     m_scenes.emplace();
 }
 
-flat::state& flat::state::create(wsdl2::renderer& r)
+flat::state& flat::state::create(const std::string& title, 
+                                 std::size_t width, 
+                                 std::size_t height)
 {
-    static flat::state singleton = flat::state(r);
+    static flat::state singleton = flat::state(title, width, height);
 
 #ifndef NDEBUG
     if (flat_state_singleton != nullptr) {
@@ -48,20 +52,9 @@ flat::state& flat::state::get()
     return *flat_state_singleton;
 }
 
-void flat::state::renderer(wsdl2::renderer& r)
+wsdl2::window& flat::state::window()
 {
-    m_renderer = &r;
-}
-
-wsdl2::renderer& flat::state::renderer()
-{
-#ifdef DEBUG
-    if (m_renderer == nullptr) {
-        throw std::runtime_error("requested renderer without having it set first (nullptr)");
-    }
-#endif
-
-    return *m_renderer;
+    return m_window;
 }
 
 void flat::state::new_scene()

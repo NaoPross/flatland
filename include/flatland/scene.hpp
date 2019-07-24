@@ -21,24 +21,24 @@ namespace flat
 
         scene();
 
-        std::optional<std::shared_ptr<wsdl2::texture>>
+        std::shared_ptr<wsdl2::texture>
         load_texture(const std::string& path);
 
         template<typename ...Args>
-        std::optional<std::shared_ptr<tileset>>
+        std::shared_ptr<tileset>
         load_tileset(const std::string& path, Args&& ...args)
         {
             auto&& _tex = load_texture(path);
             if (!_tex)  {
                 npdebug("could not load texture");
-                return std::nullopt;
+                return nullptr;
             }
 
             return load_tileset(_tex.value(), std::forward<Args...>(args)...);
         }
 
         template<typename ...Args>
-        std::optional<std::shared_ptr<tileset>>
+        std::shared_ptr<tileset>
         load_tileset(std::shared_ptr<wsdl2::texture> tex, Args&& ...args)
         {
             if (auto&& valid_ptr = std::make_shared<tileset>(tex, args...)) {
@@ -46,38 +46,31 @@ namespace flat
                 return valid_ptr;
             }
 
-            return std::nullopt;
+            return nullptr;
         }
 
-        template<typename ...Args>
-        std::optional<std::shared_ptr<sprite>>
-        load_sprite(const std::string& path, Args&& ...args)
-        {
-            auto&& _tileset = load_tileset(path);
-            if (!_tileset) {
-                npdebug("could not load tileset");
-                return std::nullopt;
-            }
+        /*
+         * It loads a sprite given a path for a tileset,
+         * it returns nullptr in case of a null tileset argument
+         */
+        std::shared_ptr<sprite>
+        load_sprite(const std::string& path, 
+                    const mm::vec2<int>& pos = {0, 0},
+                    unsigned index = 0);
 
-            return load_sprite(_tileset.value(), std::forward<Args...>(args)...);
-        }
-
-        template<typename ...Args>
-        std::optional<std::shared_ptr<sprite>>
-        load_sprite(std::shared_ptr<tileset> tileset, Args&& ...args)
-        {
-            if (auto&& valid_ptr = std::make_shared<sprite>(tileset, args...)) {
-                m_sprites.insert(valid_ptr);
-                insert(std::static_pointer_cast<renderable>(valid_ptr));
-                return valid_ptr;
-            }
-
-            return std::nullopt;
-        }
+        /*
+         * It loads a sprite given a tileset,
+         * it returns nullptr in case of a null tileset argument
+         */
+        std::shared_ptr<sprite>
+        load_sprite(std::shared_ptr<tileset> tileset, 
+                    const mm::vec2<int>& pos = {0, 0},
+                    unsigned index = 0);
 
         inline auto& sprites() { return m_sprites; }
         
     private:
+
         std::unordered_set<std::shared_ptr<sprite>> m_sprites;
         std::unordered_set<std::shared_ptr<tileset>> m_tilesets;
 

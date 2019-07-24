@@ -6,7 +6,7 @@ using namespace flat;
 
 scene::scene() {}
 
-std::optional<std::shared_ptr<wsdl2::texture>>
+std::shared_ptr<wsdl2::texture>
 scene::load_texture(const std::string& path)
 {
     auto&& state = flat::state::get();
@@ -39,10 +39,43 @@ scene::load_texture(const std::string& path)
         npdebug("failed to load surface");
     }
 
-    return std::nullopt;
+    return nullptr;
+}
+
+std::shared_ptr<sprite>
+scene::load_sprite(std::shared_ptr<tileset> tileset, 
+            const mm::vec2<int>& pos,
+            unsigned index)
+{
+      if (tileset != nullptr) {
+
+          auto&& valid_ptr = std::make_shared<sprite>(tileset, pos, index);
+          m_sprites.insert(valid_ptr);
+          insert(std::static_pointer_cast<renderable>(valid_ptr));
+          return valid_ptr;
+      }
+
+      return nullptr;
+}
+
+std::shared_ptr<sprite>
+scene::load_sprite(const std::string& path, 
+                   const mm::vec2<int>& pos,
+                   unsigned index);
+{
+    auto _tileset = load_tileset(path);
+
+    if (_tileset == nullptr) {
+
+        npdebug("could not load tileset");
+        return std::nullptr;
+    }
+
+    return load_sprite(_tileset, std::forward);
 }
 
 void theater::render() const
 {
     state::get().current_scene().render();
 }
+

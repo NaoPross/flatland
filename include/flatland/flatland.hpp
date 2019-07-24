@@ -44,12 +44,13 @@ namespace flat
         core::channel events;
 
         // singleton access methods
-        static state& create(wsdl2::renderer& r);
+        static state& create(const std::string& title, 
+                             std::size_t width = 860, 
+                             std::size_t height = 640);
         static state& get();
 
         /// renderer getter and setter
-        void renderer(wsdl2::renderer& r);
-        wsdl2::renderer& renderer();
+        wsdl2::window& window();
 
         /// scenes
         scene& current_scene();
@@ -58,7 +59,9 @@ namespace flat
         void pop_scene();
 
     private:
-        explicit state(wsdl2::renderer& r);
+        explicit state(const std::string& title, 
+                       std::size_t width, 
+                       std::size_t height);
 
         explicit state(state&& other) = delete;
         explicit state(const state& other) = delete;
@@ -68,7 +71,7 @@ namespace flat
         std::stack<scene> m_scenes;
 
         /// renderer object
-        wsdl2::renderer *m_renderer;
+        wsdl2::window m_window;
         std::unordered_map<const std::string,
                            std::weak_ptr<wsdl2::texture>,
                            std::hash<std::string>> m_textures;
