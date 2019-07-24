@@ -47,7 +47,7 @@ namespace flatland::lua {
         }
 
         // TODO, variadic args loader functions
-    }
+    };
 
     sol::object current_scene();
     sol::object pop_scene();
