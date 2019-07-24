@@ -20,7 +20,7 @@ namespace flat
             bool visible = true;
 
             virtual ~renderable() = default;
-            virtual void render() const = 0;
+            virtual void render(const wsdl2::rect& target) const = 0;
         };
     }
 
@@ -29,7 +29,8 @@ namespace flat
                         public std::set<std::shared_ptr<trait::renderable>>
     {
     public:
-        void render() const override
+        void render(const wsdl2::rect& target) const override = delete;
+        void render(/* projection matrix */) const
         {
             for (auto&& child : *this)
                 if (child->visible)

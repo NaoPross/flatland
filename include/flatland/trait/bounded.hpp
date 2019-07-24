@@ -13,13 +13,13 @@ namespace flat
     namespace bound
     {
         template<typename T, typename U>
-        bool are_colliding(const T&, const U&);
+        bool are_overlapping(const T&, const U&);
 
         // overload reverses in terms of the first
         template<typename T, typename U>
-        bool are_colliding(const T& t, const U& u)
+        bool are_overlapping(const T& t, const U& u)
         {
-            return are_colliding(u, t);
+            return are_overlapping(u, t);
         }
 
         class rectangle;
@@ -35,10 +35,10 @@ namespace flat
             virtual wsdl2::rect enclosing_rect() const = 0;
 
             /// define all possible collisions
-            virtual bool collides(std::shared_ptr<const any>) const = 0;
-            virtual bool collides(const rectangle&) const = 0;
-            virtual bool collides(const circle&) const = 0;
-            virtual bool collides(const rectangles&) const = 0;
+            virtual bool overlaps(std::shared_ptr<const any>) const = 0;
+            virtual bool overlaps(const rectangle&) const = 0;
+            virtual bool overlaps(const circle&) const = 0;
+            virtual bool overlaps(const rectangles&) const = 0;
         };
 
 
@@ -46,10 +46,10 @@ namespace flat
         template<typename T>
         struct make_bound : public any
         {
-            // collision with itself need to be implemented
-            virtual bool collides(const T&) const override = 0;
+            // check if overlaps with itself need to be implemented
+            virtual bool overlaps(const T&) const override = 0;
 
-            // collision with others, is implemented outside
+            // overlap with others is implemented outside
             template<typename U,
                      // note: U cannot be T or any
                      typename std::enable_if_t<
@@ -57,18 +57,18 @@ namespace flat
                              std::negation_v<std::is_same_v<U, T>>,
                              std::negation_v<std::is_same_v<U, any>>
                       >>>
-            bool collides(const U& other) const
+            bool overlaps(const U& other) const
             {
-                return are_colliding(static_cast<T>(*this), other);
+                return are_overlapping(static_cast<T>(*this), other);
             }
 
-            // collision with pointer to any bound
-            bool collides(std::shared_ptr<const any> a) const override
+            // overlap with pointer to any bound
+            bool overlaps(std::shared_ptr<const any> a) const override
             {
-                // calls the collision of the other class by
+                // calls the ovelap check of the other class by
                 // statically downcasting, because here the type is
                 // known
-                return a->collides(static_cast<const T&>(*this));
+                return a->overlaps(static_cast<const T&>(*this));
             }
         };
 
@@ -79,9 +79,9 @@ namespace flat
          * implemented, requirements are:
          *
          * - inherit publicly make_bound<F>
-         * - add a member "collides(const F&) const = 0" to bound::any
-         * - the bound may need to be friend with are_colliding(T, U)
-         * - one must write overloads of are_colliding(F, U) where U
+         * - add a member "overlaps(const F&) const = 0" to bound::any
+         * - the bound may need to be friend with are_overlapping(T, U)
+         * - one must write overloads of are_overlapping(F, U) where U
          *   is every other bound type
          *
          */
@@ -90,11 +90,11 @@ namespace flat
         {
         public: 
             template<typename T, typename U>
-            friend bool bound::are_colliding(const T&, const U&);
+            friend bool bound::are_overlapping(const T&, const U&);
 
             rectangle(wsdl2::rect r) : m_rect(r) {}
 
-            bool collides(const rectangle& other) const override;
+            bool overlaps(const rectangle& other) const override;
             wsdl2::rect enclosing_rect() const override { return m_rect; }
 
         private:
@@ -105,12 +105,12 @@ namespace flat
         {
         public:
             template<typename T, typename U>
-            friend bool are_colliding(const T&, const U&);
+            friend bool are_overlapping(const T&, const U&);
 
             circle(mm::vec2<int> pos, unsigned radius)
                 : m_pos(pos), m_radius(radius) {}
 
-            bool collides(const circle& other) const override;
+            bool overlaps(const circle& other) const override;
             wsdl2::rect enclosing_rect() const override;
 
         private:
@@ -122,9 +122,9 @@ namespace flat
         {
         public:
             template<typename T, typename U>
-            friend bool bound::are_colliding(const T&, const U&);
+            friend bool bound::are_overlapping(const T&, const U&);
 
-            bool collides(const rectangles& other) const override;
+            bool overlaps(const rectangles& other) const override;
             wsdl2::rect enclosing_rect() const override;
 
         private:
@@ -137,10 +137,13 @@ namespace flat
         struct bounded
         {
             virtual ~bounded() = default;
-            
             virtual std::shared_ptr<const bound::any> bound() const = 0;
-            virtual bool collides(const bounded& other) const {
-                return other.bound()->collides(bound());
+        };
+
+        struct solid : public bounded
+        {
+            virtual bool collides(const solid& other) const {
+                return other.bound()->overlaps(bound());
             }
         };
     }
