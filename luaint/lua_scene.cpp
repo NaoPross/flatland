@@ -1,7 +1,7 @@
 #include "luaint/lua_scene.hpp"
 #include "scene.hpp"
 
-using namespace flatland;
+using namespace flat;
 
 void lua::init_scene(sol::lua_state& s)
 {
@@ -11,14 +11,15 @@ void lua::init_scene(sol::lua_state& s)
      *  - TODO, low level options
      */
     s.new_usertype<lua::texture>("texture",
-            "path", &lua::texture::path,
-            "owner", &lua::texture::owner);
-
+                                 "path", &lua::texture::path,
+                                 "owner", &lua::texture::owner);
     /*
      * Scene binding
      */
     auto scene_type = s.new_usertype<lua::scene>("scene", sol::constructors<scene()>(),
-                        "title", &scene::title);
+                                                 "title", &scene::title);
 
-    scene_type.set("load_texture", &lua::scene::lua_load_texture);
+    scene_type.set("load_texture", &scene::load_texture);
+    scene_type.set("load_tileset", &scene::load_tileset);
+    scene_type.set("load_sprite", &scene::load_sprite);
 }

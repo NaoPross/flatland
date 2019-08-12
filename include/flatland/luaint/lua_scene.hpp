@@ -4,13 +4,13 @@
 #include <memory>
 #include "wsdl2/video.hpp"
 
-namespace flatland {
+namespace flat {
 
     // scene defined in scene.hpp
     class scene;
 }
 
-namespace flatland::lua {
+namespace flat::lua {
 
     void init_scene(sol::lua_state&);
 

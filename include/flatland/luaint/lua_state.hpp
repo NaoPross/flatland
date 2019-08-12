@@ -3,13 +3,12 @@
 #include <sol/sol.hpp>
 #include <string.h>
 
-namespace flatland::lua {
+namespace flat::lua {
 
-    class lua_state;
+    class state;
 }
 
-
-class flatland::lua::lua_state {
+class flat::lua::state : private sol::state {
 
     class lua_general_type;
 
@@ -18,7 +17,7 @@ class flatland::lua::lua_state {
 
 public:
 
-    lua_state();
+    state();
 
     /*
      * Script loading and running section
@@ -29,19 +28,22 @@ public:
     void run_code(const std::string& code, Args... args)
     {
         // TODO, handle exception
-        auto result = lua.load(code);
+        auto result = sol::state::load(code);
 
         if (result) // if valid
             result(args);
     }
 
-    // run code given by an external file
-    sol::load_result load_script(const std::string& path);
+    // load code given by an external file as a command
+    sol::load_result load_script(const std::string& cmd, const std::string& path);
 
-    // remove a loaded script from the queue
-    void rm_script(const std::string& path);
+    // load code given by string as a command
+    sol::load_result load_code(const std::string& cmd, const std::string& code);
 
-    // run a specific script with the given arguments
+    // deactivate a command
+    void rm_cmd(const std::string& cmd);
+
+    // run directly a specific script with the given arguments
     template <typename ...Args>
     bool run_script(const std::string& path, Args... args)
     {
@@ -54,16 +56,21 @@ public:
         return result.valid();
     }
 
-    // run all loaded scripts
-    // it's supposed there are no arguments
-    // in case of invalid execution, an exception is thrown
-    void run_scripts();
+
+    /*
+     * Base commands
+     */
+
+    // run an arbitrary command
+    bool exec(const std::string& cmd);
+
+
 
     /*
      * Errors on loading or running scripts
      */
 
-    class script_error : public std::exception
+    /*class script_error : public std::exception
     {
     public:
         script_error(const char * _scp) : scp(_scp) {}
@@ -98,11 +105,11 @@ public:
         const char * reason;
     };
 
-    /*
+    *
      * Usertype definition, TODO maybe not necessary
      */
 
-    template <class T>
+    /*template <class T>
     void register_type(const std::string& id, const sol::usertype<T>& t)
     {
         auto it = types.find(id);
@@ -121,34 +128,20 @@ public:
         return (it == types.end()) ?
             std::nullopt :
             std::optional(static_cast<usertype<T>&>(*it.second));
-    }
+    }*/
 
-protected:
-
-    // direct access
-    inline sol::state& state()
-    {
-        return lua;
-    }
-
-    inline const sol::state& state() const
-    {
-        return lua;
-    }
+    using sol::state::new_usertype;
 
 private:
-
-    // lua state
-    sol::state lua;
 
     // scripts loaded by files
     std::unordered_map<std::string, sol::load_result> scripts;
 
     // defined user types in lua, TODO, maybe not necessary
-    std::unordered_map<std::string, std::unique_ptr<lua_general_type>> types;
+    //std::unordered_map<std::string, std::unique_ptr<lua_general_type>> types;
 };
 
-class flatland::lua::lua_state::lua_general_type {
+/*class flat::lua::state::lua_general_type {
 
 public:
     virtual ~lua_general_type() {}
@@ -158,7 +151,7 @@ public:
 };
 
 template <class T>
-class flatland::lua::lua_state::lua_type : public flatland::lua::lua_general_type, public sol::usertype<T> {
+class flat::lua::state::lua_type : public flat::lua::state::lua_general_type, public sol::usertype<T> {
 
 public:
 
@@ -170,5 +163,5 @@ public:
     virtual sol::usertype<T> get() override {
         return *this;
     }
-};
+};*/
 
