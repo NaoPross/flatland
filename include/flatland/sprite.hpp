@@ -63,7 +63,7 @@ namespace flat
                unsigned index = 0);
 
         /// trait::renderable
-        virtual void render(const wsdl2::rect& target) const;
+        virtual void render() const;
 
         /// trait::positioned
         mm::vec2<int>& pos() override { return m_pos; }

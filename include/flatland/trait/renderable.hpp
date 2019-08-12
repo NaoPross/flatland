@@ -18,9 +18,10 @@ namespace flat
             */
             unsigned z = 0;
             bool visible = true;
+            // TODO: add projection matrix
 
             virtual ~renderable() = default;
-            virtual void render(const wsdl2::rect& target) const = 0;
+            virtual void render() const = 0;
         };
     }
 
@@ -29,8 +30,7 @@ namespace flat
                         public std::set<std::shared_ptr<trait::renderable>>
     {
     public:
-        void render(const wsdl2::rect& target) const override = delete;
-        void render(/* projection matrix */) const
+        void render() const
         {
             for (auto&& child : *this)
                 if (child->visible)
