@@ -38,14 +38,19 @@ tileset::tileset(std::shared_ptr<wsdl2::texture> src,
 /* class sprite */
 
 sprite::sprite(std::shared_ptr<tileset> tileset,
-               mm::vec2<int> pos = /* {0, 0} */,
+               mm::vec2<int> pos /* = {0, 0} */,
                unsigned index /* = 0 */)
     : m_pos(pos), m_tileset(tileset), m_ts_index(index)
 {}
 
-void sprite::render(wsdl2::rect target) const
+void sprite::render() const
 {
+    // TODO: replace with a rectangle calculated using the projection matrix
+    //       that will be in trait::renderable
+    wsdl2::rect projected = {0, 0, 0, 0};
+
     m_tileset->m_texture->render(
-        m_tileset->at(m_ts_index), target
+        m_tileset->at(m_ts_index),
+        projected
     );
 }
