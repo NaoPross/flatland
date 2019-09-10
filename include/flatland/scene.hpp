@@ -34,7 +34,7 @@ namespace flat
                 return nullptr;
             }
 
-            return load_tileset(_tex.value(), std::forward<Args...>(args)...);
+            return load_tileset(_tex, std::forward<Args...>(args)...);
         }
 
         template<typename ...Args>
