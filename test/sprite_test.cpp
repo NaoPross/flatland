@@ -3,7 +3,6 @@
 #include "flatland/core/task.hpp"
 #include "flatland/core/signal.hpp"
 
-#include "flatland/window.hpp"
 #include "flatland/sprite.hpp"
 #include "flatland/debug.hpp"
 
@@ -26,12 +25,11 @@ void key_cb(const wsdl2::event::key event) {
 int main() {
     flat::initialize();
 
-    flat::window win("Sprite Test");
-    flat::state& engine = flat::state::create(win.get_renderer());
+    flat::state& engine = flat::state::create("Sprite Test");
 
     engine.update.add_task(&gloop);
 
-    auto render_task = engine.render.delegate_task(&flat::window::render, &win);
+    //auto render_task = engine.render.delegate_task(&flat::window::render, &win);
 
     auto keylist = engine.events.connect(&key_cb);
     auto quitlist = engine.events.connect<void, wsdl2::event::quit>(
@@ -40,19 +38,26 @@ int main() {
         }
     );
 
+    auto& win = engine.window();
+
+    //engine.new_scene();
+
+    // there must be a start up scene
+    auto sc = engine.current_scene();
 
     // sprite initialization
     if (auto surf = wsdl2::surface::load("test/res/chiara.bmp")) {
-        auto tex = std::make_shared<wsdl2::texture>(win.get_renderer(), *surf);
+        auto tex = std::make_shared<wsdl2::static_texture>(win.get_renderer(), *surf);
         auto tileset = std::make_shared<flat::tileset>(tex);
-        auto sprite = std::make_shared<flat::sprite>(tileset);
 
-        win.insert(std::static_pointer_cast<flat::trait::renderable>(sprite));
+        sc.load_sprite(tileset);
+        //auto sprite = std::make_shared<flat::sprite>(tileset);
+        //win.insert(std::static_pointer_cast<flat::trait::renderable>(sprite));
     } else {
         npdebug("failed to load texture")
         return -1;
     }
-    
+
     win.open();
     flat::run();
     flat::quit();

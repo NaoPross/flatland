@@ -3,9 +3,9 @@
 #include "flatland/core/task.hpp"
 #include "flatland/core/signal.hpp"
 
-#include "flatland/window.hpp"
 #include "flatland/debug.hpp"
 
+#include <wsdl2/video.hpp>
 #include <wsdl2/event.hpp>
 
 
@@ -26,12 +26,11 @@ int main() {
 
     flat::initialize();
 
-    flat::window win("Window Test");
-    flat::state& engine = flat::state::create(win.get_renderer());
+    flat::state& engine = flat::state::create("Window Test");
 
     engine.update.add_task(&gloop);
 
-    auto render_task = engine.render.delegate_task(&flat::window::render, &win);
+    //auto render_task = engine.render.delegate_task(&flat::window::render, &win);
 
     auto keylist = engine.events.connect(&key_cb);
     auto quitlist = engine.events.connect<void, wsdl2::event::quit>(
@@ -39,6 +38,8 @@ int main() {
             engine.running = false;
         }
     );
+
+    auto& win = engine.window();
 
     win.open();
 

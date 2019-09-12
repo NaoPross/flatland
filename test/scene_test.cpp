@@ -3,10 +3,11 @@
 #include "flatland/core/task.hpp"
 #include "flatland/core/signal.hpp"
 
-#include "flatland/window.hpp"
+//#include "flatland/window.hpp"
 #include "flatland/sprite.hpp"
 #include "flatland/debug.hpp"
 
+#include <wsdl2/video.hpp>
 #include <wsdl2/event.hpp>
 
 
