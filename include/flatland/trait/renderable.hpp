@@ -22,7 +22,15 @@ namespace flat
 
             virtual ~renderable() = default;
             virtual void render() const = 0;
+
+            // TODO, stack<scene> order problem?
+            bool operator<(const flat::trait::renderable& rhs) const
+            {
+                return z < rhs.z;
+            }
         };
+
+        
     }
 
     /* A group of renderable objects sorted by their z value */
@@ -39,7 +47,3 @@ namespace flat
     };
 }
 
-inline bool operator<(const flat::trait::renderable& lhs, const flat::trait::renderable& rhs)
-{
-    return lhs.z < rhs.z;
-}

@@ -73,6 +73,12 @@ void flat::state::push_scene(flat::scene&& s)
     m_scenes.push(s);
 }
 
+void flat::state::push_scene(const flat::scene& s)
+{
+    m_scenes.push(s);
+}
+
+
 void flat::state::pop_scene()
 {
     if (m_scenes.size() > 1)

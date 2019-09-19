@@ -15,8 +15,8 @@ void gloop() {
 
 void key_cb(const wsdl2::event::key event) {
     if (event.type == wsdl2::event::key::action::down) {
-        npdebug("you pressed ", static_cast<char>(event.keysym.sym));
-        if (event.keysym.sym == SDLK_ESCAPE) {
+        npdebug("you pressed ", static_cast<char>(event.code()));
+        if (event.code() == SDLK_ESCAPE) {
             flat::state::get().running = false;
         }
     }

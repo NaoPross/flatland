@@ -24,7 +24,7 @@ namespace flat
         std::shared_ptr<wsdl2::texture>
         load_texture(const std::string& path);
 
-        template<typename ...Args>
+        /*template<typename ...Args>
         std::shared_ptr<tileset>
         load_tileset(const std::string& path, Args&& ...args)
         {
@@ -35,11 +35,25 @@ namespace flat
             }
 
             return load_tileset(_tex, std::forward<Args...>(args)...);
+        }*/
+
+        // non-rvalue overload
+        template<typename ...Args>
+        std::shared_ptr<tileset>
+        load_tileset(const std::string& path, Args ...args)
+        {
+            auto&& _tex = load_texture(path);
+            if (!_tex)  {
+                npdebug("could not load texture");
+                return nullptr;
+            }
+
+            return load_tileset(_tex, args...);
         }
 
         template<typename ...Args>
         std::shared_ptr<tileset>
-        load_tileset(std::shared_ptr<wsdl2::texture> tex, Args&& ...args)
+        load_tileset(std::shared_ptr<wsdl2::texture> tex, Args ...args)
         {
             if (auto&& valid_ptr = std::make_shared<tileset>(tex, args...)) {
                 m_tilesets.insert(valid_ptr);

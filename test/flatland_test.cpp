@@ -1,6 +1,5 @@
 #include "flatland/flatland.hpp"
 
-#include "flatland/window.hpp"
 #include "flatland/debug.hpp"
 
 #include <wsdl2/event.hpp>
@@ -23,14 +22,14 @@ namespace test {
 int main(int, char**) {
     flat::initialize();
 
-    flat::window win("Flatland Test");
-    flat::state& engine = flat::state::create(win.get_renderer());
+    flat::state& engine = flat::state::create("Flatland Test");
+    auto& win = engine.window();
 
     // connect events callbacks
     auto keylist = engine.events.connect<void, wsdl2::event::key>(
         [&](wsdl2::event::key event) {
             if (event.type == wsdl2::event::key::action::down) {
-                if (event.keysym.sym == SDLK_ESCAPE) {
+                if (event.code() == SDLK_ESCAPE) {
                     engine.running = false;
                 }
             }
@@ -47,7 +46,7 @@ int main(int, char**) {
     engine.update.add_task(test::update_model);
 
     // add a rendering task
-    auto render_task = engine.render.delegate_task(&flat::window::render, &win);
+    //auto render_task = engine.render.delegate_task(&flat::window::render, &win);
     win.open();
 
     flat::run();

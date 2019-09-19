@@ -55,6 +55,7 @@ namespace flat
         scene& current_scene();
         void new_scene(); // pop and create a new scene 
         void push_scene(scene&& s);
+        void push_scene(const scene& s);
         void pop_scene();
 
     private:
