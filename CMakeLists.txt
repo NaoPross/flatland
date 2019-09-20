@@ -133,13 +133,13 @@ set_target_properties(flatland PROPERTIES EXPORT_NAME Flatland)
 install(
     FILES  
         # core
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/core/priority.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/core/signal.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/core/task.hpp
+        #${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/core/priority.hpp
+        #${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/core/signal.hpp
+        #${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/core/task.hpp
         # traits
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/trait/bounded.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/trait/positioned.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/trait/renderable.hpp
+        #${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/trait/bounded.hpp
+        #${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/trait/positioned.hpp
+        #${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/trait/renderable.hpp
         # others
         ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/debug.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/flatland.hpp
@@ -155,8 +155,16 @@ install(
     DIRECTORY 
         ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/core
     DESTINATION
-        ${CMAKE_INSTALL_INCLUDEDIR}
+        ${CMAKE_INSTALL_INCLUDEDIR}/flatland
 )
+
+install(
+    DIRECTORY 
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/trait
+    DESTINATION
+        ${CMAKE_INSTALL_INCLUDEDIR}/flatland
+)
+
 
 # export targets
 install(EXPORT flatland-targets
