@@ -12,10 +12,15 @@
 /// singleton object
 static flat::state *flat_state_singleton = nullptr;
 
+flat::state::~state() {
+    
+    wsdl2::quit();
+}
+
 /// the event broadcast is handled by update
 flat::state::state(const std::string& title, 
                    std::size_t width, 
-                   std::size_t height) : m_window(title, width, height), events(update)
+                   std::size_t height) : events(update), m_window(title, width, height) 
 {
     // create an empty scene
     m_scenes.emplace();
@@ -85,6 +90,10 @@ void flat::state::pop_scene()
         m_scenes.pop();
 }
 
+void flat::state::quit()
+{
+    state::get().running = false;
+}
 
 /* free functions */
 
@@ -95,7 +104,7 @@ bool flat::initialize()
 
 void flat::quit()
 {
-    wsdl2::quit();
+    flat::state::get().quit();
 }
 
 void flat::run()
@@ -133,4 +142,8 @@ void flat::run()
         );
 
     } while (s.running);
+
+    // quit wsdl2 here
+    // TODO, is it a good idea?
+    wsdl2::quit();
 }

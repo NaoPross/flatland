@@ -31,6 +31,8 @@ namespace flat
         /// indicate whether the engine is running
         bool running = false;
 
+        ~state();
+
         /// tasks to update the game
         core::job update;
         const unsigned ups = 60;
@@ -58,6 +60,8 @@ namespace flat
         void push_scene(const scene& s);
         void pop_scene();
 
+        void quit();
+
     private:
         explicit state(const std::string& title, 
                        std::size_t width, 
@@ -75,6 +79,8 @@ namespace flat
         std::unordered_map<const std::string,
                            std::weak_ptr<wsdl2::texture>,
                            std::hash<std::string>> m_textures;
+
+        // TODO, force quit with exception
     };
 
     bool initialize();
