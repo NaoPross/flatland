@@ -49,7 +49,9 @@ int main() {
         [&](wsdl2::event::quit e) {
             engine.running = false;
         }
-    );
+    ); 
+
+    {
 
     /*
      * Background image:
@@ -65,7 +67,7 @@ int main() {
      *  - Positioning index: 1
      */
     auto ball = engine.current_scene().load_sprite("res/baseball_ball.png", ball_pos = new flat::trait::proj::pixel_positioner({200, 200}, {150, 150}));
-    background->z = 1;
+    ball->z = 1;
 
     if (background == nullptr) {
         npdebug("Background is null")
@@ -80,7 +82,7 @@ int main() {
     win.open();
 
     flat::run();
-    flat::quit();
+    }
 
     return 0;
 }

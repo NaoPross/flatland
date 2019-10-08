@@ -86,7 +86,7 @@ namespace flat
         std::shared_ptr<core::task> render_task;
 
         /// renderer object
-        wsdl2::window m_window;
+        wsdl2::window * m_window;
         std::unordered_map<const std::string,
                            std::weak_ptr<wsdl2::texture>,
                            std::hash<std::string>> m_textures;

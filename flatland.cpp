@@ -13,14 +13,24 @@
 static flat::state *flat_state_singleton = nullptr;
 
 flat::state::~state() {
-    
+
+    if (running) {
+        npdebug("flat::state destroyed while it was running")
+    }
+
+    // deallocate all sdl related objects
+    m_textures.clear();
+    m_scenes = std::stack<scene>(); // set an empty stack
+
+    delete m_window;
+
     wsdl2::quit();
 }
 
 /// the event broadcast is handled by update
 flat::state::state(const std::string& title, 
                    std::size_t width, 
-                   std::size_t height) : events(update), m_window(title, width, height) 
+                   std::size_t height) : events(update), m_window(new wsdl2::window(title, width, height)) 
 {
     // create an empty scene and load it
     m_scenes.emplace();
@@ -68,7 +78,7 @@ flat::state& flat::state::get()
 
 wsdl2::window& flat::state::window()
 {
-    return m_window;
+    return *m_window;
 }
 
 void flat::state::new_scene()
@@ -160,5 +170,5 @@ void flat::run()
 
     // quit wsdl2 here
     // TODO, is it a good idea?
-    wsdl2::quit();
+    //wsdl2::quit();
 }
