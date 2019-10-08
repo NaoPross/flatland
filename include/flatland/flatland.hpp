@@ -53,12 +53,20 @@ namespace flat
         /// renderer getter and setter
         wsdl2::window& window();
 
+        // the window
+        inline void open() {
+            window().open();
+        }
+
         /// scenes
         scene& current_scene();
         void new_scene(); // pop and create a new scene 
         void push_scene(scene&& s);
         void push_scene(const scene& s);
         void pop_scene();
+
+        // load the scene at the top of the stack
+        void load_current_scene();
 
         void quit();
 
@@ -73,6 +81,9 @@ namespace flat
 
         // scenes
         std::stack<scene> m_scenes;
+
+        // renderer task, maximum priority
+        std::shared_ptr<core::task> render_task;
 
         /// renderer object
         wsdl2::window m_window;

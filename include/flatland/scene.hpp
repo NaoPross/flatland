@@ -5,6 +5,7 @@
 #include "debug.hpp"
 
 #include <optional>
+#include <functional>
 #include <unordered_set>
 #include <unordered_map>
 
@@ -21,8 +22,23 @@ namespace flat
 
         scene();
 
+        /*
+         * Texture related loaders, creator and converters
+         */
+        using tex_loader = std::function<std::shared_ptr<wsdl2::texture>(wsdl2::surface&, wsdl2::pixelformat::format)>;
+        using tex_creator = std::function<std::shared_ptr<wsdl2::texture>(int, int, wsdl2::pixelformat::format)>;
+
+        static const tex_loader load_static;
+        static const tex_loader load_streaming;
+
+        static const tex_creator create_streaming;
+        static const tex_creator create_target;
+
         std::shared_ptr<wsdl2::texture>
-        load_texture(const std::string& path);
+        load_texture(const std::string& path, tex_loader = load_static, wsdl2::pixelformat::format = wsdl2::pixelformat::format::unknown);
+
+        std::shared_ptr<wsdl2::texture>
+        create_texture(int width, int height, tex_creator = create_streaming, wsdl2::pixelformat::format = wsdl2::pixelformat::format::unknown);
 
         /*template<typename ...Args>
         std::shared_ptr<tileset>
@@ -69,7 +85,7 @@ namespace flat
          */
         std::shared_ptr<sprite>
         load_sprite(const std::string& path, 
-                    const mm::vec2<int>& pos = {0, 0},
+                    flat::trait::projector *p = nullptr,
                     unsigned index = 0);
 
         /*
@@ -78,7 +94,7 @@ namespace flat
          */
         std::shared_ptr<sprite>
         load_sprite(std::shared_ptr<tileset> tileset, 
-                    const mm::vec2<int>& pos = {0, 0},
+                    flat::trait::projector *p  = nullptr,
                     unsigned index = 0);
 
         inline auto& sprites() { return m_sprites; }

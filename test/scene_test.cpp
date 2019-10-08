@@ -10,15 +10,13 @@
 #include <wsdl2/video.hpp>
 #include <wsdl2/event.hpp>
 
+flat::trait::proj::pixel_positioner * ball_pos;
 
 void keypressed(const wsdl2::event::key event) {
     if (event.type == wsdl2::event::key::action::down) {
         npdebug("you pressed ", static_cast<char>(event.code()));
 
-        auto sprite = *flat::state::get()
-            .current_scene()
-            .sprites()
-            .begin();
+        auto sprite = ball_pos;
 
         if (event.code() == SDLK_ESCAPE) {
             flat::state::get().running = false;
@@ -53,8 +51,16 @@ int main() {
         }
     );
 
-    auto s = engine.current_scene()
-        .load_sprite("test/res/chiara.bmp");
+    auto background = engine.current_scene().load_sprite("res/static_background.jpg", new flat::trait::proj::fullscreen(win));
+    auto ball = engine.current_scene().load_sprite("res/baseball_ball.png", ball_pos = new flat::trait::proj::pixel_positioner({50, 50}, {100, 100}));
+
+    if (background == nullptr) {
+        npdebug("Background is null")
+    }
+
+    if (ball == nullptr) {
+        npdebug("Ball is null")
+    }
         //.value();
 
     //win.insert(std::make_shared<flat::theater>());

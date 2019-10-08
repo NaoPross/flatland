@@ -150,3 +150,8 @@ add_test(
     WORKING_DIRECTORY test
     COMMAND flatland_test 
 )
+
+install(
+    DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/res
+    DESTINATION ${PROJECT_BINARY_DIR}/test
+)

@@ -22,8 +22,17 @@ flat::state::state(const std::string& title,
                    std::size_t width, 
                    std::size_t height) : events(update), m_window(title, width, height) 
 {
-    // create an empty scene
+    // create an empty scene and load it
     m_scenes.emplace();
+    load_current_scene();
+}
+
+void flat::state::load_current_scene() 
+{
+    scene& top = m_scenes.top();
+    render_task = render.delegate_task([&top]() {
+                top.render();
+            });
 }
 
 flat::state& flat::state::create(const std::string& title, 
@@ -131,6 +140,9 @@ void flat::run()
 
         // call game update tasks
         s.update();
+        
+        // clear the window before drawing
+        s.window().clear();
 
         // call graphics tasks
         s.render();

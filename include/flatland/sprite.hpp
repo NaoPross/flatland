@@ -1,7 +1,7 @@
 #pragma once
 
 #include "trait/renderable.hpp"
-#include "trait/positioned.hpp"
+#include "trait/projector.hpp"
 
 #include <wsdl2/video.hpp>
 #include <unordered_map>
@@ -54,23 +54,33 @@ namespace flat
     /* 
      * Any graphical entity with an image
      */
-    class sprite : public trait::renderable,
-                   public trait::positioned
+    class sprite : public trait::renderable
+                    //public trait::positioned
     {
     public:
         sprite(std::shared_ptr<tileset> tileset,
-               mm::vec2<int> pos = {0, 0},
+               trait::projector * proj,
+              // mm::vec2<int> pos = {0, 0},
                unsigned index = 0);
 
         /// trait::renderable
         virtual void render() const;
 
+        inline void set_projector(trait::projector * p)
+        {
+            if (p != nullptr)
+                m_projector.reset(p);
+        }
+
         /// trait::positioned
-        mm::vec2<int>& pos() override { return m_pos; }
-        void pos(const mm::vec2<int>& newpos) override { m_pos = newpos; }
+        // TODO, not the best idea, use an object instead to determine positioning and size
+        //mm::vec2<int>& pos() override { return m_pos; }
+        //void pos(const mm::vec2<int>& newpos) override { m_pos = newpos; }
 
     protected:
-        mm::vec2<int> m_pos;
+        //mm::vec2<int> m_pos;
+
+        std::unique_ptr<trait::projector> m_projector;
 
         std::shared_ptr<tileset> m_tileset;
         unsigned m_ts_index;
