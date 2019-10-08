@@ -24,10 +24,17 @@ namespace flat
             virtual void render() const = 0;
 
             // TODO, stack<scene> order problem?
-            bool operator<(const flat::trait::renderable& rhs) const
+            // YES IT DOES
+            /*bool operator<(const flat::trait::renderable& rhs) const
             {
                 return z < rhs.z;
-            }
+            }*/
+
+            struct zlevel_less {
+                bool operator()(const std::shared_ptr<renderable>& lhs, const std::shared_ptr<renderable>& rhs) const {
+                    return lhs->z < rhs->z;
+                }
+            };
         };
 
         
@@ -35,7 +42,7 @@ namespace flat
 
     /* A group of renderable objects sorted by their z value */
     class rendergroup : public trait::renderable,
-                        public std::set<std::shared_ptr<trait::renderable>>
+                        public std::multiset<std::shared_ptr<trait::renderable>, trait::renderable::zlevel_less>
     {
     public:
         void render() const

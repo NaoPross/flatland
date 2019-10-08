@@ -51,10 +51,6 @@ void sprite::render() const
 {
     // TODO: replace with a rectangle calculated using the projection matrix
     //       that will be in trait::renderable
-#ifdef DEBUG
-    if (m_projector == nullptr)
-        return;
-#endif
 
     m_tileset->m_texture->render(
         m_tileset->at(m_ts_index),

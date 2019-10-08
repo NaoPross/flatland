@@ -51,8 +51,21 @@ int main() {
         }
     );
 
+    /*
+     * Background image:
+     *  - Fullscreen projector
+     *  - Positioning index: 0
+     */
     auto background = engine.current_scene().load_sprite("res/static_background.jpg", new flat::trait::proj::fullscreen(win));
-    auto ball = engine.current_scene().load_sprite("res/baseball_ball.png", ball_pos = new flat::trait::proj::pixel_positioner({50, 50}, {100, 100}));
+    background->z = 0;
+
+    /*
+     * Ball image:
+     *  - Positioner in pixel format projector
+     *  - Positioning index: 1
+     */
+    auto ball = engine.current_scene().load_sprite("res/baseball_ball.png", ball_pos = new flat::trait::proj::pixel_positioner({200, 200}, {150, 150}));
+    background->z = 1;
 
     if (background == nullptr) {
         npdebug("Background is null")

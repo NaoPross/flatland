@@ -147,6 +147,9 @@ void flat::run()
         // call graphics tasks
         s.render();
 
+        // update the screen
+        s.window().present();
+
         end = std::chrono::steady_clock::now();
 
         std::this_thread::sleep_for(
