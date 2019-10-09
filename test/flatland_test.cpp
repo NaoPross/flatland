@@ -9,12 +9,8 @@
 
 #include "flatland/scene.hpp"
 
-namespace test {
-
-class scene
+class test
 {
-public:
-
     struct positioner : public flat::trait::projector
     {
         positioner( mm::vec2<double> _pos,
@@ -31,39 +27,92 @@ public:
         mm::vec2<double>& centre; 
 
         virtual wsdl2::rect projection() const override {
-            return wsdl2::rect{(int)((pos[0] + centre[0]) / expand[0] - size[0]/2.0), (int)((pos[1] + centre[1]) / expand[1]  - size[1]/2.0), (int)size[0], (int)size[1]};
+            return wsdl2::rect{(int)((pos[0] + centre[0] - size[0]/2.0) / expand[0]), (int)((pos[1] + centre[1] - size[1]/2.0) / expand[1]), (int)(size[0] / expand[0]), (int)(-size[1] / expand[1])};
+            //npdebug(out.x, " ", out.y, " ", out.w, " ", out.h)
+            //return out;
         }
     };
 
-    scene(flat::scene& _scene, mm::vec2<double> _expand, mm::vec2<double> _centre) 
-        : m_scene(_scene), expand(_expand), centre(_centre) {}
+public:
 
-    inline std::pair<std::shared_ptr<flat::sprite>, positioner*>
-    load_sprite(const std::string& path, mm::vec2<double> pos, mm::vec2<double> size, unsigned index = 0)
+    test(flat::state& engine, const mm::vec2<double>& bounds_x, const mm::vec2<double>& bounds_y) 
+        : m_state(engine)
     {
-        positioner * proj = new positioner(pos, size, expand, centre);
-        return {m_scene.load_sprite(path, proj, index), proj};
+        auto& scene = engine.current_scene();
+        auto& win = engine.window();
+
+        set_space(bounds_x, bounds_y);
+
+        // determine projection
+        eval_space();
+
+        // connect events callbacks
+        quit_keylist = m_state.events.connect(&test::escape_quit, this);
+        move_keylist = m_state.events.connect(&test::keypressed, this);
+
+        quitlist = m_state.events.connect(&test::close_quit, this);
+
+        update_task = m_state.update.delegate_task(&test::update_model, this);
+
+        /*
+         * Background image:
+         *  - Fullscreen projector
+         *  - Positioning index: 0
+         */
+        background = scene.load_sprite("res/static_background.jpg", new flat::trait::proj::fullscreen(win));
+        background->z = 0;
+
+        /*
+         * Ball image:
+         *  - Positioner in pixel format projector
+         *  - Positioning index: 1
+         */
+        ball_projector = new positioner({0, 0}, {0.2, 0.2}, expand, centre);
+        ball = scene.load_sprite("res/baseball_ball.png", ball_projector);
+        ball->z = 1;
+
+        if (background == nullptr) {
+            npdebug("Background is null")
+        }
+
+        if (ball == nullptr) {
+            npdebug("Ball is null")
+        }
+
+        // open the window
+        win.open();
     }
 
-private:
+    void set_space(const mm::vec2<double>& bounds_x, const mm::vec2<double>& bounds_y)
+    {
+        space_size = {abs(bounds_x[1] - bounds_x[0]), abs(bounds_y[1] - bounds_y[0])};
+        centre = {-bounds_x[0], bounds_y[0]};
+        npdebug(space_size)
+        npdebug(centre)
+        eval_space();
+    }
 
-    flat::scene& m_scene;
+    void eval_space()
+    {
+        auto win_size = m_state.window().size();
+        expand = {space_size[0]/win_size.x, -space_size[1]/win_size.y};
+    }
 
-    // transformation core
-    mm::vec2<double> expand; 
-    mm::vec2<double> centre; 
-};
+    void escape_quit(wsdl2::event::key event) {
+        if (event.type == wsdl2::event::key::action::down && 
+            event.code() == SDLK_ESCAPE)
+                m_state.quit();
+    }
 
-
-    struct state {
-        bool game_over = false;
-    };
+    void close_quit(wsdl2::event::quit e) {
+        m_state.quit();
+    }
 
     void update_model() {
 
     }
 
-    void keypressed(scene::positioner *ball_pos, const wsdl2::event::key event) {
+    void keypressed(const wsdl2::event::key event) {
         if (event.type == wsdl2::event::key::action::down) {
             //npdebug("You pressed ", static_cast<char>(event.code()));
  
@@ -72,85 +121,55 @@ private:
             }
  
             if (event.code() == SDLK_a) {
-                ball_pos->pos += mm::vec2<double>({-0.04,  0});
+                ball_projector->pos += mm::vec2<double>({-0.04,  0});
             } else if (event.code() == SDLK_d) {
-                ball_pos->pos += mm::vec2<double>({0.04,  0});
+                ball_projector->pos += mm::vec2<double>({0.04,  0});
             }
  
             if (event.code() == SDLK_w) {
-                ball_pos->pos += mm::vec2<double>({0,  0.04});
+                ball_projector->pos += mm::vec2<double>({0,  0.04});
             } else if (event.code() == SDLK_s) {
-                ball_pos->pos += mm::vec2<double>({0,  -0.04});
+                ball_projector->pos += mm::vec2<double>({0,  -0.04});
             }
         }
     }
-}
+
+private:
+    // flatland state 
+    flat::state& m_state;
+
+    // transformation relative indication
+    mm::vec2<double> space_size; 
+
+    // transformation core
+    mm::vec2<double> expand; 
+    mm::vec2<double> centre; 
+
+    // listeners
+    std::shared_ptr<flat::core::listener<wsdl2::event::key>> quit_keylist;
+    std::shared_ptr<flat::core::listener<wsdl2::event::key>> move_keylist;
+
+    std::shared_ptr<flat::core::listener<wsdl2::event::quit>> quitlist;
+
+    // update task
+    std::shared_ptr<flat::core::task> update_task;
+
+    // sprites
+    std::shared_ptr<flat::sprite> background;
+    std::shared_ptr<flat::sprite> ball;
+
+    // positioner of the ball
+    positioner *ball_projector;
+};
+
 
 
 int main(int, char**) {
+
     flat::initialize();
-
     flat::state& engine = flat::state::create("Flatland Test");
-    auto& win = engine.window();
 
-    // connect events callbacks
-    auto keylist = engine.events.connect<void, wsdl2::event::key>(
-        [&](wsdl2::event::key event) {
-            if (event.type == wsdl2::event::key::action::down) {
-                if (event.code() == SDLK_ESCAPE) {
-                    engine.running = false;
-                }
-            }
-        }
-    );
-
-    auto quitlist = engine.events.connect<void, wsdl2::event::quit>(
-        [&](wsdl2::event::quit e) {
-            engine.running = false;
-        }
-    );
-
-    // add task to update the game data model
-    engine.update.add_task(test::update_model);
-
-    wsdl2::point win_size = win.size();    
-    flat::scene& current = engine.current_scene();
-
-    test::scene game_scene(current, {2.0/win_size.x, -2.0/win_size.y}, {1, -1});
-
-    /*
-     * Background image:
-     *  - Fullscreen projector
-     *  - Positioning index: 0
-     */
-    auto background = current.load_sprite("res/static_background.jpg", new flat::trait::proj::fullscreen(win));
-    background->z = 0;
-
-    /*
-     * Ball image:
-     *  - Positioner in pixel format projector
-     *  - Positioning index: 1
-     */
-    auto ball = game_scene.load_sprite("res/baseball_ball.png", {0, 0}, {150, 150});
-    test::scene::positioner * projector = ball.second;
-    ball.first->z = 1;
-
-    if (background == nullptr) {
-        npdebug("Background is null")
-    }
-
-    if (ball.first == nullptr) {
-        npdebug("Ball is null")
-    }
-
-    auto keyupdate = engine.events.connect<void, wsdl2::event::key>(
-            [projector](const wsdl2::event::key event){
-                test::keypressed(projector, event);
-            });
-
-    // add a rendering task
-    //auto render_task = engine.render.delegate_task(&flat::window::render, &win);
-    win.open();
+    test game_scene(engine, {-1.0, 1.0}, {-1.0, 1.0});
 
     flat::run();
 
