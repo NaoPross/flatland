@@ -9,9 +9,13 @@ namespace flat {
     class event 
     {
     public:
-        event(wsdl2::window&, core::channel&);
+        event(wsdl2::window&, core::channel&, core::job&);
 
-        void is_keydown(wsdl2::event::key::keycode) const;
+        bool is_keydown(wsdl2::event::key::keycode) const;
+       
+        // signal managers 
+        core::channel on_key_down;
+        core::channel on_key_up;
 
     private:
         // reference focused window

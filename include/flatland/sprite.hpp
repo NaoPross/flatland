@@ -69,7 +69,7 @@ namespace flat
         inline void set_projector(trait::projector * p)
         {
             if (p != nullptr)
-                m_projector.reset(p);
+                m_projector = p;
         }
 
         /// trait::positioned
@@ -80,7 +80,8 @@ namespace flat
     protected:
         //mm::vec2<int> m_pos;
 
-        std::unique_ptr<trait::projector> m_projector;
+        // find a safer solution
+        trait::projector * m_projector;
 
         std::shared_ptr<tileset> m_tileset;
         unsigned m_ts_index;

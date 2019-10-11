@@ -18,6 +18,7 @@ add_library(flatland SHARED
     ${CMAKE_CURRENT_SOURCE_DIR}/scene.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/task.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/widget.cpp
+    #${CMAKE_CURRENT_SOURCE_DIR}/event.cpp
 )
 
 add_library(Flatland::flatland ALIAS flatland)
@@ -146,6 +147,7 @@ install(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/scene.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/sprite.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/widget.hpp
+        #${CMAKE_CURRENT_SOURCE_DIR}/include/flatland/event.hpp
 
     DESTINATION
         ${CMAKE_INSTALL_INCLUDEDIR}/flatland
