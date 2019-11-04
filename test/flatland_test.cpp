@@ -183,6 +183,9 @@ public:
                 this->baseball->velocity() += mm::vec2<double>({0,  -0.2});
                 });
 
+        if (baseball->position()[1] < inf_y && baseball->velocity()[1] < 0)
+            this->baseball->velocity()[1] *= -0.95;
+
         // check boundaries, TODO
     }
 
@@ -192,6 +195,10 @@ public:
  
             if (event.code() == SDLK_ESCAPE)
                 flat::state::get().quit();
+
+            if (event.code() == SDLK_RETURN) {
+                npdebug(baseball->velocity()[1] > 0 ? "Raising" : "Descending")
+            }
         }
     }
 

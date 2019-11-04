@@ -147,4 +147,135 @@ namespace flat
             }
         };
     }
+
+    namespace helper
+    {
+        
+        
+        
+        
+    }
+
+    class ebox;
+    struct ebox::node;
+
+    // enclosing box, collision check region
+    class ebox : private std::multiset<node>
+    {
+        struct node
+        {
+            // get the enclosing rectangle and find the index approximation
+            //void update();
+
+            unsigned int x;
+            unsigned int y;    
+            std::weak_ptr<bounded> object;
+
+            inline bool operator<(const node& other) const {
+                // check y first, then if equal, check x
+                return this->y < other.y || (this->y == other.y && this->x < other.x);
+            }
+            
+            // create a pair of nodes from the corners of the bound's enclosing rectangle
+            static std::pair<node, node> create(std::shared_ptr<bounded>);
+
+        private:
+            node(unsigned int _x, unsigned int _y, std::shared_ptr<bounded> _obj)
+                : x(_x), y(_y), object(_object) {}
+        };
+
+    public:
+
+        ebox(double _length, 
+             double _height, 
+             unsigned char _depth_x, 
+             unsigned char _depth_y, 
+             const mm::vec2<double>& _location, 
+             std::initializer_list<std::shared_ptr<bounded>> init = {});
+
+        void insert(std::shared_ptr<bounded>);
+        void erase(std::shared_ptr<bounded>);
+
+        using std::multiset<enode>::size;
+        using std::multiset<enode>::empty;
+        using std::multiset<enode>::clear;
+
+        using std::multiset<enode>::begin;
+        using std::multiset<enode>::cbegin;
+        using std::multiset<enode>::end;
+        using std::multiset<enode>::cend;
+
+        using std::multiset<enode>::rbegin;
+        using std::multiset<enode>::crbegin;
+        using std::multiset<enode>::rend;
+        using std::multiset<enode>::crend; 
+        
+        const double length;
+        const double height;
+
+        // power of 2 which determines the rectangle discretisation
+        const unsigned char depth_x;
+        const unsigned char depth_y;
+
+        const mm::vec2<double> location;
+
+        // upair comparer
+        template<class Pair>
+        struct upair_comp 
+        {
+            bool operator()(const Pair& lhs, const Pair& rhs) const
+            {
+                return lhs == rhs || (lhs.first == rhs.second && lhs.second == rhs.first);
+            }
+        };
+
+        // unordered pair
+        template<class T>
+        struct upair_set : public std::unordered_set<std::pair<T, T>, 
+                                                     std::hash<std::pair<T, T>>, 
+                                                     helper::upair_comp<std::pair<T, T>>> 
+        {
+            using std::unordered_set<std::pair<T, T>, std::hash<std::pair<T, T>>, helper::upair_comp<T>>::unordered_set;
+
+            upair_set& operator<<(const upair_set& rhs) {
+                insert(rhs.begin(), rhs.end());
+                return *this;
+            }
+        };
+
+        inline upair_set<std::weak_ptr<bounded>> check_collisions() const {
+            return check_collision(this->begin(), this->end(), );
+        }
+
+
+    private:
+
+        typedef std::multiset<node>::const_iterator const_iterator;
+
+        static upair_set<std::weak_ptr<bounded>> check_collisions(const_iterator down, const_iterator up, const std::size_t depth) const;
+    };
+
+    // get all overlapping, O(N log(N)) algorithm
+    // where N is the size of L
+    template<class T,
+             template<class> class List, 
+             class Rect = wsdl2::rect>
+    upair_set<T> overlapping_pairs(const List<T>& L, const Rect& domain)
+    {
+        const size_t N = L.size();
+        if (N == 0 || N == 1)
+            return upair_set(); // empty set
+        else if (N == 2)
+            return upair_set({std::make_pair<T, T>(L[0], L[1])});
+
+        const Rect b_left{domain.x, domain.y, domain.w/2, domain.h/2};
+        const Rect b_right{domain.x + domain.w/2, domain.y, domain.w/2, domain.h/2};
+        const Rect u_left{domain.x, domain.y + domain.h/2, domain.w/2, domain.h/2};
+        const Rect u_right{domain.x + domain.w/2, domain.y + domain.h/2, domain.w/2, domain.h/2};
+
+        return overlapping_pairs(next_b_left, b_left) <<
+               overlapping_pairs(next_b_right, b_right) <<
+               overlapping_pairs(next_u_left, u_left) <<
+               overlapping_pairs(next_u_right, u_right);
+    }
 }
