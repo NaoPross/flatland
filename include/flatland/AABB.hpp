@@ -4,24 +4,33 @@
 
 // Axys aligned bounding box interface
 namespace flat::AABB {
+
+    // forward declarations
+    class node;
+    class branch;
+    class leaf;
+    class tree;
     
     // tools for a flat::rect treating
     
-    using rect = flat::rect<double>
+    using rect = flat::rect<double>;
     
     // perimeter, abstract surface bi-dimensional measure
-    double perimeter(const rect&) const;
+    double perimeter(const rect&);
 
     // construct a rectangle to embed both rectangles
-    rect rect_union(const rect&, const rect&) const;
+    rect rect_union(const rect&, const rect&);
+
+    // check wether "in" is totally inside "ext"
+    bool is_rect_inscribed(const rect& in, const rect& ext);
 
     // node of the tree
     struct node {
 
-        node(const rect& box, std::shared_ptr<node> parent = nullptr) 
+        node(const rect& box, branch* parent = nullptr) 
             : m_box(box), m_parent(parent) {}
-        
-        virtual ~node();
+
+        virtual ~node() {}
         
         // rectangle bounds, lower = bottom-left corner, upper = top-right corner
         inline const mm::vec2<double>& lower_bound() const {
@@ -31,14 +40,11 @@ namespace flat::AABB {
             return m_box.upper;
         }
 
-        // check whether it is a leaf or a branch
+        // check whether it's a leaf or a branch
         virtual bool is_leaf() const = 0;
-        
-        // check if a node is inside
-        // bool is_inside(const node&) const;
 
         // parent node in the tree
-        shared_ptr<node> m_parent;
+        branch * m_parent;
 
         // bounding box
         rect m_box;
@@ -47,7 +53,7 @@ namespace flat::AABB {
     // leaf of the AABB tree
     struct leaf : public node {
 
-        leaf(const flat::bounded& object, std::shared_ptr<node> parent = nullptr)
+        leaf(const flat::bounded& object, node* parent = nullptr)
             : node(object.bound_rect(), parent), m_object(object) {}
 
         // check whether it is a leaf or a branch
@@ -60,24 +66,34 @@ namespace flat::AABB {
     };
 
     // branch of the AABB tree
-    struct branch : public std::pair<std::shared_ptr<node>, std::shared_ptr<node>>, public node {
+    struct branch : public std::pair<node*, node*>, public node {
 
-        branch(std::shared_ptr<node> first, std::shared_ptr<node> second, std::shared_ptr<node> parent = nullptr);
-            : std::pair<std::shared_ptr<node>, std::shared_ptr<node>>(first, second), 
-              node(rect_union(first->m_box, second->m_box), parent) 
-        {
-            first->m_parent = this;
-            second->m_parent = this;
-        }
+        friend class tree;
+
+        // not able to construct a branch externally
+        branch() = delete; 
 
         // check whether it is a leaf or a branch
         virtual bool is_leaf() const override {
              return false;
         }
+
+    private:
+
+        // NB: first and second MUST be non null
+        branch(node* first, node* second, node* parent = nullptr);
+            : std::pair<node*, node*>(first, second), 
+              node(rect_union(first->m_box, second->m_box), parent) 
+        {
+            // set this object as parent
+            first->m_parent = this;
+            second->m_parent = this;
+        }
     };
 
 
     // The tree structure
+    // Spatial complexity: O(N log(N)), N = total number of leaves
     class tree {
     public: 
         // initialize an empty tree
@@ -88,21 +104,44 @@ namespace flat::AABB {
 
         // initialize a tree and emplace a set of objects using the "divide and conquer" algorithm
         // O(N * log(N)), N = init.size(): the list is supposed to be sorted by rectangle positioning
+        // TODO, not working. A proper data structure not found yet
         template <class RandomIt> // random access iterator
         tree(RandomIt begin, RandomIt end);
 
         void insert(const flat::bounded&);
         void remove(const flat::bounded&);
 
+        // find but don't allow to delete the pointed object
+        // O(log(N)) time complexity, N = total number of leaves
+        const leaf& find(const flat::bounded&) const;
+
     private:
+
+        struct collision {
+            // std::pair doesn't support referencies :/
+
+            collision(const leaf& _first, const leaf& _second);
+
+            const flat::bounded& first;
+            const flat::bounded& second;
+            node * common_parent_node;
+
+            // checking 
+            bool operator==(const collision& other) const;
+        };
+
+        leaf * find_leaf(const flat::bounded&) const;
+
         // find the best fitting node
-        std::shared_ptr<node> best_fit(flat::bounded&) const;
+        leaf * find_best_fit(const flat::bounded&) const;
 
         // starting point of the tree
-        std::unique_ptr<node> m_top;
+        // it's safe to use C pointers because it's an internal mechanism
+        // and there's no reason to make our life more difficult
+        node * m_root;
 
-        // collision queue, collect new collisions
-        std::vector<std::pair<std::shared_ptr<flat::bounded>, std::shared_ptr<flat::bounded>> m_collision_queue;
+        // collision queue, collect current collisions states
+        std::vector<collision> m_collision_queue;
         
         // recursive support for the "divide and conquer" initialization
         template <class RandomIt>
@@ -118,7 +157,7 @@ namespace flat::AABB {
         case 0:
             return;
         case 1:
-            m_top = std::static_pointer_cast<node>(std::make_unique<leaf>(*it, nullptr));
+            m_top = new leaf(*it, nullptr));
             return;
         default:
             break;
@@ -131,7 +170,7 @@ namespace flat::AABB {
     }
 
     template <class RandomIt>
-    std::shared_ptr<node> tree::construct(RandomIt begin, RandomIt end)
+    node * tree::construct(RandomIt begin, RandomIt end)
     {
         auto N = std::distance(begin, end);
 
