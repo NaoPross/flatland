@@ -148,6 +148,7 @@ namespace flat
         };
     }
 
+    /*
     namespace helper
     {
         
@@ -277,5 +278,5 @@ namespace flat
                overlapping_pairs(next_b_right, b_right) <<
                overlapping_pairs(next_u_left, u_left) <<
                overlapping_pairs(next_u_right, u_right);
-    }
+    }*/
 }

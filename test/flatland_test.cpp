@@ -8,7 +8,7 @@
 #include <iostream>
 
 #include "flatland/scene.hpp"
-#include "flatland/event.hpp"
+//#include "flatland/event.hpp"
 
 constexpr double dt = 1e-2;
 
@@ -167,7 +167,7 @@ public:
 
         // check keys
         //key_state.update(); // not necessary
-        key_state.exec_if<SDL_SCANCODE_A>([this]() {
+        /*key_state.exec_if<SDL_SCANCODE_A>([this]() {
                 this->baseball->position() += mm::vec2<double>({-0.02,  0});
                 });
 
@@ -181,7 +181,7 @@ public:
 
         key_state.exec_if<SDL_SCANCODE_S>([this]() {
                 this->baseball->velocity() += mm::vec2<double>({0,  -0.2});
-                });
+                });*/
 
         if (baseball->position()[1] < inf_y && baseball->velocity()[1] < 0)
             this->baseball->velocity()[1] *= -0.95;
@@ -225,7 +225,7 @@ private:
     ball * baseball;
 
     // key_state
-    wsdl2::event::key::state key_state;
+    //wsdl2::event::key::state key_state;
 };
 
 const mm::vec2<double> ball::init_ball_pos({0, sup_y * 0.8});

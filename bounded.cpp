@@ -131,7 +131,7 @@ wsdl2::rect bound::rectangles::enclosing_rect() const
 }
 
 // ebox section
-upair_set<std::weak_ptr<bounded>> ebox::check_collisions(const_iterator down, const_iterator up, const std::size_t depth) const {
+/*upair_set<std::weak_ptr<bounded>> ebox::check_collisions(const_iterator down, const_iterator up, const std::size_t depth) const {
 
     const auto N = std::distance(down, up);
 
@@ -147,4 +147,4 @@ upair_set<std::weak_ptr<bounded>> ebox::check_collisions(const_iterator down, co
            break;
     }
     auto split = std::lower_bound(down, up, 
-}
+}*/
