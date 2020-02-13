@@ -4,26 +4,6 @@
 
 using namespace flat::AABB;
 
-// perimeter, abstract surface bi-dimensional measure
-double perimeter(const rect& r) {
-    auto d = r.upper - r.lower;
-    return 2 * (d[0] + d[1]);
-}
-
-// construct a rectangle to embed both rectangles
-rect rect_union(const rect& a, const rect& b) {
-    return rect({std::min(a.lower[0], b.lower[0]), std::min(a.lower[1], b.lower[1])}, 
-                {std::max(a.lower[0], b.lower[0]), std::max(a.lower[1], b.lower[1])});
-}
-
-bool is_rect_inscribed(const rect& in, const rect& ext)
-{
-    return ext.lower[0] < in.lower[0] &&
-           ext.lower[1] < in.lower[1] &&
-           in.upper[0] < ext.upper[0] &&
-           in.upper[1] < ext.upper[1];
-}
-
 // tree::collision struct
 
 tree::collision::collision(const leaf& _first, const leaf& _second) 
@@ -172,8 +152,16 @@ const leaf& tree::find(const flat::bounded& object) const {
 
 leaf * tree::find_best_fit(const flat::bounded& obj, node * current) const {
 
-    if (current.is_leaf()) 
+    // if it's a leaf, then return it
+    if (current->is_leaf()) 
         return dynamic_cast<leaf*>(current);
 
-    
+    // evaluate and minimize generated perimeter by the union of the object and the node box
+    branch * b = dynamic_cast<branch*>(current);    
+    double p1 = perimeter(rect_union(b->first->m_box, obj.enclosing_box()));
+    double p2 = perimeter(rect_union(b->second->m_box, obj.enclosing_box()));
+
+    return (p1 < p2) ? 
+        tree::find_best_fit(obj, b->first) : 
+        tree::find_best_fit(obj, b->second);   
 }

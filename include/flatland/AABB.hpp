@@ -1,6 +1,7 @@
 #pragma once
 
 #include "flatland/trait/bounded.hpp"
+#include "flatland/core/geometry.hpp"
 
 // Axys aligned bounding box interface
 namespace flat::AABB {
@@ -11,18 +12,7 @@ namespace flat::AABB {
     class leaf;
     class tree;
     
-    // tools for a flat::rect treating
-    
-    using rect = flat::rect<double>;
-    
-    // perimeter, abstract surface bi-dimensional measure
-    double perimeter(const rect&);
-
-    // construct a rectangle to embed both rectangles
-    rect rect_union(const rect&, const rect&);
-
-    // check wether "in" is totally inside "ext"
-    bool is_rect_inscribed(const rect& in, const rect& ext);
+    using rect = flat::geom::rect<double>;
 
     // node of the tree
     struct node {
