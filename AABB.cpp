@@ -126,7 +126,7 @@ void tree::remove(const flat::bounded& object) {
     else 
         grandpa->second = other;
 
-    // deallocate the parent, it's no more referenced
+    // deallocate the parent, which is no more referenced
     delete parent;
 
     // TODO, adjust grandpa and ancestors box
@@ -170,6 +170,10 @@ const leaf& tree::find(const flat::bounded& object) const {
     return *ptr;
 }
 
-node * tree::find_best_fit(const flat::bounded&) const {
-    // TODO
+leaf * tree::find_best_fit(const flat::bounded& obj, node * current) const {
+
+    if (current.is_leaf()) 
+        return dynamic_cast<leaf*>(current);
+
+    
 }

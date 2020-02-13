@@ -43,6 +43,14 @@ namespace flat::AABB {
         // check whether it's a leaf or a branch
         virtual bool is_leaf() const = 0;
 
+        enum overlap {
+            inside, partial, outside
+        };
+
+        // check whether the rectangle is inside or colliding
+        // TODO, implement with areas
+        overlap is_inside(const rect&) const;
+
         // parent node in the tree
         branch * m_parent;
 
@@ -132,8 +140,8 @@ namespace flat::AABB {
 
         leaf * find_leaf(const flat::bounded&) const;
 
-        // find the best fitting node
-        leaf * find_best_fit(const flat::bounded&) const;
+        // find the best fitting leaf start by a node
+        leaf * find_best_fit(const flat::bounded&, node*) const;
 
         // starting point of the tree
         // it's safe to use C pointers because it's an internal mechanism
