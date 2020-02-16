@@ -107,7 +107,9 @@ void tree::remove(const flat::bounded& object) {
     // adjust grandpa and ancestors box
     refit(grandpa);
 
-    // TODO, remove all collisions matching "object"
+    // remove all collisions matching "object"
+    // TODO, unfortunately erase_if doesn't exists (eheh waiting for C++20)
+    
 }
 
 leaf * tree::find_leaf(const flat::bounded& object) const {
