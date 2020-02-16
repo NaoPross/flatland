@@ -62,16 +62,12 @@ void tree::insert(const flat::bounded& object) {
         parent->first = new_branch;
     else
         parent->second = new_branch;
+    
+    // adjust the ancestors' boxes size
+    refit(new_branch);
 
-    // resize the ancestors boxes in order to fit in
-    // O(log(N)), N = total number of leaves
-    branch * ptr = new_branch;
-    while(ptr != nullptr) {
-        ptr->m_box = rect_union(ptr->first.m_box, ptr->second.m_box);
-        ptr = ptr->m_parent;
-    }
+    // TODO, check for collisions and emplace them into the queue
 
-    // TODO, check collision and emplace into the queue
 }
 
 void tree::remove(const flat::bounded& object) {
@@ -84,7 +80,7 @@ void tree::remove(const flat::bounded& object) {
     // reset ancestor
     branch * parent = ptr->m_parent;
 
-    if (parent == nullptr) { // ptr is the root
+    if (parent == nullptr) { // ptr is the root, then empty the tree
         delete m_root;
         m_root = nullptr;
     } 
@@ -93,7 +89,7 @@ void tree::remove(const flat::bounded& object) {
     node * other = (ptr == parent->first) ? parent->first : parent->second;
     branch * grandpa = parent->m_parent;
 
-    // check wether the "parent" is the root
+    // check whether the "parent" is the root
     if (grandpa == nullptr) {
         // "other" becomes the root
         delete m_root;
@@ -109,7 +105,9 @@ void tree::remove(const flat::bounded& object) {
     // deallocate the parent, which is no more referenced
     delete parent;
 
-    // TODO, adjust grandpa and ancestors box
+    // adjust grandpa and ancestors box
+    refit(grandpa);
+
     // TODO, remove all collisions matching "object"
 }
 
@@ -140,6 +138,14 @@ leaf * tree::find_leaf(const flat::bounded& object) const {
     return (legit && out != nullptr && &out->object == &object) ? out : nullptr;
 }
 
+
+void refit(branch *target) {
+    target.m_box = flat::geom::rect_union(first->m_box, second->m_box);
+
+    if (target->parent != nullptr) // if it's not the root, then recurse
+        refit(target->parent);
+}
+
 const leaf& tree::find(const flat::bounded& object) const {
     leaf * ptr = find_leaf(object);
    
@@ -151,7 +157,8 @@ const leaf& tree::find(const flat::bounded& object) const {
 }
 
 leaf * tree::find_best_fit(const flat::bounded& obj, node * current) const {
-
+    
+    // TODO, dynamic_cast is sadly the best solution at the moment
     // if it's a leaf, then return it
     if (current->is_leaf()) 
         return dynamic_cast<leaf*>(current);
@@ -161,6 +168,7 @@ leaf * tree::find_best_fit(const flat::bounded& obj, node * current) const {
     double p1 = perimeter(rect_union(b->first->m_box, obj.enclosing_box()));
     double p2 = perimeter(rect_union(b->second->m_box, obj.enclosing_box()));
 
+    // recurse onto the next branch
     return (p1 < p2) ? 
         tree::find_best_fit(obj, b->first) : 
         tree::find_best_fit(obj, b->second);   

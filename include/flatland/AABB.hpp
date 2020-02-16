@@ -116,7 +116,7 @@ namespace flat::AABB {
     private:
 
         struct collision {
-            // std::pair doesn't support referencies :/
+            // std::pair doesn't support referencing :/
 
             collision(const leaf& _first, const leaf& _second);
 
@@ -132,6 +132,9 @@ namespace flat::AABB {
 
         // find the best fitting leaf start by a node
         leaf * find_best_fit(const flat::bounded&, node*) const;
+
+        // refit the target box basing on the children' boxes
+        static void refit(branch* target);
 
         // starting point of the tree
         // it's safe to use C pointers because it's an internal mechanism
