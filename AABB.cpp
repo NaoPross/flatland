@@ -6,15 +6,9 @@ using namespace flat::AABB;
 
 // tree::collision struct
 
-tree::collision::collision(const leaf& _first, const leaf& _second) 
-    : first(_first.object), second(_second.object), common_parent_node(nullptr)
-{
-    // find the common parent node
-    // TODO
-}
-
 bool tree::collision::operator==(const collision& other) const {
-    // TODO
+    return (first == other.first && second == other.second) ||
+           (first == other.second && second == other.first);
 }
 
 // tree class
@@ -35,9 +29,13 @@ void tree::insert(const flat::bounded& object) {
         m_root = new leaf(object, nullptr);
         return;
     }
+    
+    // check for collisions
+    std::stack<leaf*> collision_stack;
+    collisions_check(object, collision_stack);
 
     // find the best fitting leaf, as fast as possible
-    leaf* best = find_best_fit(object);
+    leaf* best = find_best_fit(object, collision_stack);
 
     // create the new leaf
     leaf* new_leaf = new leaf(object);
@@ -66,8 +64,9 @@ void tree::insert(const flat::bounded& object) {
     // adjust the ancestors' boxes size
     refit(new_branch);
 
-    // TODO, check for collisions and emplace them into the queue
-
+    // push the found collisions into the queue
+    for(; !collision_stack.empty(); collision_stack.pop())
+        m_collision_queue.insert(collision(new_leaf, collision_stack.top())); 
 }
 
 void tree::remove(const flat::bounded& object) {
@@ -139,11 +138,29 @@ leaf * tree::find_leaf(const flat::bounded& object) const {
 }
 
 
-void refit(branch *target) {
+void tree::refit(branch *target) {
     target.m_box = flat::geom::rect_union(first->m_box, second->m_box);
 
     if (target->parent != nullptr) // if it's not the root, then recurse
         refit(target->parent);
+}
+
+void tree::collisions_check(const flat::bounded& box, std::stack<leaf*>& coll_stack, node *start) const {
+   
+    // the tree is not empty and the box isn't disjoint with respect to the node box
+    if (start != nullptr && !start->is_disjoint(box.aabb()))
+    {
+        // TODO, dynamic_cast is the simplest solution at the moment
+        // TODO, use variants and std::visit instead
+        if (branch * b = dynamic_cast<branch*>(start)) {
+            // recurse into the tree
+            collisions_check(box, coll_stack, b->first);    
+            collisions_check(box, coll_stack, b->second);    
+        } else if (leaf * l = dynamic_cast<leaf*>(start) && start->m_box.overlaps(box.aabb())) {
+            // finally push into the stack
+            coll_stack.push(l); 
+        }
+    }
 }
 
 const leaf& tree::find(const flat::bounded& object) const {
@@ -156,9 +173,10 @@ const leaf& tree::find(const flat::bounded& object) const {
     return *ptr;
 }
 
-leaf * tree::find_best_fit(const flat::bounded& obj, node * current) const {
+leaf * tree::find_best_fit(const flat::bounded& obj, node * current, std::stack<leaf*>& collision_stack) const {
     
-    // TODO, dynamic_cast is sadly the best solution at the moment
+    // TODO, dynamic_cast is the simplest solution at the moment
+    // TODO, use variants and std::visit instead
     // if it's a leaf, then return it
     if (current->is_leaf()) 
         return dynamic_cast<leaf*>(current);

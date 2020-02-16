@@ -41,6 +41,11 @@ namespace flat::AABB {
         // TODO, implement with areas
         overlap is_inside(const rect&) const;
 
+        inline is_disjoint(const rect& box) const {
+            
+            return m_box.overlaps(box) || box.is_inside(m_box);
+        }
+
         // parent node in the tree
         branch * m_parent;
 
@@ -93,6 +98,15 @@ namespace flat::AABB {
     // The tree structure
     // Spatial complexity: O(N log(N)), N = total number of leaves
     class tree {
+
+        // starting point of the tree
+        // it's safe to use C pointers because it's an internal mechanism
+        // and there's no reason to make our life more difficult
+        node * m_root;
+
+        // collision queue, collect current collisions states
+        std::unordered_set<collision> m_collision_queue;
+
     public: 
         // initialize an empty tree
         tree();
@@ -115,35 +129,25 @@ namespace flat::AABB {
 
     private:
 
-        struct collision {
-            // std::pair doesn't support referencing :/
+        struct collision : public std::pair<leaf*, leaf*> {
 
-            collision(const leaf& _first, const leaf& _second);
+            using std::pair::pair;
 
-            const flat::bounded& first;
-            const flat::bounded& second;
-            node * common_parent_node;
-
-            // checking 
+            // a commutative comparison (ex: (a,b) == (b,a))
             bool operator==(const collision& other) const;
         };
 
         leaf * find_leaf(const flat::bounded&) const;
 
-        // find the best fitting leaf start by a node
-        leaf * find_best_fit(const flat::bounded&, node*) const;
+        // find the best fitting leaf start by a node and check for possible collisions
+        leaf * find_best_fit(const flat::bounded& box, node *start) const;
 
         // refit the target box basing on the children' boxes
         static void refit(branch* target);
 
-        // starting point of the tree
-        // it's safe to use C pointers because it's an internal mechanism
-        // and there's no reason to make our life more difficult
-        node * m_root;
+        // check for collisions and put them into the collision stack passed as parameter
+        void collisions_check(const flat::bounded& box, std::stack<leaf*>& coll_stack, node *start = m_root) const;
 
-        // collision queue, collect current collisions states
-        std::vector<collision> m_collision_queue;
-        
         // recursive support for the "divide and conquer" initialization
         template <class RandomIt>
         std::shared_ptr<node> construct(RandomIt begin, RandomIt end);
