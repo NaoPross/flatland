@@ -1,4 +1,4 @@
-#include "AABB.hpp"
+#include "flatland/AABB.hpp"
 
 #include <algorithm>
 
@@ -16,13 +16,13 @@ tree::tree() : m_root(nullptr) {
 
 }
 
-tree::tree(const flat::bounded& object) 
+tree::tree(const flat::trait::bounded& object) 
     : m_root(new leaf(object)) 
 {
 
 }
 
-void tree::insert(const flat::bounded& object) {
+void tree::insert(const flat::trait::bounded& object) {
 
     // check for an empty tree
     if (m_root == nullptr) {
@@ -32,7 +32,7 @@ void tree::insert(const flat::bounded& object) {
     
     // check for collisions
     std::stack<leaf*> collision_stack;
-    collisions_check(object, collision_stack);
+    collisions_check(object, collision_stack, m_root);
 
     // find the best fitting leaf, as fast as possible
     leaf* best = find_best_fit(object, collision_stack);
@@ -69,7 +69,7 @@ void tree::insert(const flat::bounded& object) {
         m_collision_queue.insert(collision(new_leaf, collision_stack.top())); 
 }
 
-void tree::remove(const flat::bounded& object) {
+void tree::remove(const flat::trait::bounded& object) {
     
     leaf * ptr = find_leaf(object);
 
@@ -112,7 +112,7 @@ void tree::remove(const flat::bounded& object) {
     
 }
 
-leaf * tree::find_leaf(const flat::bounded& object) const {
+leaf * tree::find_leaf(const flat::trait::bounded& object) const {
 
     if (m_root == nullptr) // empty tree
         return nullptr;
@@ -147,7 +147,7 @@ void tree::refit(branch *target) {
         refit(target->parent);
 }
 
-void tree::collisions_check(const flat::bounded& box, std::stack<leaf*>& coll_stack, node *start) const {
+void tree::collisions_check(const flat::trait::bounded& box, std::stack<leaf*>& coll_stack, node *start) {
    
     // the tree is not empty and the box isn't disjoint with respect to the node box
     if (start != nullptr && !start->is_disjoint(box.aabb()))
@@ -165,7 +165,7 @@ void tree::collisions_check(const flat::bounded& box, std::stack<leaf*>& coll_st
     }
 }
 
-const leaf& tree::find(const flat::bounded& object) const {
+const leaf& tree::find(const flat::trait::bounded& object) const {
     leaf * ptr = find_leaf(object);
    
     // not found 
@@ -175,7 +175,7 @@ const leaf& tree::find(const flat::bounded& object) const {
     return *ptr;
 }
 
-leaf * tree::find_best_fit(const flat::bounded& obj, node * current, std::stack<leaf*>& collision_stack) const {
+leaf * tree::find_best_fit(const flat::trait::bounded& obj, node * current, std::stack<leaf*>& collision_stack) const {
     
     // TODO, dynamic_cast is the simplest solution at the moment
     // TODO, use variants and std::visit instead

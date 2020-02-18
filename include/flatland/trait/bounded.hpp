@@ -3,6 +3,8 @@
 #include <mm/mmvec.hpp>
 #include <wsdl2/video.hpp>
 
+#include "flatland/core/geometry.hpp"
+
 #include <type_traits>
 #include <utility>
 #include <set>
@@ -32,7 +34,7 @@ namespace flat
             virtual ~any() = default;
 
             /// get enclosing rectangle
-            virtual wsdl2::rect enclosing_rect() const = 0;
+            virtual flat::geom::rect<double> enclosing_rect() const = 0;
 
             /// define all possible collisions
             virtual bool overlaps(std::shared_ptr<const any>) const = 0;
@@ -92,13 +94,13 @@ namespace flat
             template<typename T, typename U>
             friend bool bound::are_overlapping(const T&, const U&);
 
-            rectangle(wsdl2::rect r) : m_rect(r) {}
+            rectangle(flat::geom::rect<double> r) : m_rect(r) {}
 
             bool overlaps(const rectangle& other) const override;
-            wsdl2::rect enclosing_rect() const override { return m_rect; }
+            flat::geom::rect<double> enclosing_rect() const override { return m_rect; }
 
         private:
-            wsdl2::rect m_rect;
+            flat::geom::rect<double> m_rect;
         };
 
         class circle : public make_bound<circle>
@@ -111,7 +113,7 @@ namespace flat
                 : m_pos(pos), m_radius(radius) {}
 
             bool overlaps(const circle& other) const override;
-            wsdl2::rect enclosing_rect() const override;
+            flat::geom::rect<double> enclosing_rect() const override;
 
         private:
             mm::vec2<int> m_pos;
@@ -125,10 +127,10 @@ namespace flat
             friend bool bound::are_overlapping(const T&, const U&);
 
             bool overlaps(const rectangles& other) const override;
-            wsdl2::rect enclosing_rect() const override;
+            flat::geom::rect<double> enclosing_rect() const override;
 
         private:
-            std::multiset<wsdl2::rect> m_rects;
+            std::multiset<flat::geom::rect<double>> m_rects;
         };
     }
 
@@ -260,7 +262,7 @@ namespace flat
     // where N is the size of L
     template<class T,
              template<class> class List, 
-             class Rect = wsdl2::rect>
+             class Rect = flat::geom::rect<double>>
     upair_set<T> overlapping_pairs(const List<T>& L, const Rect& domain)
     {
         const size_t N = L.size();

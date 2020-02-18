@@ -3,6 +3,9 @@
 #include "flatland/trait/bounded.hpp"
 #include "flatland/core/geometry.hpp"
 
+#include <unordered_set>
+#include <stack>
+
 // Axys aligned bounding box interface
 namespace flat::AABB {
 
@@ -41,9 +44,8 @@ namespace flat::AABB {
         // TODO, implement with areas
         overlap is_inside(const rect&) const;
 
-        inline is_disjoint(const rect& box) const {
-            
-            return m_box.overlaps(box) || box.is_inside(m_box);
+        inline bool is_disjoint(const rect& box) const {
+            return m_box.overlaps(box) || box.inscribed_in(m_box);
         }
 
         // parent node in the tree
@@ -56,8 +58,9 @@ namespace flat::AABB {
     // leaf of the AABB tree
     struct leaf : public node {
 
-        leaf(const flat::bounded& object, node* parent = nullptr)
-            : node(object.bound_rect(), parent), m_object(object) {}
+        leaf(const flat::trait::bounded& object, branch* parent = nullptr)
+            : node(object.bound()->enclosing_rect(), parent), m_object(object) {}
+            // TODO, dangerous use of shared_ptr
 
         // check whether it is a leaf or a branch
         virtual bool is_leaf() const override {
@@ -65,7 +68,7 @@ namespace flat::AABB {
         }
         
         // contained object
-        const flat::bounded& m_object;
+        const flat::trait::bounded& m_object;
     };
 
     // branch of the AABB tree
@@ -84,9 +87,9 @@ namespace flat::AABB {
     private:
 
         // NB: first and second MUST be non null
-        branch(node* first, node* second, node* parent = nullptr);
-            : std::pair<node*, node*>(first, second), 
-              node(rect_union(first->m_box, second->m_box), parent) 
+        branch(node* _first, node* _second, branch* parent = nullptr)
+            : std::pair<node*, node*>(_first, _second), 
+              node(rect_union(_first->m_box, _second->m_box), parent) 
         {
             // set this object as parent
             first->m_parent = this;
@@ -104,6 +107,14 @@ namespace flat::AABB {
         // and there's no reason to make our life more difficult
         node * m_root;
 
+        struct collision : public std::pair<leaf*, leaf*> {
+
+            using std::pair<leaf*, leaf*>::pair;
+
+            // a commutative comparison (ex: (a,b) == (b,a))
+            bool operator==(const collision& other) const;
+        };
+
         // collision queue, collect current collisions states
         std::unordered_set<collision> m_collision_queue;
 
@@ -112,7 +123,7 @@ namespace flat::AABB {
         tree();
 
         // initialize a tree and emplace the first node
-        tree(const flat::bounded&);
+        tree(const flat::trait::bounded&);
 
         // initialize a tree and emplace a set of objects using the "divide and conquer" algorithm
         // O(N * log(N)), N = init.size(): the list is supposed to be sorted by rectangle positioning
@@ -120,33 +131,25 @@ namespace flat::AABB {
         template <class RandomIt> // random access iterator
         tree(RandomIt begin, RandomIt end);
 
-        void insert(const flat::bounded&);
-        void remove(const flat::bounded&);
+        void insert(const flat::trait::bounded&);
+        void remove(const flat::trait::bounded&);
 
         // find but don't allow to delete the pointed object
         // O(log(N)) time complexity, N = total number of leaves
-        const leaf& find(const flat::bounded&) const;
+        const leaf& find(const flat::trait::bounded&) const;
 
     private:
 
-        struct collision : public std::pair<leaf*, leaf*> {
-
-            using std::pair::pair;
-
-            // a commutative comparison (ex: (a,b) == (b,a))
-            bool operator==(const collision& other) const;
-        };
-
-        leaf * find_leaf(const flat::bounded&) const;
+        leaf * find_leaf(const flat::trait::bounded&) const;
 
         // find the best fitting leaf start by a node and check for possible collisions
-        leaf * find_best_fit(const flat::bounded& box, node *start) const;
+        leaf * find_best_fit(const flat::trait::bounded& box, node *start) const;
 
         // refit the target box basing on the children' boxes
         static void refit(branch* target);
 
         // check for collisions and put them into the collision stack passed as parameter
-        void collisions_check(const flat::bounded& box, std::stack<leaf*>& coll_stack, node *start = m_root) const;
+        static void collisions_check(const flat::trait::bounded& box, std::stack<leaf*>& coll_stack, node *start);
 
         // recursive support for the "divide and conquer" initialization
         template <class RandomIt>
@@ -162,7 +165,7 @@ namespace flat::AABB {
         case 0:
             return;
         case 1:
-            m_top = new leaf(*it, nullptr));
+            m_root = new leaf(*begin, nullptr);
             return;
         default:
             break;
@@ -170,12 +173,12 @@ namespace flat::AABB {
 
         auto it = begin + N/2;
 
-        m_top = std::static_pointer_cast<node>(
+        m_root = std::static_pointer_cast<node>(
                 std::make_unique<branch>(construct(begin, it), construct(it, end), nullptr) );
     }
 
     template <class RandomIt>
-    node * tree::construct(RandomIt begin, RandomIt end)
+    std::shared_ptr<node> tree::construct(RandomIt begin, RandomIt end)
     {
         auto N = std::distance(begin, end);
 

@@ -75,6 +75,11 @@ target_include_directories(flatland
         ${CMAKE_CURRENT_SOURCE_DIR}/
 )
 
+message("Include directories:")
+message($<INSTALL_INTERFACE:include/>)
+message($<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/>)
+message(${CMAKE_CURRENT_SOURCE_DIR})
+
 target_compile_definitions(flatland
     PRIVATE
         $<$<CONFIG:Debug>:DEBUG>

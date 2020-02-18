@@ -9,7 +9,7 @@ template<>
 bool bound::are_overlapping<>(const rectangle& r, const rectangles& rs)
 {
     for (auto&& i : rs.m_rects)
-        if (r.m_rect.intersects(i))
+        if (r.m_rect.overlaps(i))
             return true;
 
     return false;
@@ -33,7 +33,7 @@ bool bound::are_overlapping<>(const bound::rectangles& , const bound::circle& )
 
 bool bound::rectangle::overlaps(const bound::rectangle& other) const
 {
-    return other.m_rect.intersects(m_rect);
+    return other.m_rect.overlaps(m_rect);
 }
 
 
@@ -48,14 +48,12 @@ bool bound::circle::overlaps(const bound::circle& other) const
     return false;
 }
 
-wsdl2::rect bound::circle::enclosing_rect() const
+flat::geom::rect<double> bound::circle::enclosing_rect() const
 {
-    return {
-        static_cast<int>(m_pos.x() - m_radius),
-        static_cast<int>(m_pos.y() - m_radius),
-        static_cast<int>(m_radius),
-        static_cast<int>(m_radius)
-    };
+    return flat::geom::rect<double>(
+        {m_pos.x() - m_radius, m_pos.y() - m_radius},
+        {m_pos.x() + m_radius, m_pos.y() + m_radius}
+    );
 }
 
 
@@ -66,13 +64,13 @@ bool bound::rectangles::overlaps(const bound::rectangles& other) const
 {
     // check if they are in the same quadrant
     std::pair<int, int> quad = std::make_pair(
-        ((0 < other.m_rects.begin()->x) - (other.m_rects.begin()->x < 0)),
-        ((0 < other.m_rects.begin()->y) - (other.m_rects.begin()->y < 0))
+        ((0 < other.m_rects.begin()->x()) - (other.m_rects.begin()->x() < 0)),
+        ((0 < other.m_rects.begin()->y()) - (other.m_rects.begin()->y() < 0))
     );
 
     std::pair<int, int> other_quad = std::make_pair(
-        ((0 < other.m_rects.begin()->x) - (other.m_rects.begin()->x < 0)),
-        ((0 < other.m_rects.begin()->y) - (other.m_rects.begin()->y < 0))
+        ((0 < other.m_rects.begin()->x()) - (other.m_rects.begin()->x() < 0)),
+        ((0 < other.m_rects.begin()->y()) - (other.m_rects.begin()->y() < 0))
     );
 
     // TODO: check for width / height to skip if they are not in the
@@ -86,7 +84,7 @@ bool bound::rectangles::overlaps(const bound::rectangles& other) const
         // iterations
         for (auto&& it = begin; it != end; ++it)
             for (auto&& other_it = obegin; other_it != oend; ++other_it)
-                if (it->intersects(*other_it))
+                if (it->overlaps(*other_it))
                     return true;
 
         return false;
@@ -111,7 +109,7 @@ bool bound::rectangles::overlaps(const bound::rectangles& other) const
     );
 }
 
-wsdl2::rect bound::rectangles::enclosing_rect() const
+flat::geom::rect<double>  bound::rectangles::enclosing_rect() const
 {
     if (m_rects.size() == 1) {
         return *(m_rects.cbegin());
@@ -122,8 +120,8 @@ wsdl2::rect bound::rectangles::enclosing_rect() const
             m_rects.cend(),
             // because given here
             *(m_rects.begin()),
-            [](wsdl2::rect prev, const wsdl2::rect& next) -> wsdl2::rect {
-                return prev.union_with(next);
+            [](flat::geom::rect<double> prev, const flat::geom::rect<double>& next) -> flat::geom::rect<double> {
+                return flat::geom::rect_union(prev, next);
             }
         );
 
