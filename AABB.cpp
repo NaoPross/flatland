@@ -4,13 +4,6 @@
 
 using namespace flat::AABB;
 
-// tree::collision struct
-
-bool tree::collision::operator==(const collision& other) const {
-    return (first == other.first && second == other.second) ||
-           (first == other.second && second == other.first);
-}
-
 // tree class
 tree::tree() : m_root(nullptr) {
 

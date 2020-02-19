@@ -97,7 +97,7 @@ namespace flat::AABB {
         }
     };
 
-
+    
     // The tree structure
     // Spatial complexity: O(N log(N)), N = total number of leaves
     class tree {
@@ -107,16 +107,7 @@ namespace flat::AABB {
         // and there's no reason to make our life more difficult
         node * m_root;
 
-        struct collision : public std::pair<leaf*, leaf*> {
-
-            using std::pair<leaf*, leaf*>::pair;
-
-            // a commutative comparison (ex: (a,b) == (b,a))
-            bool operator==(const collision& other) const;
-        };
-
-        // collision queue, collect current collisions states
-        std::unordered_set<collision> m_collision_queue;
+        
 
     public: 
         // initialize an empty tree
