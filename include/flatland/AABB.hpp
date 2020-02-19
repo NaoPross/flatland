@@ -123,7 +123,7 @@ namespace flat::AABB {
         tree(RandomIt begin, RandomIt end);
 
         void insert(const flat::trait::bounded&);
-        void remove(const flat::trait::bounded&);
+        void erase(const flat::trait::bounded&);
 
         // find but don't allow to delete the pointed object
         // O(log(N)) time complexity, N = total number of leaves
